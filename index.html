@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sweat2Scroll — Earn Your Screen Time</title>
+  <meta name="description" content="The iOS app that gates your screen time behind real workouts. Move more. Scroll smarter. Back by IEEE research." />
+  <meta property="og:title" content="Sweat2Scroll — Earn Your Screen Time" />
+  <meta property="og:description" content="The iOS app that gates your screen time behind real workouts." />
+  <meta property="og:image" content="https://sweattoscroll.com/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lime: #C8FF00;
+      --lime-dim: #9DC400;
+      --dark: #080808;
+      --dark2: #111111;
+      --dark3: #1A1A1A;
+      --card: #141414;
+      --border: rgba(255,255,255,0.08);
+      --text: #F0F0EE;
+      --muted: rgba(240,240,238,0.45);
+      --font-display: 'Anton', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 5vw;
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+      color: var(--lime);
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--lime);
+      color: #000;
+      border: none;
+      padding: 0.55rem 1.4rem;
+      border-radius: 2rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .nav-cta:hover { background: #ddf020; transform: scale(1.03); }
+
+    /* ── HERO ────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10rem 5vw 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200,255,0,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(200,255,0,0.1);
+      border: 1px solid rgba(200,255,0,0.25);
+      border-radius: 2rem;
+      padding: 0.4rem 1.1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--lime);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 13vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      animation: fadeInUp 0.7s 0.1s ease both;
+    }
+
+    h1 .accent { color: var(--lime); }
+
+    .hero-sub {
+      max-width: 540px;
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: var(--muted);
+      margin: 2rem auto 0;
+      font-weight: 300;
+      animation: fadeInUp 0.7s 0.2s ease both;
+    }
+
+    .hero-motive {
+      max-width: 500px;
+      font-size: clamp(0.88rem, 1.8vw, 1rem);
+      color: var(--muted);
+      margin: 2rem auto 0;
+      font-weight: 300;
+      line-height: 1.8;
+      animation: fadeInUp 0.7s 0.28s ease both;
+      border-left: 2px solid rgba(200,255,0,0.3);
+      padding-left: 1.1rem;
+      text-align: left;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+      animation: fadeInUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--lime);
+      color: #000;
+      border: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: 2rem;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(200,255,0,0.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.9rem 2.2rem;
+      border-radius: 2rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 5rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--border);
+      animation: fadeInUp 0.7s 0.45s ease both;
+    }
+
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--lime);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── SECTION SHARED ─────────────────────────────── */
+    section { padding: 6rem 5vw; }
+    .section-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: 0.01em;
+    }
+    .section-body {
+      color: var(--muted);
+      max-width: 560px;
+      font-size: 1.05rem;
+      margin-top: 1rem;
+      font-weight: 300;
+    }
+
+    /* ── HOW IT WORKS ───────────────────────────────── */
+    .how { background: var(--dark2); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5px;
+      margin-top: 4rem;
+      border: 1.5px solid var(--border);
+      border-radius: 1.5rem;
+      overflow: hidden;
+    }
+
+    .step {
+      padding: 2.5rem 2rem;
+      background: var(--card);
+      position: relative;
+      transition: background 0.2s;
+    }
+    .step:hover { background: #1c1c1c; }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 4rem;
+      color: rgba(200,255,0,0.12);
+      line-height: 1;
+      margin-bottom: 1rem;
+      transition: color 0.2s;
+    }
+    .step:hover .step-num { color: rgba(200,255,0,0.25); }
+
+    .step-icon {
+      width: 32px;
+      height: 2px;
+      background: var(--lime);
+      opacity: 0.4;
+      margin-bottom: 1.2rem;
+      border-radius: 2px;
+    }
+
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .step p { color: var(--muted); font-size: 0.95rem; font-weight: 300; line-height: 1.7; }
+
+    /* ── FEATURES ───────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(200,255,0,0.2);
+      transform: translateY(-3px);
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--lime);
+      opacity: 0.5;
+      margin-bottom: 1.2rem;
+    }
+
+    .feature-card h3 {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; font-weight: 300; }
+
+    /* ── RESEARCH ───────────────────────────────────── */
+    .research { background: var(--dark2); }
+
+    .research-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .ieee-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.2);
+      border-radius: 0.5rem;
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--lime);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .paper-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .paper-card .paper-venue {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 0.5rem;
+    }
+
+    .paper-card h4 {
+      font-weight: 500;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .paper-card .paper-authors { color: var(--muted); font-size: 0.82rem; }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* ── WAITLIST ───────────────────────────────────── */
+    .waitlist {
+      text-align: center;
+      background: var(--dark);
+      padding: 8rem 5vw;
+    }
+
+    .waitlist-card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid rgba(200,255,0,0.18);
+      border-radius: 2rem;
+      padding: 4rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .waitlist-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 200px;
+      background: radial-gradient(circle, rgba(200,255,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .waitlist-card h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .waitlist-card p {
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+    }
+
+    .waitlist-form {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 460px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .waitlist-input {
+      flex: 1;
+      min-width: 220px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: 0.9rem 1.5rem;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .waitlist-input::placeholder { color: var(--muted); }
+    .waitlist-input:focus { border-color: rgba(200,255,0,0.4); }
+
+    .waitlist-submit {
+      background: var(--lime);
+      color: #000;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.9rem 1.8rem;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .waitlist-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(200,255,0,0.3);
+    }
+
+    .waitlist-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+
+    .success-msg {
+      display: none;
+      color: var(--lime);
+      font-weight: 600;
+      margin-top: 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    footer {
+      background: var(--dark2);
+      border-top: 1px solid var(--border);
+      padding: 3rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--lime);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-copy { color: var(--muted); font-size: 0.8rem; }
+
+    /* ── ANIMATIONS ─────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .research-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-stats { gap: 2rem; }
+      .waitlist-card { padding: 2.5rem 1.5rem; }
+      nav { padding: 1rem 4vw; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">SWEAT2SCROLL</span>
+    <ul class="nav-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#research">Research</a></li>
+    </ul>
+    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      iOS App — Coming Soon
+    </div>
+
+    <h1>Earn<br><span class="accent">Your</span><br>Screen<br>Time</h1>
+
+    <p class="hero-sub">
+      Sweat2Scroll is the iOS app that makes you work out before you scroll.
+      Built on HealthKit and OPA/WebAssembly — your fitness unlocks your phone.
+    </p>
+
+    <p class="hero-motive">
+      The average person scrolls 3+ hours a day without earning a single minute of it.<br>
+      We built Sweat2Scroll to change that — one workout at a time.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">Join the Waitlist</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">IEEE</span>
+        <span class="stat-label">Conference Paper</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">OPA</span>
+        <span class="stat-label">Policy Engine</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">WASM</span>
+        <span class="stat-label">On-Device</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">HealthKit</span>
+        <span class="stat-label">Powered By</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <span class="section-tag reveal">How It Works</span>
+    <h2 class="section-title reveal">Move. Unlock.<br>Scroll.</h2>
+    <p class="section-body reveal">Three simple steps powered by real fitness data — no gamification gimmicks, just honest accountability.</p>
+
+    <div class="steps-grid reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon"></div>
+        <h3>Set Your Goal</h3>
+        <p>Choose a daily activity target — steps, active calories, or workout minutes. You decide what earns your screen time.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon"></div>
+        <h3>Work Out</h3>
+        <p>Sweat2Scroll reads your HealthKit data in real time. Every rep, every step, every calorie counts toward unlocking access.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon"></div>
+        <h3>Earn Your Scroll</h3>
+        <p>Hit your target and the app unlocks your designated apps via Apple's FamilyControls API. No fitness, no feed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <span class="section-tag reveal">Features</span>
+    <h2 class="section-title reveal">Built Different.</h2>
+    <p class="section-body reveal">Not another step counter. A policy-enforced fitness gatekeeper for your digital life.</p>
+
+    <div class="features-grid">
+
+      <div class="feature-card reveal">
+        <div class="feature-icon"></div>
+        <h3>OPA Policy Engine</h3>
+        <p>Open Policy Agent rules run entirely on-device via WebAssembly. No cloud server decides your access — your phone does, based on your data.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon"></div>
+        <h3>HealthKit Native</h3>
+        <p>Deep integration with Apple HealthKit for heart rate, active energy, steps, and workout sessions. Real exercise only — gaming metrics won't cut it.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon"></div>
+        <h3>FamilyControls Enforcement</h3>
+        <p>Uses Apple's official Screen Time framework to enforce restrictions. Apps you choose stay locked until you've earned them.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon"></div>
+        <h3>Edge Processing</h3>
+        <p>All policy evaluation happens locally — sub-millisecond decisions without battery drain or privacy trade-offs.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon"></div>
+        <h3>Flexible Thresholds</h3>
+        <p>Set different unlock conditions per app category. Social media costs more than podcasts. You're in control.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon"></div>
+        <h3>Activity Insights</h3>
+        <p>Weekly trends show how your physical activity correlates with screen time. See the habit forming in real numbers.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="research" id="research">
+    <div class="research-inner">
+      <div>
+        <div class="ieee-badge reveal">
+          ✦ IEEE Conference Paper
+        </div>
+        <h2 class="section-title reveal">Grounded in<br>IEEE Research.</h2>
+        <p class="section-body reveal">
+          Sweat2Scroll began as a research contribution accepted at IEEE SoutheastCon 2026 and presented on March 7, 2026. The system architecture, policy enforcement model, and mobile edge computing approach are all documented in the conference paper — bringing academic rigor to consumer wellness tech.
+        </p>
+
+        <div class="tech-stack reveal">
+          <span class="tag">Swift / SwiftUI</span>
+          <span class="tag">HealthKit</span>
+          <span class="tag">OPA / Rego</span>
+          <span class="tag">WebAssembly</span>
+          <span class="tag">FamilyControls</span>
+          <span class="tag">Mobile Edge Computing</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="paper-card reveal">
+          <div class="paper-venue">IEEE SoutheastCon 2026 &nbsp;·&nbsp; Presented March 7, 2026 &nbsp;·&nbsp; Publication Pending</div>
+          <h4>Fitness-Contingent Screen Access Control Using Open Policy Agent and WebAssembly on Mobile Edge Devices</h4>
+          <p class="paper-authors">Jagadish Krishna Pilla</p>
+        </div>
+
+        <div class="paper-card reveal" style="margin-top: 1rem;">
+          <div class="paper-venue">Why It Matters</div>
+          <h4>Average US adults spend 7+ hours daily on screens. Sweat2Scroll creates an enforceable, privacy-preserving feedback loop between physical health and digital consumption.</h4>
+          <p class="paper-authors" style="margin-top: 0.5rem;">No cloud. No ads. No data harvesting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section class="waitlist" id="waitlist">
+    <div class="waitlist-card">
+      <h2>Be First<br>To Move.</h2>
+      <p>Join the waitlist and get early access when we launch on the App Store.</p>
+
+      <div class="waitlist-form">
+        <input
+          type="email"
+          class="waitlist-input"
+          id="email-input"
+          placeholder="your@email.com"
+          autocomplete="email"
+        />
+        <button class="waitlist-submit" onclick="handleSubmit()">Notify Me</button>
+      </div>
+      <p class="waitlist-note">No spam. Just a launch ping when it's ready.</p>
+      <p class="success-msg" id="success-msg">✓ You're on the list. Now go for a run.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo">SWEAT2SCROLL</span>
+    <ul class="footer-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#waitlist">Waitlist</a></li>
+    </ul>
+    <span class="footer-copy">© 2026 Sweat2Scroll. Built on IEEE research.</span>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Waitlist form — Google Forms
+    // SETUP (one-time, ~3 min):
+    // 1. Go to forms.google.com → New form → add a Short Answer question titled "Email"
+    // 2. Click 3-dot menu top-right → "Get pre-filled link"
+    // 3. Type anything in the Email field → click "Get Link"
+    // 4. From the URL, copy:
+    //    - FORM_ID  : long string between /d/e/ and /viewform
+    //    - ENTRY_ID : the "entry.XXXXXXXXX" parameter
+    const GOOGLE_FORM_ID  = 'YOUR_FORM_ID';    // e.g. 1FAIpQLSc...
+    const GOOGLE_ENTRY_ID = 'entry.000000000';  // e.g. entry.123456789
+
+    async function handleSubmit() {
+      const input = document.getElementById('email-input');
+      const btn   = document.querySelector('.waitlist-submit');
+      const msg   = document.getElementById('success-msg');
+      const email = input.value.trim();
+
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = 'rgba(255,80,80,0.5)';
+        setTimeout(() => input.style.borderColor = '', 1200);
+        return;
+      }
+
+      btn.textContent = 'Joining...';
+      btn.disabled = true;
+
+      const formData = new FormData();
+      formData.append(GOOGLE_ENTRY_ID, email);
+
+      // Google Forms blocks CORS — no-cors is intentional (fire-and-forget)
+      // The submission still lands in your Google Sheet
+      try {
+        await fetch(
+          'https://docs.google.com/forms/d/e/' + GOOGLE_FORM_ID + '/formResponse',
+          { method: 'POST', mode: 'no-cors', body: formData }
+        );
+      } catch(e) {}
+
+      input.style.display = 'none';
+      btn.style.display   = 'none';
+      msg.style.display   = 'block';
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+</html>
