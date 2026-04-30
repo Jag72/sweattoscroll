@@ -1,0 +1,336 @@
+{
+  "source": "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/DashboardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "SWEAT2SCROLL",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "Simulator cannot run Screen Time shields. Build to a physical iPhone to test app blocking.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 247
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 291
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recovery, strain, sleep, and HRV shown here are sample estimates until fully driven by HealthKit.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 603
+        }
+      },
+      {
+        "comment": "",
+        "key": "PROGRESS",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 505
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 509
+        }
+      },
+      {
+        "comment": "",
+        "key": "REMAINING",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 515
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 520
+        }
+      },
+      {
+        "comment": "",
+        "key": "I need a break",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 584
+        }
+      },
+      {
+        "comment": "",
+        "key": "Earn your\nscroll time.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 614
+        }
+      },
+      {
+        "comment": "",
+        "key": "Apps stay locked until your body earns the access.\nEvery. Single. Day.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 620
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sample wellness data — connect HealthKit for live recovery.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 724
+        }
+      },
+      {
+        "comment": "",
+        "key": "\"Recovery scores here use sample pacing from HealthKit-style metrics. Full personalization ships with deeper sensor sync.\"",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 767
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recovery Insights",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 763
+        }
+      },
+      {
+        "comment": "",
+        "key": "LAST 7 DAYS",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 782
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 847
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sample strain curve — workouts below mirror WellnessViewModel until live sync.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 886
+        }
+      },
+      {
+        "comment": "",
+        "key": "DAILY STRAIN",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 893
+        }
+      },
+      {
+        "comment": "",
+        "key": "HEART RATE ZONES",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 908
+        }
+      },
+      {
+        "comment": "",
+        "key": "1h 12m total",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 912
+        }
+      },
+      {
+        "comment": "",
+        "key": "Activity Breakdown",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 963
+        }
+      },
+      {
+        "comment": "",
+        "key": "STRAIN",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1040
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sample sleep architecture — totals come from WellnessViewModel staging data.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 1078
+        }
+      },
+      {
+        "comment": "",
+        "key": "SLEEP PERFORMANCE",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1085
+        }
+      },
+      {
+        "comment": "",
+        "key": "TIME ASLEEP",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1096
+        }
+      },
+      {
+        "comment": "",
+        "key": "CONSISTENCY",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1104
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1107
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Stages",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1125
+        }
+      },
+      {
+        "comment": "",
+        "key": "+12m",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1177
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Debt",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1170
+        }
+      },
+      {
+        "comment": "",
+        "key": "You need 12m more tonight",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1172
+        }
+      },
+      {
+        "comment": "",
+        "key": "Leaderboard uses placeholder friends; activity feed pulls from WellnessViewModel samples.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 1220
+        }
+      },
+      {
+        "comment": "",
+        "key": "LEADERBOARD",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1227
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recent Activity",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1246
+        }
+      },
+      {
+        "comment": "",
+        "key": "No feed items yet.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 1283
+        }
+      },
+      {
+        "comment": "",
+        "key": " %@",
+        "location": {
+          "startingColumn": 78,
+          "startingLine": 1261
+        }
+      },
+      {
+        "comment": "",
+        "key": "\"%@\"",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 1264
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 1271
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld / %lld KCAL",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1346
+        }
+      },
+      {
+        "comment": "",
+        "key": "STREAK",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1363
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 1359
+        }
+      }
+    ]
+  },
+  "version": 1
+}

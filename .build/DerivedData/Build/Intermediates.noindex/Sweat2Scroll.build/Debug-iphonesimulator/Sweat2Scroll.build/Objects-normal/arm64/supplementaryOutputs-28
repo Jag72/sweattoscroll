@@ -1,0 +1,23 @@
+{
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/AllViews.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AllViews.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AllViews.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AllViews.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AllViews.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AllViews.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/AuthView.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AuthView.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AuthView.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AuthView.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AuthView.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/AuthView.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Components/Components.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/Components.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/Components.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/Components.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/Components.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/Components.swiftdeps"
+  }
+}

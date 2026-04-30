@@ -1,0 +1,23 @@
+{
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Models/GovernanceContract.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/GovernanceContract.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/GovernanceContract.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/GovernanceContract.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/GovernanceContract.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/GovernanceContract.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Models/UnlockPolicy.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UnlockPolicy.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UnlockPolicy.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UnlockPolicy.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UnlockPolicy.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UnlockPolicy.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Models/UserProfile.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UserProfile.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UserProfile.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UserProfile.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UserProfile.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/Sweat2Scroll.build/Objects-normal/arm64/UserProfile.swiftdeps"
+  }
+}

@@ -1,0 +1,4 @@
+module WasmParser {
+header "WasmParser-Swift.h"
+export *
+}

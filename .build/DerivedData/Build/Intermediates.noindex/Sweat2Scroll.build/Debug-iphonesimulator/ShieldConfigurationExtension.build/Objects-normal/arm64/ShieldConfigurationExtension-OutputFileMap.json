@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/ShieldConfigurationExtension-primary.dia",
+    "emit-module-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/ShieldConfigurationExtension-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/ShieldConfigurationExtension-primary-emit-module.dia",
+    "pch" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/ShieldConfigurationExtension-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/ShieldConfigurationExtension-primary.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/ShieldConfigurationExtension/Sweat2ScrollShieldConfiguration.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.dia",
+    "index-unit-output-path" : "/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/ShieldConfigurationExtension.build/Objects-normal/arm64/Sweat2ScrollShieldConfiguration~partial.swiftmodule"
+  }
+}

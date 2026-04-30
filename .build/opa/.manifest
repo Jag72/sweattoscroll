@@ -1,0 +1,1 @@
+{"revision":"","roots":[""],"wasm":[{"entrypoint":"sweat2scroll/contract/allow","module":"/policy.wasm"},{"entrypoint":"sweat2scroll/contract/requires_grace","module":"/policy.wasm"},{"entrypoint":"sweat2scroll/contract/deny_reason","module":"/policy.wasm"}],"rego_version":1}

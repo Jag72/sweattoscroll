@@ -1,0 +1,30 @@
+{
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmKit/Execution/Instructions/Misc.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Misc.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Misc.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Misc.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Misc.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Misc.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmKit/Execution/Instructions/Table.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Table.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Table.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Table.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Table.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Table.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmKit/Execution/NameRegistry.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/NameRegistry.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/NameRegistry.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/NameRegistry.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/NameRegistry.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/NameRegistry.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmKit/Execution/Profiler.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Profiler.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Profiler.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Profiler.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Profiler.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmKit.build/Objects-normal/arm64/Profiler.swiftdeps"
+  }
+}

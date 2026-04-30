@@ -1,0 +1,99 @@
+{
+  "" : {
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser-primary.dia",
+    "emit-module-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser-primary-emit-module.dia",
+    "pch" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser-primary.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/BinaryInstructionDecoder.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/BinaryInstructionDecoder~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/InstructionVisitor.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/InstructionVisitor~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/LEB.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/LEB~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/ParsingLimits.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ParsingLimits~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/Stream/ByteStream.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/ByteStream~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/Stream/FileHandleStream.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/FileHandleStream~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/Stream/Stream.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/Stream~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/WasmParser.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmParser~partial.swiftmodule"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/WasmKit/Sources/WasmParser/WasmTypes.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.dia",
+    "index-unit-output-path" : "/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/WasmKit.build/Debug-iphonesimulator/WasmParser.build/Objects-normal/arm64/WasmTypes~partial.swiftmodule"
+  }
+}

@@ -1,0 +1,712 @@
+{
+  "source": "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/AllViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "SWEAT2SCROLL",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 32
+        }
+      },
+      {
+        "comment": "",
+        "key": "Earn your screen time.\nMove first. Then scroll.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 35
+        }
+      },
+      {
+        "comment": "",
+        "key": "Currency",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 77
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 84
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recommended: %lld — Hard cap: %lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld apps selected",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 121
+        }
+      },
+      {
+        "comment": "",
+        "key": "Select Apps",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 116
+        }
+      },
+      {
+        "comment": "",
+        "key": "Method",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 150
+        }
+      },
+      {
+        "comment": "",
+        "key": "Role",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 163
+        }
+      },
+      {
+        "comment": "",
+        "key": "QR Code",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "iMessage",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 152
+        }
+      },
+      {
+        "comment": "",
+        "key": "Show My Code",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Scan Partner",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "Show this to your partner to scan.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 262
+        }
+      },
+      {
+        "comment": "",
+        "key": "Regenerate Code",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 269
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate Pairing Code",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 236
+        }
+      },
+      {
+        "comment": "",
+        "key": "Waiting for partner to scan...",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 256
+        }
+      },
+      {
+        "comment": "",
+        "key": "Completing key exchange...",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 297
+        }
+      },
+      {
+        "comment": "",
+        "key": "Scan your partner's QR code to\nexchange encryption keys.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 301
+        }
+      },
+      {
+        "comment": "",
+        "key": "Open Scanner",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 310
+        }
+      },
+      {
+        "comment": "",
+        "key": "Send a secure pairing link\nto your partner via iMessage.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 335
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate New Link",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 404
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate Link",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 349
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share via iMessage",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 381
+        }
+      },
+      {
+        "comment": "",
+        "key": "Waiting for partner to open link...",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 397
+        }
+      },
+      {
+        "comment": "",
+        "key": "Paired!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 446
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connected with %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 450
+        }
+      },
+      {
+        "comment": "",
+        "key": "ECDH key exchange complete",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 458
+        }
+      },
+      {
+        "comment": "",
+        "key": "You're set up!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 505
+        }
+      },
+      {
+        "comment": "",
+        "key": "Go earn your screen time.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 508
+        }
+      },
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 646
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unpair Partner?",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 655
+        }
+      },
+      {
+        "comment": "",
+        "key": "Daily Target",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 563
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hard Cap",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 564
+        }
+      },
+      {
+        "comment": "",
+        "key": "Currency",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 565
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit Goal",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 566
+        }
+      },
+      {
+        "comment": "",
+        "key": "Goal",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 573
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sweat2Scroll needs Screen Time permission to block selected apps until you meet your goal. If you denied access, enable it in Settings → Screen Time.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 580
+        }
+      },
+      {
+        "comment": "",
+        "key": "Screen Time API",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 578
+        }
+      },
+      {
+        "comment": "",
+        "key": "Master Shield",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 584
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 589
+        }
+      },
+      {
+        "comment": "",
+        "key": "Shield",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 591
+        }
+      },
+      {
+        "comment": "",
+        "key": "No partner connected",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 605
+        }
+      },
+      {
+        "comment": "",
+        "key": "Partner",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 597
+        }
+      },
+      {
+        "comment": "",
+        "key": "Paired Since",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 599
+        }
+      },
+      {
+        "comment": "",
+        "key": "Contract ID",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 600
+        }
+      },
+      {
+        "comment": "",
+        "key": "Re-Pair Device",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 602
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unpair Partner",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 603
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pair with Partner",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 607
+        }
+      },
+      {
+        "comment": "",
+        "key": "Partner",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 610
+        }
+      },
+      {
+        "comment": "",
+        "key": "Morning Progress Summary",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 615
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tamper Detection Alerts",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 616
+        }
+      },
+      {
+        "comment": "",
+        "key": "Partner Activity Updates",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 617
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notifications",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 619
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tamper alerts notify your partner when HealthKit or Screen Time permissions are revoked.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 621
+        }
+      },
+      {
+        "comment": "",
+        "key": "View Audit Log",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 626
+        }
+      },
+      {
+        "comment": "",
+        "key": "Health Data",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 629
+        }
+      },
+      {
+        "comment": "",
+        "key": "Policy Engine",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 630
+        }
+      },
+      {
+        "comment": "",
+        "key": "Data & Privacy",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 632
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reset Onboarding",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 637
+        }
+      },
+      {
+        "comment": "",
+        "key": "Version",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 641
+        }
+      },
+      {
+        "comment": "",
+        "key": "Account",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 643
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 649
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 656
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unpair",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 657
+        }
+      },
+      {
+        "comment": "",
+        "key": "This will remove the shared encryption key. You'll need to re-pair with a new QR code. Break-Glass codes will stop working.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 661
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recommended: %lld · Max: %lld",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 691
+        }
+      },
+      {
+        "comment": "",
+        "key": "Currency",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 678
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 684
+        }
+      },
+      {
+        "comment": "",
+        "key": "kcal",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 686
+        }
+      },
+      {
+        "comment": "",
+        "key": "steps",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 686
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 696
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save Goal",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 699
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 720
+        }
+      },
+      {
+        "comment": "",
+        "key": "Break-Glass",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 776
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mode",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 739
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter Code",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 740
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate Code",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 741
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter the 6-digit code from your partner.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 747
+        }
+      },
+      {
+        "comment": "",
+        "key": "000000",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 750
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unlock (15 min)",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 757
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share this code with your partner.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 766
+        }
+      },
+      {
+        "comment": "",
+        "key": "Expires in 30 seconds",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 771
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 779
+        }
+      },
+      {
+        "comment": "",
+        "key": "Audit Log",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 839
+        }
+      },
+      {
+        "comment": "",
+        "key": "No events yet",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 802
+        }
+      },
+      {
+        "comment": "",
+        "key": "Shield engagements, break-glass overrides, and tamper detections will appear here.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 805
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 66,
+          "startingLine": 841
+        }
+      }
+    ]
+  },
+  "version": 1
+}

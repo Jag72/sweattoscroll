@@ -1,0 +1,35 @@
+Target dependency graph (13 targets)
+Target 'Sweat2Scroll' in project 'Sweat2Scroll'
+➜ Explicit dependency on target 'DeviceActivityMonitorExtension' in project 'Sweat2Scroll'
+➜ Explicit dependency on target 'ShieldConfigurationExtension' in project 'Sweat2Scroll'
+➜ Explicit dependency on target 'ShieldActionExtension' in project 'Sweat2Scroll'
+➜ Explicit dependency on target 'WasmKit' in project 'WasmKit'
+Target 'WasmKit' in project 'WasmKit'
+➜ Explicit dependency on target 'WasmKit' in project 'WasmKit'
+➜ Explicit dependency on target '_CWasmKit' in project 'WasmKit'
+➜ Explicit dependency on target 'WasmTypes' in project 'WasmKit'
+➜ Explicit dependency on target 'WasmParser' in project 'WasmKit'
+➜ Explicit dependency on target 'SystemExtras' in project 'WasmKit'
+➜ Explicit dependency on target 'SystemPackage' in project 'swift-system'
+Target 'WasmKit' in project 'WasmKit'
+➜ Explicit dependency on target '_CWasmKit' in project 'WasmKit'
+➜ Explicit dependency on target 'WasmTypes' in project 'WasmKit'
+➜ Explicit dependency on target 'WasmParser' in project 'WasmKit'
+➜ Explicit dependency on target 'SystemExtras' in project 'WasmKit'
+➜ Explicit dependency on target 'SystemPackage' in project 'swift-system'
+Target 'SystemExtras' in project 'WasmKit'
+➜ Explicit dependency on target 'SystemPackage' in project 'swift-system'
+Target 'WasmParser' in project 'WasmKit'
+➜ Explicit dependency on target 'WasmTypes' in project 'WasmKit'
+➜ Explicit dependency on target 'SystemPackage' in project 'swift-system'
+Target 'SystemPackage' in project 'swift-system'
+➜ Explicit dependency on target 'SystemPackage' in project 'swift-system'
+➜ Explicit dependency on target 'CSystem' in project 'swift-system'
+Target 'SystemPackage' in project 'swift-system'
+➜ Explicit dependency on target 'CSystem' in project 'swift-system'
+Target 'CSystem' in project 'swift-system' (no dependencies)
+Target 'WasmTypes' in project 'WasmKit' (no dependencies)
+Target '_CWasmKit' in project 'WasmKit' (no dependencies)
+Target 'ShieldActionExtension' in project 'Sweat2Scroll' (no dependencies)
+Target 'ShieldConfigurationExtension' in project 'Sweat2Scroll' (no dependencies)
+Target 'DeviceActivityMonitorExtension' in project 'Sweat2Scroll' (no dependencies)

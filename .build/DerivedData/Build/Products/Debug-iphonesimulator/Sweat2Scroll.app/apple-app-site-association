@@ -1,0 +1,23 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "A7ZQYUR8Z9.com.jagadish.Sweat2Scroll"
+        ],
+        "components": [
+          {
+            "/": "/pair",
+            "?": { "payload": "?*", "v": "1" },
+            "comment": "Pairing Universal Link — ECDH key exchange via iMessage"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "A7ZQYUR8Z9.com.jagadish.Sweat2Scroll"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/swift-system/Sources/System/Util+StringArray.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util+StringArray.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util+StringArray.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util+StringArray.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util+StringArray.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util+StringArray.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/swift-system/Sources/System/Util.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/Util.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/SourcePackages/checkouts/swift-system/Sources/System/UtilConsumers.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/UtilConsumers.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/UtilConsumers.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/UtilConsumers.dia",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/UtilConsumers.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/swift-system.build/Debug-iphonesimulator/SystemPackage.build/Objects-normal/arm64/UtilConsumers.swiftdeps"
+  }
+}

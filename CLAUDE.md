@@ -87,10 +87,14 @@ allow {
 - Never store health data to disk — keep in memory only (privacy)
 
 ## Current Status
-- [ ] Xcode project created
-- [ ] HealthKit integration
-- [ ] OPA/WASM integration
-- [ ] FamilyControls integration
-- [ ] Home UI
-- [ ] Onboarding flow
+- [x] Xcode project created
+- [x] HealthKit integration (activity + biometrics + wellness metrics: HRV, RHR, sleep, respiratory rate)
+- [x] OPA/WASM integration (WasmKit bridge fully written — add WasmKit via SPM to compile)
+- [x] FamilyControls integration (Distribution entitlement approved 2026-03-20 for com.jagadish.sweat2scroll)
+- [x] Home UI + full view hierarchy (Auth, Onboarding, Dashboards, Pairing, Wellness)
+- [x] Onboarding flow (Solo, User, Monitor modes)
+- [x] CloudKit schema bootstrap, tamper alert subscription, partner sync
+- [ ] Add WasmKit package via Xcode SPM (File → Add Package Dependencies)
+- [ ] Run on physical device to bootstrap CloudKit schema, then deploy to Production in Dashboard
+- [ ] Change aps-environment in entitlements to "production" before archiving for App Store
 - [ ] App Store submission

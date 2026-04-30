@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/DeviceActivityMonitorExtension-primary.dia",
+    "emit-module-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/DeviceActivityMonitorExtension-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/DeviceActivityMonitorExtension-primary-emit-module.dia",
+    "pch" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/DeviceActivityMonitorExtension-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/DeviceActivityMonitorExtension-primary.swiftdeps"
+  },
+  "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/DeviceActivityMonitorExtension/Sweat2ScrollActivityMonitor.swift" : {
+    "const-values" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.swiftconstvalues",
+    "dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.d",
+    "diagnostics" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.dia",
+    "index-unit-output-path" : "/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.o",
+    "llvm-bc" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.bc",
+    "object" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.o",
+    "swift-dependencies" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor.swiftdeps",
+    "swiftmodule" : "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/.build/DerivedData/Build/Intermediates.noindex/Sweat2Scroll.build/Debug-iphonesimulator/DeviceActivityMonitorExtension.build/Objects-normal/arm64/Sweat2ScrollActivityMonitor~partial.swiftmodule"
+  }
+}

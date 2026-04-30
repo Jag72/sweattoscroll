@@ -1,0 +1,64 @@
+{
+  "source": "/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Components/Components.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "kcal",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "steps",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 73
+        }
+      },
+      {
+        "comment": "",
+        "key": "Master Shield",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 63
+        }
+      },
+      {
+        "comment": "",
+        "key": "Apps locked until goal met",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "Shield is disabled",
+        "location": {
+          "startingColumn": 64,
+          "startingLine": 66
+        }
+      }
+    ]
+  },
+  "version": 1
+}
