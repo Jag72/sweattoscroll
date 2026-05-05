@@ -1,4 +1,0 @@
-module WasmTypes {
-header "WasmTypes-Swift.h"
-export *
-}

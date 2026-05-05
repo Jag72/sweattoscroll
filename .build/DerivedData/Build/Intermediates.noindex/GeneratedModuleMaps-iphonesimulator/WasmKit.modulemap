@@ -1,4 +1,0 @@
-module WasmKit {
-header "WasmKit-Swift.h"
-export *
-}

@@ -1,0 +1,100 @@
+<!-- 
+Info.plist Required Keys for Sweat2Scroll
+Add these entries in Xcode: Target → Info → Custom iOS Target Properties
+Or edit Info.plist directly.
+-->
+
+<!--
+HEALTHKIT PRIVACY STRINGS (required by App Store review)
+-->
+<key>NSHealthShareUsageDescription</key>
+<string>Sweat2Scroll reads your active calories, steps, weight, and height from Apple Health to compute your daily fitness goal. This data is processed entirely on your device and is never transmitted to third-party servers.</string>
+
+<key>NSHealthUpdateUsageDescription</key>
+<string>Sweat2Scroll does not write health data.</string>
+
+<!--
+CAMERA (for QR code pairing scan)
+-->
+<key>NSCameraUsageDescription</key>
+<string>Sweat2Scroll uses the camera to scan your partner's QR code during the secure device pairing process.</string>
+
+<!--
+CLOUDKIT / PUSH NOTIFICATIONS (for tamper alerts and partner sync)
+-->
+<key>UIBackgroundModes</key>
+<array>
+    <string>fetch</string>
+    <string>remote-notification</string>
+    <string>processing</string>
+</array>
+
+<!--
+APP GROUP (shared container between main app and extensions)
+Must match: group.com.sweat2scroll.appblocker
+Add in: Target → Signing & Capabilities → App Groups
+Also add to ALL extension targets:
+  - DeviceActivityMonitorExtension
+  - ShieldConfigurationExtension
+  - ShieldActionExtension
+-->
+
+<!--
+ENTITLEMENTS FILE (Sweat2Scroll.entitlements)
+Xcode auto-generates this when you add capabilities.
+The following must be present:
+
+com.apple.developer.family-controls              → Boolean: YES
+  ⚠️  REQUIRES APPLE ENTITLEMENT APPROVAL
+  Apply at: https://developer.apple.com/contact/request/family-controls-entitlement
+  Testing WITHOUT this: use .individual authorization (already in AppEntry)
+
+com.apple.developer.healthkit                   → Boolean: YES
+
+com.apple.security.application-groups          → Array:
+  group.com.sweat2scroll.appblocker
+
+aps-environment                                 → String: development (then production)
+  Required for CloudKit push notifications
+
+iCloud                                          → Boolean: YES
+  with CKSharingSupported: YES
+-->
+
+<!--
+SWIFT PACKAGE MANAGER DEPENDENCIES
+Add in Xcode: File → Add Package Dependencies
+
+1. WasmKit (Wasm runtime for OPA policy execution)
+   URL: https://github.com/swiftwasm/WasmKit
+   Version: latest stable
+
+2. No other external dependencies required.
+   CloudKit, HealthKit, FamilyControls, ManagedSettings,
+   DeviceActivity, CryptoKit are all Apple-native frameworks.
+-->
+
+<!--
+XCODE TARGET SETUP CHECKLIST
+Main App Target: Sweat2Scroll
+  ☐ Deployment target: iOS 16.0+
+  ☐ Capabilities: HealthKit, iCloud (CloudKit), Push Notifications,
+                  App Groups, Background Modes
+  ☐ Entitlement: com.apple.developer.family-controls
+
+Extension Targets (File → New → Target):
+  ☐ Device Activity Monitor Extension → "DeviceActivityMonitorExtension"
+  ☐ Shield Configuration Extension   → "ShieldConfigurationExtension"
+  ☐ Shield Action Extension          → "ShieldActionExtension"
+
+Each extension target needs:
+  ☐ App Group: group.com.sweat2scroll.appblocker
+  ☐ Same Team/Bundle prefix as main app
+
+CloudKit Container:
+  ☐ Container ID: iCloud.com.sweat2scroll
+  ☐ Schema: Create record types in CloudKit Dashboard
+      - AuditEvent (fields: eventType, timestamp, agentDisplayName + encrypted fields)
+      - GovernanceContract
+      - PartnerProgress
+-->

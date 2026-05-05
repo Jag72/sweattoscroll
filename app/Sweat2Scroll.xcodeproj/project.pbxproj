@@ -1,0 +1,1050 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000001AAAA000100000001 /* WasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = AA000001AAAA000100000002 /* WasmKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AA100001AAAA000100000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE97B5392F6D88BD00104C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA200001AAAA000100000001;
+			remoteInfo = DeviceActivityMonitorExtension;
+		};
+		AA100002AAAA000100000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE97B5392F6D88BD00104C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA200002AAAA000100000001;
+			remoteInfo = ShieldConfigurationExtension;
+		};
+		AA100003AAAA000100000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE97B5392F6D88BD00104C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA200003AAAA000100000001;
+			remoteInfo = ShieldActionExtension;
+		};
+		BB2000802F6D88BD00104C5F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE97B5392F6D88BD00104C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FE97B5402F6D88BD00104C5F;
+			remoteInfo = Sweat2Scroll;
+		};
+		BB2000812F6D88BD00104C5F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE97B5392F6D88BD00104C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FE97B5402F6D88BD00104C5F;
+			remoteInfo = Sweat2Scroll;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AA300001AAAA000100000001 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AA400001AAAA000100000001 /* DeviceActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA400002AAAA000100000001 /* ShieldConfigurationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfigurationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA400003AAAA000100000001 /* ShieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sweat2Scroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB2000102F6D88BD00104C5F /* Sweat2ScrollTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sweat2ScrollTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB2000103F6D88BD00104C5F /* Sweat2ScrollUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sweat2ScrollUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AAEXC001AAAA000100000001 /* Exceptions for "DeviceActivityMonitorExtension" folder in "DeviceActivityMonitorExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA200001AAAA000100000001 /* DeviceActivityMonitorExtension */;
+		};
+		AAEXC002AAAA000100000001 /* Exceptions for "ShieldConfigurationExtension" folder in "ShieldConfigurationExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA200002AAAA000100000001 /* ShieldConfigurationExtension */;
+		};
+		AAEXC003AAAA000100000001 /* Exceptions for "ShieldActionExtension" folder in "ShieldActionExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA200003AAAA000100000001 /* ShieldActionExtension */;
+		};
+		AAEXC004AAAA000100000001 /* Exceptions for "Sweat2Scroll" folder in "Sweat2Scroll" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FE97B5402F6D88BD00104C5F /* Sweat2Scroll */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		AA500001AAAA000100000001 /* DeviceActivityMonitorExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAEXC001AAAA000100000001 /* Exceptions for "DeviceActivityMonitorExtension" folder in "DeviceActivityMonitorExtension" target */,
+			);
+			path = DeviceActivityMonitorExtension;
+			sourceTree = "<group>";
+		};
+		AA500002AAAA000100000001 /* ShieldConfigurationExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAEXC002AAAA000100000001 /* Exceptions for "ShieldConfigurationExtension" folder in "ShieldConfigurationExtension" target */,
+			);
+			path = ShieldConfigurationExtension;
+			sourceTree = "<group>";
+		};
+		AA500003AAAA000100000001 /* ShieldActionExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAEXC003AAAA000100000001 /* Exceptions for "ShieldActionExtension" folder in "ShieldActionExtension" target */,
+			);
+			path = ShieldActionExtension;
+			sourceTree = "<group>";
+		};
+		FE97B5432F6D88BD00104C5F /* Sweat2Scroll */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAEXC004AAAA000100000001 /* Exceptions for "Sweat2Scroll" folder in "Sweat2Scroll" target */,
+			);
+			path = Sweat2Scroll;
+			sourceTree = "<group>";
+		};
+		BB2000202F6D88BD00104C5F /* Sweat2ScrollTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sweat2ScrollTests;
+			sourceTree = "<group>";
+		};
+		BB2000203F6D88BD00104C5F /* Sweat2ScrollUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sweat2ScrollUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA600001AAAA000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA600002AAAA000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA600003AAAA000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE97B53E2F6D88BD00104C5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001AAAA000100000001 /* WasmKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB2000502F6D88BD00104C5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB2000512F6D88BD00104C5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FE97B5382F6D88BD00104C5F = {
+			isa = PBXGroup;
+			children = (
+				FE97B5432F6D88BD00104C5F /* Sweat2Scroll */,
+				BB2000202F6D88BD00104C5F /* Sweat2ScrollTests */,
+				BB2000203F6D88BD00104C5F /* Sweat2ScrollUITests */,
+				AA500001AAAA000100000001 /* DeviceActivityMonitorExtension */,
+				AA500002AAAA000100000001 /* ShieldConfigurationExtension */,
+				AA500003AAAA000100000001 /* ShieldActionExtension */,
+				FE97B5422F6D88BD00104C5F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FE97B5422F6D88BD00104C5F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */,
+				BB2000102F6D88BD00104C5F /* Sweat2ScrollTests.xctest */,
+				BB2000103F6D88BD00104C5F /* Sweat2ScrollUITests.xctest */,
+				AA400001AAAA000100000001 /* DeviceActivityMonitorExtension.appex */,
+				AA400002AAAA000100000001 /* ShieldConfigurationExtension.appex */,
+				AA400003AAAA000100000001 /* ShieldActionExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA200001AAAA000100000001 /* DeviceActivityMonitorExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA800001AAAA000100000001 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitorExtension" */;
+			buildPhases = (
+				AA900001AAAA000100000001 /* Sources */,
+				AA600001AAAA000100000001 /* Frameworks */,
+				AAA00001AAAA000100000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA500001AAAA000100000001 /* DeviceActivityMonitorExtension */,
+			);
+			name = DeviceActivityMonitorExtension;
+			packageProductDependencies = (
+			);
+			productName = DeviceActivityMonitorExtension;
+			productReference = AA400001AAAA000100000001 /* DeviceActivityMonitorExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		AA200002AAAA000100000001 /* ShieldConfigurationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA800002AAAA000100000001 /* Build configuration list for PBXNativeTarget "ShieldConfigurationExtension" */;
+			buildPhases = (
+				AA900002AAAA000100000001 /* Sources */,
+				AA600002AAAA000100000001 /* Frameworks */,
+				AAA00002AAAA000100000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA500002AAAA000100000001 /* ShieldConfigurationExtension */,
+			);
+			name = ShieldConfigurationExtension;
+			packageProductDependencies = (
+			);
+			productName = ShieldConfigurationExtension;
+			productReference = AA400002AAAA000100000001 /* ShieldConfigurationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		AA200003AAAA000100000001 /* ShieldActionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA800003AAAA000100000001 /* Build configuration list for PBXNativeTarget "ShieldActionExtension" */;
+			buildPhases = (
+				AA900003AAAA000100000001 /* Sources */,
+				AA600003AAAA000100000001 /* Frameworks */,
+				AAA00003AAAA000100000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA500003AAAA000100000001 /* ShieldActionExtension */,
+			);
+			name = ShieldActionExtension;
+			packageProductDependencies = (
+			);
+			productName = ShieldActionExtension;
+			productReference = AA400003AAAA000100000001 /* ShieldActionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		FE97B5402F6D88BD00104C5F /* Sweat2Scroll */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE97B54C2F6D88C000104C5F /* Build configuration list for PBXNativeTarget "Sweat2Scroll" */;
+			buildPhases = (
+				FE97B53D2F6D88BD00104C5F /* Sources */,
+				FE97B53E2F6D88BD00104C5F /* Frameworks */,
+				FE97B53F2F6D88BD00104C5F /* Resources */,
+				AA300001AAAA000100000001 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA700001AAAA000100000001 /* PBXTargetDependency */,
+				AA700002AAAA000100000001 /* PBXTargetDependency */,
+				AA700003AAAA000100000001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FE97B5432F6D88BD00104C5F /* Sweat2Scroll */,
+			);
+			name = Sweat2Scroll;
+			packageProductDependencies = (
+				AA000001AAAA000100000002 /* WasmKit */,
+			);
+			productName = Sweat2Scroll;
+			productReference = FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BB2000302F6D88BD00104C5F /* Sweat2ScrollTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB2001002F6D88BD00104C5F /* Build configuration list for PBXNativeTarget "Sweat2ScrollTests" */;
+			buildPhases = (
+				BB2000402F6D88BD00104C5F /* Sources */,
+				BB2000502F6D88BD00104C5F /* Frameworks */,
+				BB2000602F6D88BD00104C5F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BB2000702F6D88BD00104C5F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BB2000202F6D88BD00104C5F /* Sweat2ScrollTests */,
+			);
+			name = Sweat2ScrollTests;
+			packageProductDependencies = (
+			);
+			productName = Sweat2ScrollTests;
+			productReference = BB2000102F6D88BD00104C5F /* Sweat2ScrollTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BB2000303F6D88BD00104C5F /* Sweat2ScrollUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB2001012F6D88BD00104C5F /* Build configuration list for PBXNativeTarget "Sweat2ScrollUITests" */;
+			buildPhases = (
+				BB2000412F6D88BD00104C5F /* Sources */,
+				BB2000512F6D88BD00104C5F /* Frameworks */,
+				BB2000612F6D88BD00104C5F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BB2000712F6D88BD00104C5F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BB2000203F6D88BD00104C5F /* Sweat2ScrollUITests */,
+			);
+			name = Sweat2ScrollUITests;
+			packageProductDependencies = (
+			);
+			productName = Sweat2ScrollUITests;
+			productReference = BB2000103F6D88BD00104C5F /* Sweat2ScrollUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FE97B5392F6D88BD00104C5F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					AA200001AAAA000100000001 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					AA200002AAAA000100000001 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					AA200003AAAA000100000001 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					BB2000302F6D88BD00104C5F = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					BB2000303F6D88BD00104C5F = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = FE97B5402F6D88BD00104C5F;
+					};
+					FE97B5402F6D88BD00104C5F = {
+						CreatedOnToolsVersion = 26.3;
+					};
+				};
+			};
+			buildConfigurationList = FE97B53C2F6D88BD00104C5F /* Build configuration list for PBXProject "Sweat2Scroll" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FE97B5382F6D88BD00104C5F;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AA000001AAAA000100000003 /* XCRemoteSwiftPackageReference "WasmKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = FE97B5422F6D88BD00104C5F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FE97B5402F6D88BD00104C5F /* Sweat2Scroll */,
+				BB2000302F6D88BD00104C5F /* Sweat2ScrollTests */,
+				BB2000303F6D88BD00104C5F /* Sweat2ScrollUITests */,
+				AA200001AAAA000100000001 /* DeviceActivityMonitorExtension */,
+				AA200002AAAA000100000001 /* ShieldConfigurationExtension */,
+				AA200003AAAA000100000001 /* ShieldActionExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AAA00001AAAA000100000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA00002AAAA000100000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA00003AAAA000100000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE97B53F2F6D88BD00104C5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB2000602F6D88BD00104C5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB2000612F6D88BD00104C5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA900001AAAA000100000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA900002AAAA000100000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA900003AAAA000100000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE97B53D2F6D88BD00104C5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB2000402F6D88BD00104C5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB2000412F6D88BD00104C5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA700001AAAA000100000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA200001AAAA000100000001 /* DeviceActivityMonitorExtension */;
+			targetProxy = AA100001AAAA000100000001 /* PBXContainerItemProxy */;
+		};
+		AA700002AAAA000100000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA200002AAAA000100000001 /* ShieldConfigurationExtension */;
+			targetProxy = AA100002AAAA000100000001 /* PBXContainerItemProxy */;
+		};
+		AA700003AAAA000100000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA200003AAAA000100000001 /* ShieldActionExtension */;
+			targetProxy = AA100003AAAA000100000001 /* PBXContainerItemProxy */;
+		};
+		BB2000702F6D88BD00104C5F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FE97B5402F6D88BD00104C5F /* Sweat2Scroll */;
+			targetProxy = BB2000802F6D88BD00104C5F /* PBXContainerItemProxy */;
+		};
+		BB2000712F6D88BD00104C5F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FE97B5402F6D88BD00104C5F /* Sweat2Scroll */;
+			targetProxy = BB2000812F6D88BD00104C5F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AAB00001AAAA000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DeviceActivityMonitorExtension/DeviceActivityMonitorExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DeviceActivityMonitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sweat2Scroll Activity Monitor";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAB00002AAAA000100000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DeviceActivityMonitorExtension/DeviceActivityMonitorExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DeviceActivityMonitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sweat2Scroll Activity Monitor";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AAB00003AAAA000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShieldConfigurationExtension/ShieldConfigurationExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShieldConfigurationExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sweat2Scroll Shield Config";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldConfiguration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAB00004AAAA000100000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShieldConfigurationExtension/ShieldConfigurationExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShieldConfigurationExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sweat2Scroll Shield Config";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldConfiguration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AAB00005AAAA000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sweat2Scroll Shield Action";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAB00006AAAA000100000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sweat2Scroll Shield Action";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FE97B54A2F6D88C000104C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FE97B54B2F6D88C000104C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FE97B54D2F6D88C000104C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Sweat2Scroll/Sweat2Scroll.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sweat2Scroll/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Sweat2Scroll uses the camera to scan your partner's QR code during pairing.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Sweat2Scroll reads your activity data to compute your daily fitness goal.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FE97B54E2F6D88C000104C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Sweat2Scroll/Sweat2Scroll.Release.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sweat2Scroll/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Sweat2Scroll uses the camera to scan your partner's QR code during pairing.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Sweat2Scroll reads your activity data to compute your daily fitness goal.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BB2000902F6D88BD00104C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sweat2Scroll.app/Sweat2Scroll";
+			};
+			name = Debug;
+		};
+		BB2000912F6D88BD00104C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sweat2Scroll.app/Sweat2Scroll";
+			};
+			name = Release;
+		};
+		BB2000922F6D88BD00104C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Sweat2Scroll;
+			};
+			name = Debug;
+		};
+		BB2000932F6D88BD00104C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Sweat2Scroll;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA800001AAAA000100000001 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitorExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAB00001AAAA000100000001 /* Debug */,
+				AAB00002AAAA000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA800002AAAA000100000001 /* Build configuration list for PBXNativeTarget "ShieldConfigurationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAB00003AAAA000100000001 /* Debug */,
+				AAB00004AAAA000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA800003AAAA000100000001 /* Build configuration list for PBXNativeTarget "ShieldActionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAB00005AAAA000100000001 /* Debug */,
+				AAB00006AAAA000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FE97B53C2F6D88BD00104C5F /* Build configuration list for PBXProject "Sweat2Scroll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE97B54A2F6D88C000104C5F /* Debug */,
+				FE97B54B2F6D88C000104C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FE97B54C2F6D88C000104C5F /* Build configuration list for PBXNativeTarget "Sweat2Scroll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE97B54D2F6D88C000104C5F /* Debug */,
+				FE97B54E2F6D88C000104C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB2001002F6D88BD00104C5F /* Build configuration list for PBXNativeTarget "Sweat2ScrollTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB2000902F6D88BD00104C5F /* Debug */,
+				BB2000912F6D88BD00104C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB2001012F6D88BD00104C5F /* Build configuration list for PBXNativeTarget "Sweat2ScrollUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB2000922F6D88BD00104C5F /* Debug */,
+				BB2000932F6D88BD00104C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA000001AAAA000100000003 /* XCRemoteSwiftPackageReference "WasmKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftwasm/WasmKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AA000001AAAA000100000002 /* WasmKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA000001AAAA000100000003 /* XCRemoteSwiftPackageReference "WasmKit" */;
+			productName = WasmKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = FE97B5392F6D88BD00104C5F /* Project object */;
+}
