@@ -90,10 +90,17 @@ struct CalorieEngine {
     }
 
     // MARK: - Steps Equivalent
-    /// Converts an active calorie goal to approximate step count equivalent
+    /// Converts an active calorie goal to approximate step count equivalent.
+    /// Guards against `profile.weightKg == 0` (which would make `kcalPerStep`
+    /// zero and crash on `Int(calories / 0)` → infinity) by falling back to
+    /// the 70 kg reference weight. Returns 0 for non-positive calorie goals.
     static func stepsEquivalent(for calories: Double, profile: UserProfile) -> Int {
+        guard calories > 0 else { return 0 }
+        let referenceWeight: Double = 70
+        let weight = profile.weightKg > 0 ? profile.weightKg : referenceWeight
         // ~0.04 kcal per step average (varies by weight, stride)
-        let kcalPerStep = 0.04 * (profile.weightKg / 70)
+        let kcalPerStep = 0.04 * (weight / referenceWeight)
+        guard kcalPerStep > 0 else { return 0 }
         return Int(calories / kcalPerStep)
     }
 

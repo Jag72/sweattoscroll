@@ -80,6 +80,7 @@ struct SignUpView: View {
                         title: "Create account",
                         isEnabled: isFormValid,
                         isLoading: auth.isLoadingAuth,
+                        accessibilityIdentifier: "signUp.submit",
                         action: { Task { await signUpEmail() } }
                     )
 
@@ -91,12 +92,14 @@ struct SignUpView: View {
                             .font(.caption)
                             .foregroundColor(.rose)
                             .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("signUp.localError")
                     }
                     if let err = auth.lastAuthError {
                         Text(err)
                             .font(.caption)
                             .foregroundColor(.rose)
                             .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("signUp.authError")
                     }
 
                     HStack(spacing: 4) {
@@ -110,6 +113,7 @@ struct SignUpView: View {
                                 .font(.subheadline.weight(.bold))
                                 .foregroundColor(.electricOrange)
                         }
+                        .accessibilityIdentifier("signUp.backToSignIn")
                     }
                     .padding(.top, 4)
                     .padding(.bottom, 24)
@@ -139,7 +143,8 @@ struct SignUpView: View {
                     text: $firstName,
                     textContentType: .givenName,
                     autocapitalization: .words,
-                    disableAutocorrection: true
+                    disableAutocorrection: true,
+                    accessibilityFieldID: "signUp.firstName"
                 )
                 AuthFormField(
                     icon: "person",
@@ -147,7 +152,8 @@ struct SignUpView: View {
                     text: $lastName,
                     textContentType: .familyName,
                     autocapitalization: .words,
-                    disableAutocorrection: true
+                    disableAutocorrection: true,
+                    accessibilityFieldID: "signUp.lastName"
                 )
             }
 
@@ -156,7 +162,8 @@ struct SignUpView: View {
                 placeholder: "Email",
                 text: $email,
                 keyboardType: .emailAddress,
-                textContentType: .emailAddress
+                textContentType: .emailAddress,
+                accessibilityFieldID: "signUp.email"
             )
 
             AuthFormField(
@@ -164,7 +171,8 @@ struct SignUpView: View {
                 placeholder: "Phone (optional)",
                 text: $phone,
                 keyboardType: .phonePad,
-                textContentType: .telephoneNumber
+                textContentType: .telephoneNumber,
+                accessibilityFieldID: "signUp.phone"
             )
 
             AuthFormField(
@@ -173,7 +181,8 @@ struct SignUpView: View {
                 text: $password,
                 textContentType: .newPassword,
                 isSecure: true,
-                showSecure: $showPassword
+                showSecure: $showPassword,
+                accessibilityFieldID: "signUp.password"
             )
 
             AuthFormField(
@@ -182,13 +191,15 @@ struct SignUpView: View {
                 text: $confirmPassword,
                 textContentType: .newPassword,
                 isSecure: true,
-                showSecure: $showConfirmPassword
+                showSecure: $showConfirmPassword,
+                accessibilityFieldID: "signUp.confirmPassword"
             )
 
             if !confirmPassword.isEmpty && password != confirmPassword {
                 Label("Passwords don't match", systemImage: "exclamationmark.triangle.fill")
                     .font(.caption)
                     .foregroundColor(.rose)
+                    .accessibilityIdentifier("signUp.passwordMismatch")
             }
         }
         .padding(.top, 4)
@@ -219,6 +230,7 @@ struct SignUpView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.ringTrack, lineWidth: 1))
             }
+            .accessibilityIdentifier("signUp.google")
 
             SignInWithAppleButton(.signUp) { request in
                 request.requestedScopes = [.fullName, .email]
@@ -236,8 +248,13 @@ struct SignUpView: View {
                 }
             }
             .signInWithAppleButtonStyle(.black)
+            // See SignInView for the constraint-conflict explanation. Cap
+            // the host at the button's internal 375pt limit, then center.
+            .frame(maxWidth: 375)
             .frame(height: 50)
+            .frame(maxWidth: .infinity)  // outer wrapper centers the 375-wide button
             .clipShape(RoundedRectangle(cornerRadius: 14))
+            .accessibilityIdentifier("signUp.apple")
         }
     }
 

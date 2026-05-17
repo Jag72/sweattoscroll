@@ -20,6 +20,13 @@ struct Sweat2ScrollApp: App {
     init() {
         AppLogger.app.info("Application init starting")
 
+        // 0. App Group self-check — write/read a probe value to confirm the
+        //    `group.com.sweat2scroll.appblocker` container is honoring the
+        //    entitlement. iOS may emit a noisy `cfprefsd ... kCFPreferencesAnyUser`
+        //    warning at launch that's cosmetic; this check is the source of
+        //    truth. See `AppGroupHealthCheck.swift` header for context.
+        AppGroupHealthCheck.run()
+
         // 1. FamilyControls authorization — must happen before any ManagedSettingsStore call.
         Task { @MainActor in
             ScreenTimeService.shared.refreshAuthorizationStatus()

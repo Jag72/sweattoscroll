@@ -56,6 +56,12 @@ class OPAService {
 
     // MARK: - State
     private var isModuleLoaded: Bool = false
+    /// Sticky failure flag: once `loadModule()` throws, every subsequent call
+    /// short-circuits to the native Swift fallback instead of re-attempting
+    /// (and re-logging hash-pinning + re-failing) on every dashboard tick. The
+    /// flag is cleared in `unloadModule()` so a hot reload (or future bundled
+    /// `contract.wasm` update) can take effect without an app relaunch.
+    private var loadFailed: Bool = false
     private var engine: Engine?
     private var store: Store?
     private var moduleInstance: ModuleInstance?
@@ -76,6 +82,18 @@ class OPAService {
     /// This is a one-time cost — subsequent evaluations reuse the loaded module.
     func loadModule() throws {
         guard !isModuleLoaded else { return }
+        // If a previous attempt already failed, don't retry every time —
+        // production logs were showing dozens of `[OPA] ✅ Hash pinning
+        // verified` followed by `[OPA] Wasm evaluation failed` per minute
+        // because every `evaluate()` re-entered this path. Surface the same
+        // error so callers fall back to the native Swift evaluator.
+        if loadFailed {
+            throw OPAError.evaluationFailed("Wasm module previously failed to load — using fallback. Call unloadModule() to retry.")
+        }
+        // Mark as failed unless we reach the end of this method successfully.
+        // Defer + sentinel avoids wrapping the whole body in a do/catch.
+        var didSucceed = false
+        defer { if !didSucceed { loadFailed = true } }
 
         guard let wasmURL = Bundle.main.url(forResource: "contract", withExtension: "wasm") else {
             throw OPAError.moduleNotFound
@@ -95,8 +113,35 @@ class OPAService {
         engine = Engine()
         store = Store(engine: engine!)
 
-        // Provide OPA-required imports (abort, println for debugging)
-        // WasmKit 0.2+: Use Function(store:parameters:results:body:) — HostFunction is deprecated.
+        // Provide OPA-required imports.
+        //
+        // The OPA-emitted WASM imports SEVEN host functions in `env`:
+        //
+        //   opa_abort(addr)                                      → fatal error trap
+        //   opa_println(addr)                                    → debug print
+        //   opa_builtin0(builtin_id, ctx)                        → 0-arg builtin
+        //   opa_builtin1(builtin_id, ctx, a0)                    → 1-arg builtin
+        //   opa_builtin2(builtin_id, ctx, a0, a1)                → 2-arg builtin
+        //   opa_builtin3(builtin_id, ctx, a0, a1, a2)            → 3-arg builtin
+        //   opa_builtin4(builtin_id, ctx, a0, a1, a2, a3)        → 4-arg builtin
+        //
+        // ALL SEVEN must be defined or `module.instantiate` fails with
+        // `ImportError(message: ... unknown import env.opa_builtinN)` — which
+        // is the failure observed in production logs as
+        // `[ActivityVM] Initialization error: ImportError ... unknown import
+        // env.opa_builtin0`. After that error, the rest of the app falls back
+        // to the native Swift evaluator (`evaluateNativeFallback`) — correct
+        // behavior, but it means the WASM PDP claim in the IEEE paper isn't
+        // actually exercised at runtime.
+        //
+        // The current Rego fitness policy is a pure comparison (no calls to
+        // `time.now_ns`, `count`, etc.), so no `opa_builtin*` will ever be
+        // INVOKED at evaluation time. Returning `i32(0)` from the stubs is
+        // OPA's "undefined" sentinel; if a future policy starts using a real
+        // builtin we'll see undefined results — at which point we wire the
+        // stubs to look up the builtin id via the `builtins` export and
+        // dispatch to a Swift implementation. See OPA's WASM ABI docs:
+        // https://www.openpolicyagent.org/docs/latest/wasm/#builtin-functions
         let currentStore = store!
         var imports = Imports()
         imports.define(
@@ -115,15 +160,66 @@ class OPAService {
                 return []
             }
         )
+        // Stubs for opa_builtinN. Signature: (builtin_id, ctx, ...args) → i32 result address.
+        // Returning 0 = "undefined" per OPA ABI; safe for any policy that
+        // doesn't actually call a builtin. If you start seeing rules evaluate
+        // as undefined unexpectedly, this is the place to look.
+        let unimplementedBuiltin: ([Value]) -> [Value] = { args in
+            // args[0] = builtin_id (i32), args[1] = ctx (i32), then 0..n args.
+            let builtinID = args.first?.i32 ?? 0
+            print("[OPA] WARN: opa_builtin\(args.count - 2) called with builtin_id=\(builtinID) — returning undefined. Wire a real implementation if your policy needs this builtin.")
+            return [.i32(0)]
+        }
+        imports.define(
+            module: "env", name: "opa_builtin0",
+            Function(store: currentStore, parameters: [.i32, .i32], results: [.i32]) { _, args in
+                unimplementedBuiltin(args)
+            }
+        )
+        imports.define(
+            module: "env", name: "opa_builtin1",
+            Function(store: currentStore, parameters: [.i32, .i32, .i32], results: [.i32]) { _, args in
+                unimplementedBuiltin(args)
+            }
+        )
+        imports.define(
+            module: "env", name: "opa_builtin2",
+            Function(store: currentStore, parameters: [.i32, .i32, .i32, .i32], results: [.i32]) { _, args in
+                unimplementedBuiltin(args)
+            }
+        )
+        imports.define(
+            module: "env", name: "opa_builtin3",
+            Function(store: currentStore, parameters: [.i32, .i32, .i32, .i32, .i32], results: [.i32]) { _, args in
+                unimplementedBuiltin(args)
+            }
+        )
+        imports.define(
+            module: "env", name: "opa_builtin4",
+            Function(store: currentStore, parameters: [.i32, .i32, .i32, .i32, .i32, .i32], results: [.i32]) { _, args in
+                unimplementedBuiltin(args)
+            }
+        )
+
+        // OPA's WASM target IMPORTS linear memory from `env.memory` rather
+        // than exporting it. The previous code path that looked up
+        // `moduleInstance.exports[memory: "memory"]` therefore returned nil
+        // and threw "Wasm module does not export 'memory'" — visible in
+        // production logs as `unknown import env.memory` after we fixed the
+        // opa_builtin* imports. Provide a host-allocated `Memory` whose
+        // limits are compatible with what the module declares (OPA ships
+        // with `min: 2 pages` typical; WasmKit will throw an
+        // `incompatibleMemoryType` if our limits are too tight, in which
+        // case raise the `min:` value below to match.). We hold onto this
+        // `Memory` directly so the rest of the file (which reads/writes
+        // bytes via `wasmMemory`) keeps working unchanged.
+        let providedMemory = try Memory(store: currentStore,
+                                        type: MemoryType(min: 2, max: nil))
+        imports.define(module: "env", name: "memory", providedMemory)
+        wasmMemory = providedMemory
 
         // Instantiate module
         moduleInstance = try module.instantiate(store: store!, imports: imports)
-
-        // Get memory export
-        guard let mem = moduleInstance?.exports[memory: "memory"] else {
-            throw OPAError.evaluationFailed("Wasm module does not export 'memory'")
-        }
-        wasmMemory = mem
 
         // Step 4: Load the empty base data document `{}`
         baseDataAddr = try loadJSONIntoWasm("{}")
@@ -132,6 +228,7 @@ class OPAService {
         baseHeapPointer = try callExportedFunction(OPAABIExport.heapPtrGet, args: [])
 
         isModuleLoaded = true
+        didSucceed = true
         print("[OPA] Wasm module loaded. Cold start complete. Heap base: \(baseHeapPointer)")
     }
 
@@ -155,9 +252,17 @@ class OPAService {
 
         // Evaluate all entrypoints and merge results
         return try evaluationQueue.sync {
-            // Reset heap to base pointer — reclaims memory from previous evaluation
-            // WasmKit 0.2+: Value.i32() takes UInt32; use bitPattern to reinterpret Int32.
-            try callExportedFunction(OPAABIExport.heapPtrSet, args: [.i32(UInt32(bitPattern: baseHeapPointer))])
+            // Reset heap to base pointer — reclaims memory from previous evaluation.
+            //
+            // `opa_heap_ptr_set(addr: i32) -> ()` is VOID-returning per the
+            // OPA WASM ABI. Calling it through `callExportedFunction` (which
+            // requires an i32 result) was throwing
+            // `evaluationFailed("'opa_heap_ptr_set' returned no result")`
+            // on every evaluation, sending us into the native Swift fallback
+            // every 30s. Use the void helper instead. WasmKit 0.2+:
+            // `Value.i32()` takes UInt32; `bitPattern` reinterprets Int32.
+            try callExportedFunctionVoid(OPAABIExport.heapPtrSet,
+                args: [.i32(UInt32(bitPattern: baseHeapPointer))])
 
             // Parse the input JSON into OPA's internal value representation
             let inputAddr = try loadJSONIntoWasm(inputJSON)
@@ -452,6 +557,8 @@ class OPAService {
 
     /// Unloads the Wasm module and releases all resources.
     /// Call this on app termination or if the policy needs to be reloaded.
+    /// Also clears the `loadFailed` sticky flag so the next `loadModule()`
+    /// will actually re-attempt instantiation.
     func unloadModule() {
         evaluationQueue.sync {
             moduleInstance = nil
@@ -459,6 +566,7 @@ class OPAService {
             store = nil
             engine = nil
             isModuleLoaded = false
+            loadFailed = false
             baseHeapPointer = 0
             baseDataAddr = 0
             print("[OPA] Wasm module unloaded.")
@@ -468,15 +576,30 @@ class OPAService {
     // MARK: - Native Swift Fallback
     /// Mirrors the Rego policy logic exactly.
     /// Used when the Wasm module is unavailable (e.g., contract.wasm missing from bundle).
+    ///
+    /// Logs the underlying error from `evaluate(...)` exactly once per kind
+    /// of failure — `try?` was swallowing it before, leaving "Wasm evaluation
+    /// failed" with no clue which step (opa_json_parse, eval, etc.) actually
+    /// blew up. The de-dupe avoids spamming the console when the policy
+    /// re-evaluates every 30s.
     func evaluateWithFallback(input: PolicyInput) -> PolicyResult {
-        // Try Wasm first, fall back to native Swift
-        if let result = try? evaluate(input: input) {
-            return result
+        do {
+            return try evaluate(input: input)
+        } catch {
+            let key = String(describing: error)
+            if Self.loggedEvalErrorKeys.insert(key).inserted {
+                print("[OPA] Wasm evaluation failed — using native Swift fallback. Underlying error: \(error)")
+            } else {
+                // Quieter follow-ups so the console isn't a wall of text.
+                print("[OPA] Wasm evaluation failed (same as previous) — fallback.")
+            }
+            return evaluateNativeFallback(input: input)
         }
-
-        print("[OPA] Wasm evaluation failed — using native Swift fallback.")
-        return evaluateNativeFallback(input: input)
     }
+
+    /// Set of error descriptions we've already printed in full. Bounded by
+    /// the small number of distinct OPAError cases the eval path can throw.
+    private static var loggedEvalErrorKeys: Set<String> = []
 
     private func evaluateNativeFallback(input: PolicyInput) -> PolicyResult {
         // Tamper detection — time drift detected means fail-closed

@@ -65,9 +65,9 @@
 		AA400001AAAA000100000001 /* DeviceActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA400002AAAA000100000001 /* ShieldConfigurationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfigurationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA400003AAAA000100000001 /* ShieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sweat2Scroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2000102F6D88BD00104C5F /* Sweat2ScrollTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sweat2ScrollTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2000103F6D88BD00104C5F /* Sweat2ScrollUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sweat2ScrollUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sweat2Scroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -126,14 +126,6 @@
 			path = ShieldActionExtension;
 			sourceTree = "<group>";
 		};
-		FE97B5432F6D88BD00104C5F /* Sweat2Scroll */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				AAEXC004AAAA000100000001 /* Exceptions for "Sweat2Scroll" folder in "Sweat2Scroll" target */,
-			);
-			path = Sweat2Scroll;
-			sourceTree = "<group>";
-		};
 		BB2000202F6D88BD00104C5F /* Sweat2ScrollTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Sweat2ScrollTests;
@@ -142,6 +134,14 @@
 		BB2000203F6D88BD00104C5F /* Sweat2ScrollUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Sweat2ScrollUITests;
+			sourceTree = "<group>";
+		};
+		FE97B5432F6D88BD00104C5F /* Sweat2Scroll */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAEXC004AAAA000100000001 /* Exceptions for "Sweat2Scroll" folder in "Sweat2Scroll" target */,
+			);
+			path = Sweat2Scroll;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -168,14 +168,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FE97B53E2F6D88BD00104C5F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA000001AAAA000100000001 /* WasmKit in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BB2000502F6D88BD00104C5F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -187,6 +179,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE97B53E2F6D88BD00104C5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001AAAA000100000001 /* WasmKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,33 +288,6 @@
 			productReference = AA400003AAAA000100000001 /* ShieldActionExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		FE97B5402F6D88BD00104C5F /* Sweat2Scroll */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FE97B54C2F6D88C000104C5F /* Build configuration list for PBXNativeTarget "Sweat2Scroll" */;
-			buildPhases = (
-				FE97B53D2F6D88BD00104C5F /* Sources */,
-				FE97B53E2F6D88BD00104C5F /* Frameworks */,
-				FE97B53F2F6D88BD00104C5F /* Resources */,
-				AA300001AAAA000100000001 /* Embed Foundation Extensions */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				AA700001AAAA000100000001 /* PBXTargetDependency */,
-				AA700002AAAA000100000001 /* PBXTargetDependency */,
-				AA700003AAAA000100000001 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				FE97B5432F6D88BD00104C5F /* Sweat2Scroll */,
-			);
-			name = Sweat2Scroll;
-			packageProductDependencies = (
-				AA000001AAAA000100000002 /* WasmKit */,
-			);
-			productName = Sweat2Scroll;
-			productReference = FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */;
-			productType = "com.apple.product-type.application";
-		};
 		BB2000302F6D88BD00104C5F /* Sweat2ScrollTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BB2001002F6D88BD00104C5F /* Build configuration list for PBXNativeTarget "Sweat2ScrollTests" */;
@@ -360,6 +333,33 @@
 			productName = Sweat2ScrollUITests;
 			productReference = BB2000103F6D88BD00104C5F /* Sweat2ScrollUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		FE97B5402F6D88BD00104C5F /* Sweat2Scroll */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE97B54C2F6D88C000104C5F /* Build configuration list for PBXNativeTarget "Sweat2Scroll" */;
+			buildPhases = (
+				FE97B53D2F6D88BD00104C5F /* Sources */,
+				FE97B53E2F6D88BD00104C5F /* Frameworks */,
+				FE97B53F2F6D88BD00104C5F /* Resources */,
+				AA300001AAAA000100000001 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA700001AAAA000100000001 /* PBXTargetDependency */,
+				AA700002AAAA000100000001 /* PBXTargetDependency */,
+				AA700003AAAA000100000001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FE97B5432F6D88BD00104C5F /* Sweat2Scroll */,
+			);
+			name = Sweat2Scroll;
+			packageProductDependencies = (
+				AA000001AAAA000100000002 /* WasmKit */,
+			);
+			productName = Sweat2Scroll;
+			productReference = FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -441,13 +441,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FE97B53F2F6D88BD00104C5F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BB2000602F6D88BD00104C5F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -456,6 +449,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BB2000612F6D88BD00104C5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE97B53F2F6D88BD00104C5F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -486,13 +486,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FE97B53D2F6D88BD00104C5F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BB2000402F6D88BD00104C5F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -501,6 +494,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BB2000412F6D88BD00104C5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE97B53D2F6D88BD00104C5F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -556,7 +556,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.DeviceActivityMonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll.DeviceActivityMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -583,7 +583,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.DeviceActivityMonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll.DeviceActivityMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -610,7 +610,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldConfiguration;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll.ShieldConfiguration;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -637,7 +637,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldConfiguration;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll.ShieldConfiguration;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -664,7 +664,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldAction;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll.ShieldAction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -691,12 +691,86 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadish.Sweat2Scroll.ShieldAction;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2Scroll.ShieldAction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BB2000902F6D88BD00104C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sweat2Scroll.app/Sweat2Scroll";
+			};
+			name = Debug;
+		};
+		BB2000912F6D88BD00104C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sweat2Scroll.app/Sweat2Scroll";
+			};
+			name = Release;
+		};
+		BB2000922F6D88BD00104C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Sweat2Scroll;
+			};
+			name = Debug;
+		};
+		BB2000932F6D88BD00104C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Sweat2Scroll;
 			};
 			name = Release;
 		};
@@ -885,80 +959,6 @@
 			};
 			name = Release;
 		};
-		BB2000902F6D88BD00104C5F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sweat2Scroll.app/Sweat2Scroll";
-			};
-			name = Debug;
-		};
-		BB2000912F6D88BD00104C5F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sweat2Scroll.app/Sweat2Scroll";
-			};
-			name = Release;
-		};
-		BB2000922F6D88BD00104C5F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Sweat2Scroll;
-			};
-			name = Debug;
-		};
-		BB2000932F6D88BD00104C5F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A7ZQYUR8Z9;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jagadishkrishnapilla.Sweat2ScrollUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Sweat2Scroll;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -989,24 +989,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FE97B53C2F6D88BD00104C5F /* Build configuration list for PBXProject "Sweat2Scroll" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FE97B54A2F6D88C000104C5F /* Debug */,
-				FE97B54B2F6D88C000104C5F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		FE97B54C2F6D88C000104C5F /* Build configuration list for PBXNativeTarget "Sweat2Scroll" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FE97B54D2F6D88C000104C5F /* Debug */,
-				FE97B54E2F6D88C000104C5F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		BB2001002F6D88BD00104C5F /* Build configuration list for PBXNativeTarget "Sweat2ScrollTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1021,6 +1003,24 @@
 			buildConfigurations = (
 				BB2000922F6D88BD00104C5F /* Debug */,
 				BB2000932F6D88BD00104C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FE97B53C2F6D88BD00104C5F /* Build configuration list for PBXProject "Sweat2Scroll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE97B54A2F6D88C000104C5F /* Debug */,
+				FE97B54B2F6D88C000104C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FE97B54C2F6D88C000104C5F /* Build configuration list for PBXNativeTarget "Sweat2Scroll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE97B54D2F6D88C000104C5F /* Debug */,
+				FE97B54E2F6D88C000104C5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

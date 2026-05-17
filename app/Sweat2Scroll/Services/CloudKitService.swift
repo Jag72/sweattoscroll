@@ -14,6 +14,12 @@ class CloudKitService: ObservableObject {
     // MARK: - Singleton
     static let shared = CloudKitService()
 
+    /// Set once we've already printed the hint about the benign
+    /// "Field 'recordName' is not marked queryable" CloudKit error so we
+    /// don't spam the console on every dashboard refresh. See
+    /// `handleCloudKitError(_:)` for the full explanation.
+    private static var loggedRecordNameHint = false
+
     // MARK: - Published State
     @Published var isSyncing: Bool = false
     @Published var partnerProgress: Double = 0      // Partner's current calorie progress
@@ -63,17 +69,19 @@ class CloudKitService: ObservableObject {
 
     // MARK: - Sync Partner Progress
     /// Pushes current calorie progress to the CKShare zone visible to partner.
+    /// Uses `upsert(...)` because the recordName is deterministic (`"myProgress"`)
+    /// — saving a fresh `CKRecord` would fail with `.serverRecordChanged` /
+    /// "record to insert already exists" on every call after the first.
     func syncMyProgress(calories: Double, steps: Int, goal: ActivityGoal) async {
         let recordID = CKRecord.ID(recordName: "myProgress")
-        let record = CKRecord(recordType: progressRecordType, recordID: recordID)
-        record["calories"]    = calories as CKRecordValue
-        record["steps"]       = steps as CKRecordValue
-        record["goal"]        = goal.agreedTarget as CKRecordValue
-        record["currency"]    = goal.currency.rawValue as CKRecordValue
-        record["lastUpdated"] = Date() as CKRecordValue
-
         do {
-            try await privateDB.save(record)
+            try await upsert(recordID: recordID, recordType: progressRecordType) { record in
+                record["calories"]    = calories as CKRecordValue
+                record["steps"]       = steps as CKRecordValue
+                record["goal"]        = goal.agreedTarget as CKRecordValue
+                record["currency"]    = goal.currency.rawValue as CKRecordValue
+                record["lastUpdated"] = Date() as CKRecordValue
+            }
         } catch {
             handleCloudKitError(error)
         }
@@ -132,7 +140,11 @@ class CloudKitService: ObservableObject {
     // MARK: - Fetch Audit Log
     func fetchAuditLog() async {
         let query = CKQuery(recordType: auditRecordType, predicate: NSPredicate(value: true))
-        query.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
+        // See `loadContract` — sort by `creationDate` (always-sortable system
+        // field) so we don't depend on `timestamp` being marked sortable in
+        // CloudKit Dashboard. For audit events, save-order matches event-order
+        // closely enough that this is semantically equivalent.
+        query.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         do {
             let (results, _) = try await privateDB.records(matching: query)
             auditLog = results.compactMap { _, result in
@@ -167,24 +179,25 @@ class CloudKitService: ObservableObject {
 
     /// Device B calls this after scanning Device A's QR code and completing its side of the ECDH exchange.
     /// Publishes the response (Device B's public key + metadata) to CloudKit so Device A can poll for it.
+    /// `upsert` is required because the recordName is derived deterministically
+    /// from the initiator's user ID; a retried call (or a re-pair attempt)
+    /// would otherwise fail with `.serverRecordChanged`.
     func sendPairingResponse(_ response: PairingResponse) async throws {
         let recordID = CKRecord.ID(recordName: "pairing-\(response.initiatorUserID)")
-        let record = CKRecord(recordType: pairingRecordType, recordID: recordID)
+        try await upsert(recordID: recordID, recordType: pairingRecordType) { record in
+            record["initiatorUserID"]   = response.initiatorUserID as CKRecordValue
+            record["responderUserID"]   = response.responderUserID as CKRecordValue
+            record["responderPublicKey"] = response.responderPublicKey as CKRecordValue
+            record["createdAt"]         = response.createdAt as CKRecordValue
+            record["expiresAt"]         = response.expiresAt as CKRecordValue
+            record["status"]            = response.status as CKRecordValue
 
-        record["initiatorUserID"]   = response.initiatorUserID as CKRecordValue
-        record["responderUserID"]   = response.responderUserID as CKRecordValue
-        record["responderPublicKey"] = response.responderPublicKey as CKRecordValue
-        record["createdAt"]         = response.createdAt as CKRecordValue
-        record["expiresAt"]         = response.expiresAt as CKRecordValue
-        record["status"]            = response.status as CKRecordValue
-
-        // Encrypted fields — only the paired iCloud accounts can read these
-        record.encryptedValues["responderDisplayName"] = response.responderDisplayName as CKRecordValue
-        record.encryptedValues["goalCurrency"]    = response.goalCurrency as CKRecordValue
-        record.encryptedValues["agreedTarget"]    = response.agreedTarget as CKRecordValue
-        record.encryptedValues["fingerprint"]     = response.fingerprint as CKRecordValue
-
-        try await privateDB.save(record)
+            // Encrypted fields — only the paired iCloud accounts can read these
+            record.encryptedValues["responderDisplayName"] = response.responderDisplayName as CKRecordValue
+            record.encryptedValues["goalCurrency"]    = response.goalCurrency as CKRecordValue
+            record.encryptedValues["agreedTarget"]    = response.agreedTarget as CKRecordValue
+            record.encryptedValues["fingerprint"]     = response.fingerprint as CKRecordValue
+        }
         print("[CloudKit] Pairing response sent for initiator: \(response.initiatorUserID)")
     }
 
@@ -245,30 +258,44 @@ class CloudKitService: ObservableObject {
     // MARK: - Fetch Partner Progress from Shared Zone
     /// Queries the partner's most recent PartnerProgress record.
     /// Returns (calories, steps, goal, currency, lastUpdated) or nil if not available.
+    ///
+    /// **Why we don't predicate on `recordID`:** CloudKit's metadata field
+    /// `recordName` is not queryable by default — predicates against it raise
+    /// `<CKError ... "Field 'recordName' is not marked queryable">`. We sort
+    /// by `lastUpdated` (which IS queryable as a normal CKRecord field), pull
+    /// a small window, and skip our own record client-side.
+    ///
+    /// In the full CKShare implementation this would target the shared zone
+    /// directly; today the partner's device writes into our `privateDB` via
+    /// a shared `CKRecordZone`, so the only "other" record present here is
+    /// the partner's `myProgress` mirror.
     func fetchPartnerProgress() async -> (calories: Double, steps: Int, goal: Double, currency: String, lastUpdated: Date)? {
-        // Look for partner progress records — in the full CKShare implementation,
-        // this would query the shared zone. For now we query privateDB where the
-        // partner's device pushes their progress via the shared CKRecordZone.
         let query = CKQuery(
             recordType: progressRecordType,
-            predicate: NSPredicate(format: "recordID != %@", CKRecord.ID(recordName: "myProgress"))
+            predicate: NSPredicate(value: true)
         )
-        query.sortDescriptors = [NSSortDescriptor(key: "lastUpdated", ascending: false)]
+        // See `loadContract` for why `creationDate` is preferred over a
+        // user-defined sort key here. We re-derive `lastUpdated` from the
+        // record body before returning, so the API contract is unchanged.
+        query.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 
         do {
-            let (results, _) = try await privateDB.records(matching: query, resultsLimit: 1)
-            guard let (_, result) = results.first,
-                  let record = try? result.get() else {
-                return nil
+            // Fetch a couple of recent records so we can skip our own and
+            // still return the partner's freshest update.
+            let (results, _) = try await privateDB.records(matching: query, resultsLimit: 5)
+            for (recordID, result) in results {
+                guard recordID.recordName != "myProgress",
+                      let record = try? result.get() else { continue }
+
+                let calories    = record["calories"] as? Double ?? 0
+                let steps       = record["steps"] as? Int ?? 0
+                let goal        = record["goal"] as? Double ?? 300
+                let currency    = record["currency"] as? String ?? "Active Calories"
+                let lastUpdated = record["lastUpdated"] as? Date ?? Date.distantPast
+
+                return (calories, steps, goal, currency, lastUpdated)
             }
-
-            let calories    = record["calories"] as? Double ?? 0
-            let steps       = record["steps"] as? Int ?? 0
-            let goal        = record["goal"] as? Double ?? 300
-            let currency    = record["currency"] as? String ?? "Active Calories"
-            let lastUpdated = record["lastUpdated"] as? Date ?? Date.distantPast
-
-            return (calories, steps, goal, currency, lastUpdated)
+            return nil
         } catch {
             handleCloudKitError(error)
             return nil
@@ -304,7 +331,20 @@ class CloudKitService: ObservableObject {
     // MARK: - Load Governance Contract
     func loadContract() async -> GovernanceContract? {
         let query = CKQuery(recordType: contractRecordType, predicate: NSPredicate(value: true))
-        query.sortDescriptors = [NSSortDescriptor(key: "pairedAt", ascending: false)]
+        // Sort by `creationDate` — a CloudKit-managed system field that is
+        // always sortable without any Dashboard configuration. We deliberately
+        // do NOT sort by the user-defined `pairedAt` here: although our
+        // schema-bootstrap comment marks it "indexed, sortable", CloudKit
+        // auto-creates user fields as queryable-only on first save. When the
+        // requested sort key isn't sortable, CloudKit falls back to sorting
+        // by `recordName` and surfaces this as
+        // `<CKError ... "Field 'recordName' is not marked queryable">`,
+        // visible in production logs on every launch via
+        // `RootView.task → PartnerViewModel.loadPersistedState`. Sorting by
+        // `creationDate` sidesteps that path entirely. There is at most one
+        // contract per user today, so the sort key choice doesn't matter for
+        // results.
+        query.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 
         do {
             let (results, _) = try await privateDB.records(matching: query, resultsLimit: 1)
@@ -339,6 +379,27 @@ class CloudKitService: ObservableObject {
     // Must detect and re-initiate pairing.
     private func handleCloudKitError(_ error: Error) {
         if let ckError = error as? CKError {
+            // Suppress the "Field 'recordName' is not marked queryable"
+            // benign error. It fires when a CKQuery against a record type
+            // whose user-defined sort fields aren't promoted to sortable in
+            // CloudKit Dashboard — at which point CloudKit falls back to
+            // sorting by recordName, which is also non-queryable, and the
+            // whole query fails. From the app's perspective this means
+            // "no data yet" for an empty/unindexed record type, which the
+            // callers (loadContract, fetchAuditLog, fetchPartnerProgress,
+            // fetchBypassGrant) already handle by returning nil/empty.
+            // We log it once per launch as a developer hint without spamming.
+            let msg = ckError.localizedDescription.lowercased()
+            if ckError.code == .invalidArguments,
+               msg.contains("recordname"),
+               msg.contains("not marked queryable") {
+                if !Self.loggedRecordNameHint {
+                    Self.loggedRecordNameHint = true
+                    print("[CloudKit] Note: a CKQuery hit an empty/unindexed record type. Treating as no-data. To eliminate this hint, mark the relevant fields Sortable in CloudKit Dashboard for the affected record types.")
+                }
+                return
+            }
+
             switch ckError.code {
             case .zoneNotFound:
                 lastSyncError = "CloudKit zone not found. Re-pairing required."
@@ -380,33 +441,52 @@ class CloudKitService: ObservableObject {
 
     // MARK: - UserAccount (Sign in with Apple profile)
 
-    /// Upsert a user account record. CloudKit treats `CKDatabase.save(_:)` on a
-    /// freshly-built `CKRecord` as an *insert*, which fails with
-    /// `.serverRecordChanged` / "record to insert already exists" when the
-    /// recordName is reused (e.g. user re-registers with the same email after
-    /// wiping the app). Always fetch the existing record first so we mutate it
-    /// in place and ship a new `recordChangeTag`.
+    /// Upsert a user account record via the shared `upsert(...)` helper, so a
+    /// re-registration (or any deterministic-recordName path) updates in place
+    /// instead of failing with `.serverRecordChanged` / "record to insert
+    /// already exists".
     func saveUserAccount(_ account: CloudUserAccount) async throws {
         let recordID = CKRecord.ID(recordName: account.appleUserID)
+        try await upsert(recordID: recordID, recordType: userAccountType) { record in
+            self.applyAccountFields(account, to: record)
+        }
+    }
+
+    // MARK: - Upsert primitive
+    /// Fetch-or-create + save with one `.serverRecordChanged` retry. Use this
+    /// for any record whose `CKRecord.ID` is **deterministic** (i.e. the same
+    /// logical entity is saved repeatedly under the same recordName) — the
+    /// first save would succeed, but a second naive `database.save(_:)` on a
+    /// freshly-built CKRecord is treated as an INSERT by CloudKit and rejected
+    /// with `serverRecordChanged` (server message: "record to insert already
+    /// exists") because the etag is missing. The classic offending log line:
+    ///
+    ///   <CKError ... "Server Record Changed" (14/2004); server message =
+    ///   "record to insert already exists"; serverEtag = mom2go9h ...>
+    ///
+    /// `apply` runs against the live record (existing or freshly created)
+    /// before the save, so callers don't need to know which path was taken.
+    private func upsert(recordID: CKRecord.ID,
+                        recordType: String,
+                        apply: (CKRecord) -> Void) async throws {
         let record: CKRecord
         if let existing = try? await privateDB.record(for: recordID) {
             record = existing
         } else {
-            record = CKRecord(recordType: userAccountType, recordID: recordID)
+            record = CKRecord(recordType: recordType, recordID: recordID)
         }
-        applyAccountFields(account, to: record)
+        apply(record)
         do {
             try await privateDB.save(record)
         } catch let ckError as CKError where ckError.code == .serverRecordChanged {
-            // Conflict: another writer (or a previous attempt) already updated
-            // the record on the server. Re-fetch the latest copy, re-apply our
-            // fields, and try one more time.
-            if let latest = try? await privateDB.record(for: recordID) {
-                applyAccountFields(account, to: latest)
-                try await privateDB.save(latest)
-            } else {
+            // Conflict: another writer beat us between the fetch and the save.
+            // Re-fetch, re-apply, retry once. If that also fails we give up
+            // and throw — the caller can decide whether to surface or swallow.
+            guard let latest = try? await privateDB.record(for: recordID) else {
                 throw ckError
             }
+            apply(latest)
+            try await privateDB.save(latest)
         }
     }
 
@@ -517,14 +597,16 @@ class CloudKitService: ObservableObject {
     }
 
     func savePairCodeRecord(code: String, monitorAppleUserID: String, expiresAt: Date) async throws {
+        // Deterministic recordName (`pair-<code>`) — re-emitting the same code
+        // (e.g. on a network retry) must update, not insert.
         let recordID = CKRecord.ID(recordName: "pair-\(code)")
-        let record = CKRecord(recordType: pairCodeType, recordID: recordID)
-        record["code"] = code as CKRecordValue
-        record["monitorAppleUserID"] = monitorAppleUserID as CKRecordValue
-        record["createdAt"] = Date() as CKRecordValue
-        record["expiresAt"] = expiresAt as CKRecordValue
-        record["consumed"] = 0 as CKRecordValue
-        try await privateDB.save(record)
+        try await upsert(recordID: recordID, recordType: pairCodeType) { record in
+            record["code"] = code as CKRecordValue
+            record["monitorAppleUserID"] = monitorAppleUserID as CKRecordValue
+            record["createdAt"] = Date() as CKRecordValue
+            record["expiresAt"] = expiresAt as CKRecordValue
+            record["consumed"] = 0 as CKRecordValue
+        }
     }
 
     func deletePairCodeRecord(recordID: CKRecord.ID) async {
@@ -560,7 +642,11 @@ class CloudKitService: ObservableObject {
             code, partnershipID
         )
         let query = CKQuery(recordType: bypassGrantType, predicate: predicate)
-        query.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        // See `loadContract` — `creationDate` is the always-sortable system
+        // metadata field. For bypass grants, save order matches grant-issued
+        // order. The compound predicate above narrows results enough that the
+        // sort tiebreak almost never matters in practice.
+        query.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         do {
             let (results, _) = try await privateDB.records(matching: query, resultsLimit: 1)
             guard let (_, result) = results.first,

@@ -71,6 +71,20 @@ final class EmergencyOverrideService: ObservableObject {
     /// them right away, not save them for later.
     private let codeTTL: TimeInterval = 10 * 60
 
+    /// Inclusive bounds applied to the granter's requested duration. 5 min
+    /// is the lowest useful unblock; 4 hours is the highest a partner should
+    /// be able to grant before the receiving side is forced to ask again.
+    /// Exposed as constants so XCTest can pin the contract.
+    static let minGrantMinutes: Int = 5
+    static let maxGrantMinutes: Int = 240
+
+    /// Clamps a partner-supplied minute value to the safe issue-grant range.
+    /// Pure / static so tests can verify the contract without spinning up
+    /// CloudKit. If you change the bounds, update TC-UI-90/91 in TEST_PLAN.
+    static func clampedDurationMinutes(_ raw: Int) -> Int {
+        max(minGrantMinutes, min(raw, maxGrantMinutes))
+    }
+
     private let cloud = CloudKitService.shared
 
     // MARK: Issue (granter side)
@@ -87,7 +101,7 @@ final class EmergencyOverrideService: ObservableObject {
         guard !granterUserID.isEmpty, !recipientUserID.isEmpty else {
             throw EmergencyOverrideError.unpaired
         }
-        let clampedDuration = max(5, min(durationMinutes, 240))
+        let clampedDuration = Self.clampedDurationMinutes(durationMinutes)
         let code = String(format: "%06d", Int.random(in: 100_000...999_999))
         let now = Date()
         let grant = EmergencyOverrideGrant(

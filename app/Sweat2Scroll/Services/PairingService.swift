@@ -19,10 +19,17 @@ final class PairingService: ObservableObject {
         return code
     }
 
+    /// Strips non-digit characters and returns the result if and only if it
+    /// is a valid 6-digit pair code. Pulled out as a static so XCTest can
+    /// verify the input-handling rules without standing up CloudKit.
+    static func normalizeCode(_ raw: String) -> String? {
+        let digits = raw.filter(\.isNumber)
+        return digits.count == 6 ? digits : nil
+    }
+
     /// Validates code, links monitor ↔ user on success.
     func validateAndPair(code: String, userAppleUserID: String) async throws -> PairingResult {
-        let normalized = code.filter(\.isNumber)
-        guard normalized.count == 6 else { return .invalid }
+        guard let normalized = Self.normalizeCode(code) else { return .invalid }
 
         guard let record = await cloud.fetchPairCodeRecord(code: normalized) else {
             return .invalid

@@ -2,3 +2,10 @@
 .build/
 **/xcuserdata/
 **/*.xcuserstate
+
+# Local agent / tooling working state — never commit
+.claude/
+
+# Local reference images for in-flight design work — keep outside git
+.refimg/
+

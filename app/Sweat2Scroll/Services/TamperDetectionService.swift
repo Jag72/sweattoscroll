@@ -50,22 +50,57 @@ class TamperDetectionService: ObservableObject {
         checkClockDrift()
     }
 
+    // MARK: - "Ever-granted" gates
+    //
+    // We only call something a tamper if the user previously granted the
+    // permission AND it's now revoked. On a fresh install (no permission
+    // yet) the watchdog must NOT fire — otherwise every onboarding session
+    // logs a false TAMPER_HEALTHKIT_REVOKED before the user even sees the
+    // permission prompt, which is exactly what we observed in production
+    // logs after wiring up the watchdog. The flags are flipped to true the
+    // first time the corresponding service reports an authorized state, and
+    // are persisted across launches via UserDefaults so re-installs that
+    // restore prior auth still treat revocation as a tamper.
+    private static let healthKitEverGrantedKey = "tamper.healthKitEverGranted"
+    private static let screenTimeEverGrantedKey = "tamper.screenTimeEverGranted"
+
+    private var healthKitEverGranted: Bool {
+        get { UserDefaults.standard.bool(forKey: Self.healthKitEverGrantedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.healthKitEverGrantedKey) }
+    }
+
+    private var screenTimeEverGranted: Bool {
+        get { UserDefaults.standard.bool(forKey: Self.screenTimeEverGrantedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.screenTimeEverGrantedKey) }
+    }
+
     // MARK: - HealthKit Permission Check
     private func checkHealthKitPermissions() {
         let isValid = HealthKitService.shared.validatePermissions()
-        if !isValid {
-            handleTamperEvent(type: .tamperHealthKit,
-                              notes: "HealthKit activeEnergyBurned permission revoked.")
+        if isValid {
+            // Latch the "ever granted" flag the first time we see authorization.
+            if !healthKitEverGranted { healthKitEverGranted = true }
+            return
         }
+        // Not currently authorized. Only treat as tamper if the user
+        // previously authorized and has now revoked. Otherwise this is a
+        // first-launch / pre-onboarding state and tamper would be a false
+        // positive.
+        guard healthKitEverGranted else { return }
+        handleTamperEvent(type: .tamperHealthKit,
+                          notes: "HealthKit activeEnergyBurned permission revoked.")
     }
 
     // MARK: - Screen Time Permission Check
     private func checkScreenTimePermissions() {
         let isApproved = AuthorizationCenter.shared.authorizationStatus == .approved
-        if !isApproved {
-            handleTamperEvent(type: .tamperScreenTime,
-                              notes: "FamilyControls authorization was revoked.")
+        if isApproved {
+            if !screenTimeEverGranted { screenTimeEverGranted = true }
+            return
         }
+        guard screenTimeEverGranted else { return }
+        handleTamperEvent(type: .tamperScreenTime,
+                          notes: "FamilyControls authorization was revoked.")
     }
 
     // MARK: - Monotonic Clock Drift Detection

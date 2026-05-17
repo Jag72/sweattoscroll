@@ -15,6 +15,7 @@ struct SignInView: View {
     @State private var showPassword = false
     @State private var authError: String?
     @State private var showGoogleSoon = false
+    @State private var showForgotPassword = false
     @State private var showSignUp = false
 
     /// Maps `ASAuthorizationError` (e.g. 1000 unknown → missing capability) to actionable copy.
@@ -105,9 +106,10 @@ struct SignInView: View {
 
                     HStack {
                         Spacer()
-                        Button("Forgot Password?") {}
+                        Button("Forgot Password?") { showForgotPassword = true }
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.muted)
+                            .accessibilityIdentifier("signIn.forgotPassword")
                     }
 
                     PrimaryCTAButton(
@@ -130,12 +132,14 @@ struct SignInView: View {
                             .font(.caption)
                             .foregroundColor(.rose)
                             .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("signIn.localError")
                     }
                     if let err = auth.lastAuthError {
                         Text(err)
                             .font(.caption)
                             .foregroundColor(.rose)
                             .multilineTextAlignment(.center)
+                            .accessibilityIdentifier("signIn.authError")
                     }
 
                     HStack(spacing: 4) {
@@ -149,6 +153,7 @@ struct SignInView: View {
                                 .font(.subheadline.weight(.bold))
                                 .foregroundColor(.electricOrange)
                         }
+                        .accessibilityIdentifier("signIn.goToSignUp")
                     }
                     .padding(.top, 4)
                     .padding(.bottom, 24)
@@ -160,6 +165,11 @@ struct SignInView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or email for now.")
+        }
+        .alert("Reset password", isPresented: $showForgotPassword) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Email-based password reset isn't wired up yet in this build. If you signed in with Apple, recover from your Apple ID. Otherwise email support@sweat2scroll.app and we'll reset it manually.")
         }
         .preferredColorScheme(.light)
         .fullScreenCover(isPresented: $showSignUp) {
@@ -195,6 +205,7 @@ struct SignInView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.ringTrack, lineWidth: 1))
             }
+            .accessibilityIdentifier("signIn.google")
 
             SignInWithAppleButton(.signIn) { request in
                 request.requestedScopes = [.fullName, .email]
@@ -212,8 +223,19 @@ struct SignInView: View {
                 }
             }
             .signInWithAppleButtonStyle(.black)
+            // The underlying `ASAuthorizationAppleIDButton` (UIKit) installs
+            // a hard internal `width <= 375` constraint on itself. On iPhone
+            // Plus / iPad, the SwiftUI host parent grows past 375 (we saw
+            // 382 in production logs) and UIKit logs an "unable to satisfy
+            // constraints" warning every time the view appears. We cap the
+            // host at 375 to match the button's own limit, then center the
+            // resulting block. NB: this WIDTH cap must be set BEFORE the
+            // height frame — order matters in SwiftUI's layout pipeline.
+            .frame(maxWidth: 375)
             .frame(height: 50)
+            .frame(maxWidth: .infinity)  // outer wrapper centers the 375-wide button
             .clipShape(RoundedRectangle(cornerRadius: 14))
+            .accessibilityIdentifier("signIn.apple")
         }
     }
 
@@ -255,6 +277,7 @@ struct SignInView: View {
             email = AppSession.devUsername
             password = AppSession.devPassword
         } label: {
+            // accessibilityIdentifier applied to the outer button below.
             HStack(spacing: 6) {
                 Image(systemName: "wrench.and.screwdriver.fill")
                     .font(.system(size: 11))
@@ -278,6 +301,7 @@ struct SignInView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("signIn.devChip")
     }
     #endif
 }

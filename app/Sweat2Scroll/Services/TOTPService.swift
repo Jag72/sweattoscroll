@@ -78,7 +78,12 @@ class TOTPService {
     }
 
     // MARK: - HOTP Core (HMAC-SHA1 per RFC 4226, TOTP uses HMAC-SHA256)
-    private static func computeHOTP(secret: Data, counter: UInt64) throws -> String {
+    /// Internal access (was `private`) so XCTest can verify RFC 6238 / RFC 4226
+    /// conformance against well-known vectors without going through the
+    /// keychain-backed `generateCode()` / `validateCode()` path. Production
+    /// callers should still use the keychain-backed wrappers — there is no
+    /// reason for app code to call this directly.
+    static func computeHOTP(secret: Data, counter: UInt64) throws -> String {
         // Convert counter to big-endian 8-byte array
         var bigEndianCounter = counter.bigEndian
         let counterData = withUnsafeBytes(of: &bigEndianCounter) { Data($0) }
@@ -105,8 +110,9 @@ class TOTPService {
     }
 
     // MARK: - Current TOTP Counter
-    private static func currentCounter() -> UInt64 {
-        UInt64(Date().timeIntervalSince1970 / timeStepSeconds)
+    /// Internal so tests can verify the counter math against synthetic dates.
+    static func currentCounter(at date: Date = Date()) -> UInt64 {
+        UInt64(date.timeIntervalSince1970 / timeStepSeconds)
     }
 
     // MARK: - ECDH Key Exchange (Pairing)
