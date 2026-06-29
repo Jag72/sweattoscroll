@@ -1,32 +1,25 @@
 // SignUpView.swift
-// Sign-up form: First name + Last name + email + optional phone + password.
-// Apple sign-up still creates the account in one tap; Google is a placeholder
-// until the GoogleSignIn SDK is wired in.
+// Root auth screen for users without a session (auth check routes here).
+// Minimal account creation: username + password, plus Google / Apple one-tap.
+// "Sign In" pushes `SignInView` for returning accounts.
 
 import SwiftUI
 import AuthenticationServices
 
 struct SignUpView: View {
     @ObservedObject private var auth = AuthManager.shared
-    @Environment(\.dismiss) private var dismiss
 
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var email = ""
-    @State private var phone = ""
+    @State private var username = ""
     @State private var password = ""
-    @State private var confirmPassword = ""
     @State private var showPassword = false
-    @State private var showConfirmPassword = false
     @State private var authError: String?
     @State private var showGoogleSoon = false
+    @State private var showForgotPassword = false
+    @State private var showSignIn = false
 
     private var isFormValid: Bool {
-        !firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !lastName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        Self.isValidEmail(email) &&
-        password.count >= 6 &&
-        password == confirmPassword
+        username.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 &&
+        password.count >= 6
     }
 
     var body: some View {
@@ -43,7 +36,7 @@ struct SignUpView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 22) {
-                    Spacer().frame(height: 12)
+                    Spacer().frame(height: 28)
 
                     ZStack {
                         Circle()
@@ -68,24 +61,64 @@ struct SignUpView: View {
                             .font(.display(26))
                             .foregroundColor(.ink)
                     }
-                    Text("A few details so we can save your goals and pair you with your accountability partner.")
+                    Text("Pick a username and you're in. Your health data never leaves this device.")
                         .font(.system(size: 14))
                         .foregroundColor(.muted)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 12)
 
-                    formFields
+                    VStack(spacing: 14) {
+                        AuthFormField(
+                            icon: "person.fill",
+                            placeholder: "Username",
+                            text: $username,
+                            textContentType: .username,
+                            accessibilityFieldID: "signUp.username"
+                        )
+
+                        AuthFormField(
+                            icon: "lock.fill",
+                            placeholder: "Password (min 6 chars)",
+                            text: $password,
+                            textContentType: .newPassword,
+                            isSecure: true,
+                            showSecure: $showPassword,
+                            accessibilityFieldID: "signUp.password"
+                        )
+                    }
+                    .padding(.top, 8)
+
+                    HStack {
+                        Spacer()
+                        Button("Forgot Password?") { showForgotPassword = true }
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.muted)
+                            .accessibilityIdentifier("signUp.forgotPassword")
+                    }
 
                     PrimaryCTAButton(
-                        title: "Create account",
+                        title: "Create Account",
                         isEnabled: isFormValid,
                         isLoading: auth.isLoadingAuth,
                         accessibilityIdentifier: "signUp.submit",
-                        action: { Task { await signUpEmail() } }
+                        action: { Task { await signUpUsername() } }
                     )
 
-                    dividerOr
-                    socialButtons
+                    AuthDividerOr()
+
+                    AuthSocialButtons(context: .signUp, showGoogleSoon: $showGoogleSoon) { result in
+                        Task { @MainActor in
+                            authError = nil
+                            switch result {
+                            case .success(let authorization):
+                                if let cred = authorization.credential as? ASAuthorizationAppleIDCredential {
+                                    await auth.handleAppleCredential(cred)
+                                }
+                            case .failure(let error):
+                                authError = AuthUX.friendlyAuthError(error)
+                            }
+                        }
+                    }
 
                     if let err = authError {
                         Text(err)
@@ -107,13 +140,13 @@ struct SignUpView: View {
                             .font(.subheadline)
                             .foregroundColor(.muted)
                         Button {
-                            dismiss()
+                            showSignIn = true
                         } label: {
                             Text("Sign In")
                                 .font(.subheadline.weight(.bold))
                                 .foregroundColor(.electricOrange)
                         }
-                        .accessibilityIdentifier("signUp.backToSignIn")
+                        .accessibilityIdentifier("signUp.goToSignIn")
                     }
                     .padding(.top, 4)
                     .padding(.bottom, 24)
@@ -124,159 +157,46 @@ struct SignUpView: View {
         .alert("Google Sign-In", isPresented: $showGoogleSoon) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or email for now.")
+            Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or username for now.")
+        }
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordView(username: username) { resetUsername in
+                username = resetUsername
+                password = ""
+                authError = nil
+                auth.lastAuthError = nil
+                showSignIn = true
+            }
+        }
+        .navigationDestination(isPresented: $showSignIn) {
+            SignInView()
         }
         .preferredColorScheme(.light)
-        .onChange(of: auth.authState) { newState in
-            if newState != .unauthenticated { dismiss() }
-        }
-    }
-
-    // MARK: - Form
-
-    private var formFields: some View {
-        VStack(spacing: 14) {
-            HStack(spacing: 10) {
-                AuthFormField(
-                    icon: "person.fill",
-                    placeholder: "First name",
-                    text: $firstName,
-                    textContentType: .givenName,
-                    autocapitalization: .words,
-                    disableAutocorrection: true,
-                    accessibilityFieldID: "signUp.firstName"
-                )
-                AuthFormField(
-                    icon: "person",
-                    placeholder: "Last name",
-                    text: $lastName,
-                    textContentType: .familyName,
-                    autocapitalization: .words,
-                    disableAutocorrection: true,
-                    accessibilityFieldID: "signUp.lastName"
-                )
-            }
-
-            AuthFormField(
-                icon: "envelope.fill",
-                placeholder: "Email",
-                text: $email,
-                keyboardType: .emailAddress,
-                textContentType: .emailAddress,
-                accessibilityFieldID: "signUp.email"
-            )
-
-            AuthFormField(
-                icon: "phone.fill",
-                placeholder: "Phone (optional)",
-                text: $phone,
-                keyboardType: .phonePad,
-                textContentType: .telephoneNumber,
-                accessibilityFieldID: "signUp.phone"
-            )
-
-            AuthFormField(
-                icon: "lock.fill",
-                placeholder: "Password (min 6 chars)",
-                text: $password,
-                textContentType: .newPassword,
-                isSecure: true,
-                showSecure: $showPassword,
-                accessibilityFieldID: "signUp.password"
-            )
-
-            AuthFormField(
-                icon: "lock.shield",
-                placeholder: "Confirm password",
-                text: $confirmPassword,
-                textContentType: .newPassword,
-                isSecure: true,
-                showSecure: $showConfirmPassword,
-                accessibilityFieldID: "signUp.confirmPassword"
-            )
-
-            if !confirmPassword.isEmpty && password != confirmPassword {
-                Label("Passwords don't match", systemImage: "exclamationmark.triangle.fill")
-                    .font(.caption)
-                    .foregroundColor(.rose)
-                    .accessibilityIdentifier("signUp.passwordMismatch")
-            }
-        }
-        .padding(.top, 4)
-    }
-
-    private var dividerOr: some View {
-        HStack {
-            Rectangle().fill(Color.muted.opacity(0.25)).frame(height: 1)
-            Text("or").font(.caption).foregroundColor(.muted).padding(.horizontal, 10)
-            Rectangle().fill(Color.muted.opacity(0.25)).frame(height: 1)
-        }
-    }
-
-    private var socialButtons: some View {
-        VStack(spacing: 10) {
-            Button {
-                showGoogleSoon = true
-            } label: {
-                HStack {
-                    Image(systemName: "g.circle.fill")
-                    Text("Continue with Google")
-                }
-                .font(.system(size: 15, weight: .semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color.white)
-                .foregroundColor(.ink)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.ringTrack, lineWidth: 1))
-            }
-            .accessibilityIdentifier("signUp.google")
-
-            SignInWithAppleButton(.signUp) { request in
-                request.requestedScopes = [.fullName, .email]
-            } onCompletion: { result in
-                Task { @MainActor in
-                    authError = nil
-                    switch result {
-                    case .success(let authorization):
-                        if let cred = authorization.credential as? ASAuthorizationAppleIDCredential {
-                            await auth.handleAppleCredential(cred)
-                        }
-                    case .failure(let error):
-                        authError = error.localizedDescription
-                    }
-                }
-            }
-            .signInWithAppleButtonStyle(.black)
-            // See SignInView for the constraint-conflict explanation. Cap
-            // the host at the button's internal 375pt limit, then center.
-            .frame(maxWidth: 375)
-            .frame(height: 50)
-            .frame(maxWidth: .infinity)  // outer wrapper centers the 375-wide button
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .accessibilityIdentifier("signUp.apple")
+        .onAppear {
+            authError = nil
+            auth.lastAuthError = nil
         }
     }
 
     // MARK: - Actions
 
     @MainActor
-    private func signUpEmail() async {
+    private func signUpUsername() async {
         authError = nil
         guard isFormValid else { return }
         do {
-            try await auth.signUpWithEmail(
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                phone: phone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : phone,
-                password: password
-            )
+            try await auth.signUp(username: username, password: password)
         } catch {
-            authError = error.localizedDescription
+            // `AuthManager` already surfaces a friendly `lastAuthError` for
+            // transient iCloud failures — avoid showing a second, raw error line.
+            if auth.lastAuthError == nil {
+                authError = error.localizedDescription
+            }
         }
     }
 
+    /// Kept as the app-wide email validator: decides whether an email-shaped
+    /// username also lands in the CloudKit `email` slot (see `AuthManager`).
     static func isValidEmail(_ value: String) -> Bool {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.count >= 5, trimmed.contains("@"), trimmed.contains(".") else { return false }
@@ -285,47 +205,8 @@ struct SignUpView: View {
     }
 }
 
-// MARK: - Primary CTA helper used by auth screens
-struct PrimaryCTAButton: View {
-    let title: String
-    var isEnabled: Bool = true
-    var isLoading: Bool = false
-    var accessibilityIdentifier: String? = nil
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                if isLoading { ProgressView().tint(.white) }
-                Text(title).fontWeight(.bold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                isEnabled
-                    ? LinearGradient(colors: [.electricOrange, Color(hex: "#FF9A62")],
-                                     startPoint: .leading, endPoint: .trailing)
-                    : LinearGradient(colors: [Color.muted.opacity(0.25), Color.muted.opacity(0.2)],
-                                     startPoint: .leading, endPoint: .trailing)
-            )
-            .foregroundColor(isEnabled ? .white : .muted)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: isEnabled ? Color.electricOrange.opacity(0.25) : .clear, radius: 12, y: 4)
-        }
-        .disabled(!isEnabled || isLoading)
-        .modifier(PrimaryCTAButtonAccessibilityID(id: accessibilityIdentifier))
-    }
-}
-
-private struct PrimaryCTAButtonAccessibilityID: ViewModifier {
-    let id: String?
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if let id {
-            content.accessibilityIdentifier(id)
-        } else {
-            content
-        }
+#Preview {
+    NavigationStack {
+        SignUpView()
     }
 }

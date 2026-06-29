@@ -1,11 +1,14 @@
 // EmailValidationTests.swift
-// Covers `SignUpView.isValidEmail` — gates both Sign Up CTA enablement
-// (TC-UI-30, TC-UI-31, TC-UI-33) and Sign In CTA enablement
-// (TC-UI-11, TC-UI-12, TC-UI-123 Release dev-credential safety).
+// Covers `SignUpView.isValidEmail` — decides whether an email-shaped
+// username also lands in the CloudKit `email` slot (see `AuthManager.signUp`
+// / `signIn`), so format edge cases still matter after the username switch.
 
 import XCTest
 @testable import Sweat2Scroll
 
+// The tested type is @MainActor-isolated; hop the whole suite onto the
+// main actor so calls to its statics compile under strict concurrency.
+@MainActor
 final class EmailValidationTests: XCTestCase {
 
     // MARK: - Valid

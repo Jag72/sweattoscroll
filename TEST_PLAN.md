@@ -97,21 +97,21 @@ These match app routing (`RootView`, `AuthManager`, `AppAuthModels`).
 
 | ID | Scenario | Steps | Expected |
 |----|----------|-------|----------|
-| TC-AUTH-01 | Fresh launch, no session | Delete app (or clear keychain/defaults per test policy), launch | Sign-in presented |
+| TC-AUTH-01 | Fresh launch, no session | Delete app (or clear keychain/defaults per test policy), launch | Sign Up presented (auth root); Sign In reachable via "Sign In" link |
 | TC-AUTH-02 | Sign in with Apple — new user | Complete Apple flow | Lands in onboarding or PRD start per routing |
 | TC-AUTH-03 | Sign in with Apple — returning | Sign out (if available), sign in again same Apple ID | Routes per `CloudUserAccount` (solo/user/monitor, paired flag), no duplicate onboarding if fully onboarded |
-| TC-AUTH-04 | Email sign up — success | Valid fields, submit | Session established; CloudKit account created/updated |
-| TC-AUTH-05 | Email sign up — network failure | Airplane mode during submit | Clear error; **no** silent overwrite of cloud state (retry path works when online) |
-| TC-AUTH-06 | Email sign in — returning | Existing credentials | Correct dashboard |
+| TC-AUTH-04 | Username sign up — success | Valid username + password, submit | Session established; CloudKit account created/updated |
+| TC-AUTH-05 | Username sign up — network failure | Airplane mode during submit | Clear error; **no** silent overwrite of cloud state (retry path works when online) |
+| TC-AUTH-06 | Username sign in — returning | Existing credentials | Correct dashboard |
 | TC-AUTH-07 | Session restore | Kill app, relaunch | Still authenticated when ID persisted |
 | TC-AUTH-08 | Dev / debug session | If `dev_*` session exists | Confirm documented limitations (e.g. skips CloudKit writes) |
 | TC-AUTH-09 | Apple capability missing in build | Build a target where the **Sign In with Apple** capability is *not* enabled, tap the Apple button | Friendly copy via `friendlyAuthError` (`.unknown` branch) explains how to enable the capability — **no** opaque crash or blank state |
 | TC-AUTH-10 | Re-install on same device, same Apple ID | Delete app → reinstall → sign in with same Apple ID | `restoreSessionIfPossible` re-fetches the cached `CloudUserAccount`; user lands in their previous dashboard, **not** onboarding; pairing survives; calorie goal preserved |
-| TC-AUTH-11 | Re-install on same device, same email/password | Delete app → reinstall → sign in via email/password used previously | `signInWithEmail` resolves the same `appleUserID` from `EmailCredentialStore`; existing CloudKit account loads; user **is not** sent through PRD again |
+| TC-AUTH-11 | Re-install on same device, same username/password | Delete app → reinstall → sign in via username/password used previously | `AuthManager.signIn(username:password:)` resolves the same `appleUserID` from `EmailCredentialStore`; existing CloudKit account loads; user **is not** sent through PRD again |
 | TC-AUTH-12 | Same Apple ID, second device | Sign in with the same Apple ID on Device B | Behavior is well-defined per product (either: B takes over the session, or both stay signed in; in either case CloudKit `UserAccount` stays consistent — no duplicate records, no pairing drop) |
-| TC-AUTH-13 | Email sign-in transient CloudKit failure | Trigger a non-`unknownItem` error from `fetchUserAccountStrict` (e.g., flaky network) | `lastAuthError` shows "Couldn't reach iCloud..."; **no** blank fallback `UserAccount` is written that would overwrite real cloud state (per `signInWithEmail` doc comment) |
-| TC-AUTH-14 | Email sign-up transient CloudKit failure | Same as TC-AUTH-13 but during `signUpWithEmail` | Same safety property — no blank overwrite; user can retry when online |
-| TC-AUTH-15 | Sign Out clears session | If sign-out UI is exposed, tap it | `appleIDDefaultsKey` removed; `AppSession.clear()` runs; `authState == .unauthenticated`; relaunch lands on Sign In, **not** auto-resumed |
+| TC-AUTH-13 | Username sign-in transient CloudKit failure | Trigger a non-`unknownItem` error from `fetchUserAccountStrict` (e.g., flaky network) | `lastAuthError` shows "Couldn't reach iCloud..."; **no** blank fallback `UserAccount` is written that would overwrite real cloud state (per `AuthManager.signIn` doc comment) |
+| TC-AUTH-14 | Username sign-up transient CloudKit failure | Same as TC-AUTH-13 but during `AuthManager.signUp` | Same safety property — no blank overwrite; user can retry when online |
+| TC-AUTH-15 | Sign Out clears session | If sign-out UI is exposed, tap it | `appleIDDefaultsKey` removed; `AppSession.clear()` runs; `authState == .unauthenticated`; relaunch lands on Sign Up, **not** auto-resumed |
 | TC-AUTH-16 | Forgot Password — wired or hidden | Tap **Forgot Password?** | Either (a) opens a real reset flow **or** (b) shows a clear "coming soon" alert with a contact path. **Silent no-op** is a fail. (See TC-UI-16) |
 
 ---
@@ -237,13 +237,16 @@ Cross-cutting **for every screen:** no clipped text at default Dynamic Type; scr
 | ID | Scenario | Steps | Expected |
 |----|----------|-------|----------|
 | TC-UI-10 | Layout & copy | Land on sign-in | Logo, “Welcome back”, subtitle about shield visible |
-| TC-UI-11 | Email field | Enter invalid email (no `@`), leave password empty | **Sign In** stays disabled (`PrimaryCTAButton` disabled state visually muted) |
-| TC-UI-12 | Email validation edge | Enter syntactically invalid email per `SignUpView.isValidEmail` rules | Sign In disabled until valid email + non-empty password |
+| TC-UI-11 | Username field | Enter a username, leave password empty | **Sign In** stays disabled (`PrimaryCTAButton` disabled state visually muted) |
+| TC-UI-12 | Both fields required | Fill only one of username/password | Sign In disabled until both username and password are non-empty |
 | TC-UI-13 | Password visibility | Use secure field affordance if shown | Toggles mask/unmask without losing text |
 | TC-UI-14 | Sign In — loading | Valid credentials, tap **Sign In** | Loading indicator on CTA; double-tap does not duplicate requests |
-| TC-UI-15 | Sign In — error | Wrong password / server error | Red error text (`authError` or `lastAuthError`); user can retry |
-| TC-UI-16 | Forgot Password | Tap **Forgot Password?** | **Expected:** Either navigates to reset flow **or** currently no-op — if no-op, file bug: wire flow or remove/hide until implemented |
-| TC-UI-17 | Navigate to Sign Up | Tap **Sign Up** | Full-screen cover opens `SignUpView`; can return via **Sign In** |
+| TC-UI-15 | Sign In — error | Wrong password / server error | **Single** red error line (friendly `lastAuthError` for iCloud issues, else `authError`); no duplicate raw error; user can retry; error clears on re-attempt and when leaving the screen |
+| TC-UI-16 | Forgot Password — open | Tap **Forgot Password?** | `ForgotPasswordView` sheet opens; username prefilled from form; Apple-recovery note shown |
+| TC-UI-16a | Reset — no local account | Enter username with no device account, valid new password, **Reset password** | Inline error: "No account with that username exists on this device…" (`PasswordResetError.noLocalAccount`) |
+| TC-UI-16b | Reset — validation | New password `< 6` chars or mismatch | **Reset password** disabled; "Passwords don't match" label when applicable |
+| TC-UI-16c | Reset — success | Existing device account, valid matching new password | Success state; **Back to sign in** dismisses and prefills username; signing in with new password works (old password rejected) |
+| TC-UI-17 | Navigate back to Sign Up | Tap **Sign Up** on Sign In | Pops back to `SignUpView` (Sign Up is the nav root) |
 | TC-UI-18 | Continue with Google | Tap **Continue with Google** | Alert “Google Sign-In…” explains SDK pending; dismiss OK returns to form |
 | TC-UI-19 | Sign in with Apple — cancel | Start Apple sheet, cancel | Friendly cancel copy via `friendlyAuthError`; no crash |
 | TC-UI-20 | Sign in with Apple — success | Complete Apple sign-in | Leaves unauthenticated UI per `authState`; dismiss triggers appropriately |
@@ -253,14 +256,14 @@ Cross-cutting **for every screen:** no clipped text at default Dynamic Type; scr
 
 | ID | Scenario | Steps | Expected |
 |----|----------|-------|----------|
-| TC-UI-30 | Create account disabled | Empty names | **Create account** disabled |
-| TC-UI-31 | Password rules | Password `< 6` chars | Create account disabled |
-| TC-UI-32 | Confirm password | Mismatch confirm | Rose “Passwords don't match” label appears |
-| TC-UI-33 | Happy path form | Valid all fields | Create account enables; success dismisses on auth change |
+| TC-UI-30 | Create Account disabled | Empty form | **Create Account** disabled |
+| TC-UI-31 | Password rules | Password `< 6` chars | Create Account disabled |
+| TC-UI-32 | Username rules | Username `< 3` chars | Create Account disabled |
+| TC-UI-33 | Happy path form | Username ≥ 3 chars + password ≥ 6 chars | Create Account enables; success routes to onboarding/dashboard |
 | TC-UI-34 | Sign Up — loading | Submit valid form | Loading on CTA; no duplicate submits |
 | TC-UI-35 | Sign Up — Apple | Use Apple button on sign-up sheet | Same behavioral expectations as sign-in Apple path |
 | TC-UI-36 | Sign Up — Google | Tap Google | Same placeholder alert as sign-in |
-| TC-UI-37 | Back to Sign In | Tap **Sign In** from sign-up | Sheet dismisses |
+| TC-UI-37 | Go to Sign In | Tap **Sign In** from sign-up | `SignInView` pushes onto the nav stack |
 
 ### 14.4 Solo onboarding (`SoloOnboardingView`) — end-to-end
 
@@ -349,10 +352,10 @@ These rows pin behavior of services the user can perceive but that aren't a sing
 
 | ID | Scenario | Steps | Expected |
 |----|----------|-------|----------|
-| TC-UI-120 | `EmailCredentialStore` persistence | Sign up via email → kill app → relaunch → sign in with same email/password | Same `appleUserID` resolved → same CloudKit account → no PRD re-trigger |
-| TC-UI-121 | `EmailCredentialStore` wrong password | Sign in with the right email but wrong password | Specific error surfaces in `authError`; no session is started |
+| TC-UI-120 | `EmailCredentialStore` persistence | Sign up via username → kill app → relaunch → sign in with same username/password | Same `appleUserID` resolved → same CloudKit account → no PRD re-trigger |
+| TC-UI-121 | `EmailCredentialStore` wrong password | Sign in with the right username but wrong password | Specific error surfaces in `authError`; no session is started |
 | TC-UI-122 | `AuthManager.signOut` UX | Trigger sign-out from wherever surfaced | UI returns to Sign In; cached account cleared from memory; no stale name shown anywhere |
-| TC-UI-123 | `AppSession.isDevCredentialMatch` Release safety | In Release build, type `puji` / `1234` into Sign In | **Sign In** stays disabled (`SignUpView.isValidEmail("puji") == false`) — debug shortcut is unreachable |
+| TC-UI-123 | `AppSession.isDevCredentialMatch` Release safety | In Release build, type `puji` / `1234` into Sign In | Submit runs the real path and fails with "no account" from `EmailCredentialStore` — the dev bypass is `#if DEBUG`-gated and unreachable |
 
 ### 14.13 Subsystems II — TOTP / CalorieEngine / DailyReset / Override / Pairing
 
@@ -412,7 +415,7 @@ These are explicit, individually verifiable rows — replaces the single bullet 
 | TC-VAR-01 | DEBUG: tester chip visible | DEBUG build → Sign In | Chip visible per TC-UI-21 |
 | TC-VAR-02 | Release: tester chip absent | Release build → Sign In | Chip is absent (per TC-REL-04 / TC-UI-123) |
 | TC-VAR-03 | DEBUG: dev session skips CloudKit | DEBUG `devSignIn` flow | `isDevSession == true`; subsequent `complete*Onboarding` writes are guarded by `if !isDevSession` and not sent to CloudKit |
-| TC-VAR-04 | Release: dev shortcut unreachable | Per TC-UI-123 | `isDevCredentialMatch` call site is `#if DEBUG`-gated in `signInEmail()`; verify by source diff before each release |
+| TC-VAR-04 | Release: dev shortcut unreachable | Per TC-UI-123 | `isDevCredentialMatch` call site is `#if DEBUG`-gated in `signInUsername()`; verify by source diff before each release |
 
 ---
 

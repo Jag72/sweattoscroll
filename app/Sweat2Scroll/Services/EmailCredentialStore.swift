@@ -27,7 +27,7 @@ enum EmailCredentialError: LocalizedError {
         case .keychainReadFailed(let s):
             return "Couldn't read credentials (Keychain \(s)). Try again."
         case .noAccount:
-            return "We couldn't find an account with that email on this device. Sign up first."
+            return "We couldn't find an account with that username on this device. Sign up first."
         case .wrongPassword:
             return "Wrong password. Try again or use Sign in with Apple."
         }

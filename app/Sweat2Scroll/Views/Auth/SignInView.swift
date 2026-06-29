@@ -1,7 +1,7 @@
 // Views/Auth/SignInView.swift
-// First screen the user sees on app launch when they don't have a session.
-// Email + password sign in, plus Apple / Google one-tap. Tapping "Sign Up"
-// navigates forward to `SignUpView` for first-time accounts.
+// Returning-user screen, pushed from `SignUpView` (the auth root).
+// Username + password sign in, plus Apple / Google one-tap. Tapping
+// "Sign Up" pops back to `SignUpView` for first-time accounts.
 
 import SwiftUI
 import AuthenticationServices
@@ -10,32 +10,12 @@ struct SignInView: View {
     @ObservedObject private var auth = AuthManager.shared
     @Environment(\.dismiss) private var dismiss
 
-    @State private var email = ""
+    @State private var username = ""
     @State private var password = ""
     @State private var showPassword = false
     @State private var authError: String?
     @State private var showGoogleSoon = false
     @State private var showForgotPassword = false
-    @State private var showSignUp = false
-
-    /// Maps `ASAuthorizationError` (e.g. 1000 unknown → missing capability) to actionable copy.
-    private static func friendlyAuthError(_ error: Error) -> String {
-        if let authErr = error as? ASAuthorizationError {
-            switch authErr.code {
-            case .canceled:
-                return "Sign in was canceled."
-            case .failed:
-                return "Sign in failed. Try again or check Apple ID settings."
-            case .invalidResponse, .notHandled:
-                return "Couldn't complete sign in. Try again."
-            case .unknown:
-                return "Sign in with Apple isn't set up for this build. In Xcode: Target → Signing & Capabilities → add \"Sign In with Apple\", and enable it for this App ID at developer.apple.com."
-            @unknown default:
-                return authErr.localizedDescription
-            }
-        }
-        return error.localizedDescription
-    }
 
     var body: some View {
         ZStack {
@@ -84,12 +64,11 @@ struct SignInView: View {
 
                     VStack(spacing: 14) {
                         AuthFormField(
-                            icon: "envelope.fill",
-                            placeholder: "Email",
-                            text: $email,
-                            keyboardType: .emailAddress,
-                            textContentType: .emailAddress,
-                            accessibilityFieldID: "signIn.email"
+                            icon: "person.fill",
+                            placeholder: "Username",
+                            text: $username,
+                            textContentType: .username,
+                            accessibilityFieldID: "signIn.username"
                         )
 
                         AuthFormField(
@@ -117,15 +96,28 @@ struct SignInView: View {
                         isEnabled: isSignInReady,
                         isLoading: auth.isLoadingAuth,
                         accessibilityIdentifier: "signIn.submit",
-                        action: { Task { await signInEmail() } }
+                        action: { Task { await signInUsername() } }
                     )
 
                     #if DEBUG
                     devCredentialsHint
                     #endif
 
-                    dividerOr
-                    socialButtons
+                    AuthDividerOr()
+
+                    AuthSocialButtons(context: .signIn, showGoogleSoon: $showGoogleSoon) { result in
+                        Task { @MainActor in
+                            authError = nil
+                            switch result {
+                            case .success(let authorization):
+                                if let credential = authorization.credential as? ASAuthorizationAppleIDCredential {
+                                    await auth.handleAppleCredential(credential)
+                                }
+                            case .failure(let error):
+                                authError = AuthUX.friendlyAuthError(error)
+                            }
+                        }
+                    }
 
                     if let err = authError {
                         Text(err)
@@ -147,7 +139,7 @@ struct SignInView: View {
                             .font(.subheadline)
                             .foregroundColor(.muted)
                         Button {
-                            showSignUp = true
+                            dismiss()
                         } label: {
                             Text("Sign Up")
                                 .font(.subheadline.weight(.bold))
@@ -164,96 +156,38 @@ struct SignInView: View {
         .alert("Google Sign-In", isPresented: $showGoogleSoon) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or email for now.")
+            Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or username for now.")
         }
-        .alert("Reset password", isPresented: $showForgotPassword) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Email-based password reset isn't wired up yet in this build. If you signed in with Apple, recover from your Apple ID. Otherwise email support@sweat2scroll.app and we'll reset it manually.")
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordView(username: username) { resetUsername in
+                username = resetUsername
+                password = ""
+                authError = nil
+                auth.lastAuthError = nil
+            }
         }
         .preferredColorScheme(.light)
-        .fullScreenCover(isPresented: $showSignUp) {
-            NavigationStack { SignUpView() }
-        }
-        .onChange(of: auth.authState) { newState in
-            if newState != .unauthenticated { dismiss() }
+        .onAppear {
+            authError = nil
+            auth.lastAuthError = nil
         }
     }
 
-    private var dividerOr: some View {
-        HStack {
-            Rectangle().fill(Color.muted.opacity(0.25)).frame(height: 1)
-            Text("or").font(.caption).foregroundColor(.muted).padding(.horizontal, 10)
-            Rectangle().fill(Color.muted.opacity(0.25)).frame(height: 1)
-        }
-    }
-
-    private var socialButtons: some View {
-        VStack(spacing: 10) {
-            Button {
-                showGoogleSoon = true
-            } label: {
-                HStack {
-                    Image(systemName: "g.circle.fill")
-                    Text("Continue with Google")
-                }
-                .font(.system(size: 15, weight: .semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color.white)
-                .foregroundColor(.ink)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.ringTrack, lineWidth: 1))
-            }
-            .accessibilityIdentifier("signIn.google")
-
-            SignInWithAppleButton(.signIn) { request in
-                request.requestedScopes = [.fullName, .email]
-            } onCompletion: { result in
-                Task { @MainActor in
-                    authError = nil
-                    switch result {
-                    case .success(let authorization):
-                        if let credential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                            await auth.handleAppleCredential(credential)
-                        }
-                    case .failure(let error):
-                        authError = Self.friendlyAuthError(error)
-                    }
-                }
-            }
-            .signInWithAppleButtonStyle(.black)
-            // The underlying `ASAuthorizationAppleIDButton` (UIKit) installs
-            // a hard internal `width <= 375` constraint on itself. On iPhone
-            // Plus / iPad, the SwiftUI host parent grows past 375 (we saw
-            // 382 in production logs) and UIKit logs an "unable to satisfy
-            // constraints" warning every time the view appears. We cap the
-            // host at 375 to match the button's own limit, then center the
-            // resulting block. NB: this WIDTH cap must be set BEFORE the
-            // height frame — order matters in SwiftUI's layout pipeline.
-            .frame(maxWidth: 375)
-            .frame(height: 50)
-            .frame(maxWidth: .infinity)  // outer wrapper centers the 375-wide button
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .accessibilityIdentifier("signIn.apple")
-        }
-    }
-
-    /// True for either the DEBUG dev shortcut or a real, validly-formatted login.
+    /// True for either the DEBUG dev shortcut or a real, non-empty login.
     private var isSignInReady: Bool {
         #if DEBUG
-        if AppSession.isDevCredentialMatch(username: email, password: password) { return true }
+        if AppSession.isDevCredentialMatch(username: username, password: password) { return true }
         #endif
-        return SignUpView.isValidEmail(email) && !password.isEmpty
+        return !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !password.isEmpty
     }
 
     @MainActor
-    private func signInEmail() async {
+    private func signInUsername() async {
         authError = nil
         auth.lastAuthError = nil
 
         #if DEBUG
-        if AppSession.isDevCredentialMatch(username: email, password: password) {
+        if AppSession.isDevCredentialMatch(username: username, password: password) {
             if UserDefaults.standard.bool(forKey: "onboardingComplete") {
                 auth.devSignIn(as: .solo)
             } else {
@@ -264,9 +198,13 @@ struct SignInView: View {
         #endif
 
         do {
-            try await auth.signInWithEmail(email: email, password: password)
+            try await auth.signIn(username: username, password: password)
         } catch {
-            authError = error.localizedDescription
+            // `AuthManager` already surfaces a friendly `lastAuthError` for
+            // transient iCloud failures — avoid showing a second, raw error line.
+            if auth.lastAuthError == nil {
+                authError = error.localizedDescription
+            }
         }
     }
 
@@ -274,7 +212,7 @@ struct SignInView: View {
     /// Tiny on-screen helper so anyone testing the app knows the simulator login.
     private var devCredentialsHint: some View {
         Button {
-            email = AppSession.devUsername
+            username = AppSession.devUsername
             password = AppSession.devPassword
         } label: {
             // accessibilityIdentifier applied to the outer button below.

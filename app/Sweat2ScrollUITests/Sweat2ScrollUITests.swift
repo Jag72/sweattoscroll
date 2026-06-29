@@ -8,17 +8,17 @@ final class Sweat2ScrollUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func testLaunch_reachesSignInChrome() throws {
+    func testLaunch_reachesSignUpChrome() throws {
         let app = XCUIApplication()
         app.launchArguments = ["-uiTesting"]
         app.launch()
 
-        // Splash → transition → Sign In can take a few seconds on cold launch.
-        let email = app.textFields["signIn.email"]
-        XCTAssertTrue(email.waitForExistence(timeout: 25))
+        // Splash → transition → Sign Up can take a few seconds on cold launch.
+        let username = app.textFields["signUp.username"]
+        XCTAssertTrue(username.waitForExistence(timeout: 25))
 
-        let signIn = app.buttons["signIn.submit"]
-        XCTAssertTrue(signIn.waitForExistence(timeout: 5))
-        XCTAssertFalse(signIn.isEnabled)
+        let signUp = app.buttons["signUp.submit"]
+        XCTAssertTrue(signUp.waitForExistence(timeout: 5))
+        XCTAssertFalse(signUp.isEnabled)
     }
 }
