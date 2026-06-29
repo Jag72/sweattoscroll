@@ -188,34 +188,28 @@ final class AuthManager: ObservableObject {
         AppSession.clear()
     }
 
-    // MARK: - Email / password (local credential store)
+    // MARK: - Username / password (local credential store)
 
     /// Create a brand-new account from the sign-up form. Stores a salted
-    /// password hash in the Keychain so the user can sign back in later, then
-    /// kicks off the same PRD health-first onboarding used by Sign in with Apple.
+    /// password hash in the Keychain (keyed by the normalized username) so the
+    /// user can sign back in later, then kicks off the same PRD health-first
+    /// onboarding used by Sign in with Apple.
     ///
-    /// Because the email→ID hash is deterministic, a returning user who wiped
+    /// Because the username→ID hash is deterministic, a returning user who wiped
     /// the app and re-signs up resolves to the *same* `appleUserID` and finds
     /// their old CloudKit record. We must not paper over a transient fetch
     /// failure with `newUser(...)` here either — that would overwrite their
     /// real cloud profile with empty fields. On transient errors we throw so
     /// the user can retry; on `.unknownItem` we know it's a true new sign-up.
-    func signUpWithEmail(firstName: String,
-                         lastName: String,
-                         email: String,
-                         phone: String?,
-                         password: String) async throws {
+    func signUp(username: String, password: String) async throws {
         isLoadingAuth = true
         lastAuthError = nil
         defer { isLoadingAuth = false }
 
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let display = [firstName, lastName]
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
+        let display = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        let key = display.lowercased()
 
-        let id = try EmailCredentialStore.register(email: trimmedEmail, password: password)
+        let id = try EmailCredentialStore.register(email: key, password: password)
 
         // Probe CloudKit *before* claiming this session so a network outage
         // can't trick us into writing a blank fallback over the real record.
@@ -232,11 +226,9 @@ final class AuthManager: ObservableObject {
 
         var account = existing
             ?? CloudUserAccount.newUser(appleUserID: id, displayName: display.isEmpty ? "Athlete" : display)
-        account.displayName = display.isEmpty ? account.displayName : display
-        account.email = trimmedEmail
-        if let phone = phone?.trimmingCharacters(in: .whitespacesAndNewlines), !phone.isEmpty {
-            account.phone = phone
-        }
+        if account.displayName.isEmpty { account.displayName = display }
+        // Usernames may be plain handles — only email-shaped ones go in the email slot.
+        if SignUpView.isValidEmail(key) { account.email = key }
         cachedAccount = account
         try? await cloud.saveUserAccount(account)
 
@@ -252,7 +244,7 @@ final class AuthManager: ObservableObject {
         AppSession.setAuthenticated()
     }
 
-    /// Sign in using a previously-registered email/password on this device.
+    /// Sign in using a previously-registered username/password on this device.
     ///
     /// Critical safety property: if CloudKit returns *anything* other than a
     /// definitive "no such record" we must **not** persist a blank fallback —
@@ -260,12 +252,12 @@ final class AuthManager: ObservableObject {
     /// name, calorie goal, partner pairing, role, etc.) with empty defaults
     /// and is unrecoverable on the server side. On transient errors we throw
     /// so the user can retry once their connection recovers.
-    func signInWithEmail(email: String, password: String) async throws {
+    func signIn(username: String, password: String) async throws {
         isLoadingAuth = true
         lastAuthError = nil
         defer { isLoadingAuth = false }
 
-        let id = try EmailCredentialStore.verify(email: email, password: password)
+        let id = try EmailCredentialStore.verify(email: username, password: password)
 
         let existing: CloudUserAccount?
         do {
@@ -292,14 +284,40 @@ final class AuthManager: ObservableObject {
 
         // Genuinely first sign-in on this device with no CloudKit copy yet —
         // safe to seed a new account.
-        let normalizedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        var fallback = CloudUserAccount.newUser(appleUserID: id, displayName: "Athlete")
-        fallback.email = normalizedEmail
+        let display = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        var fallback = CloudUserAccount.newUser(appleUserID: id, displayName: display.isEmpty ? "Athlete" : display)
+        if SignUpView.isValidEmail(display) { fallback.email = display.lowercased() }
         cachedAccount = fallback
         try? await cloud.saveUserAccount(fallback)
         authState = .onboarding
         postAuthStep = .prdHealth
         AppSession.setAuthenticated()
+    }
+
+    // MARK: - Password reset (local credential store)
+
+    enum PasswordResetError: LocalizedError {
+        case noLocalAccount
+
+        var errorDescription: String? {
+            switch self {
+            case .noLocalAccount:
+                return "No account with that username exists on this device. If you signed up with Apple, recover from your Apple ID instead."
+            }
+        }
+    }
+
+    /// Reset the locally-stored password for a username registered on this
+    /// device. Because the username→ID hash is deterministic, overwriting the
+    /// Keychain record keeps the same `appleUserID`, so the user's CloudKit
+    /// profile, pairing and role stay linked. The device unlock (Keychain
+    /// `WhenUnlockedThisDeviceOnly`) is the trust boundary here; cross-device
+    /// recovery is handled by Sign in with Apple.
+    func resetLocalPassword(username: String, newPassword: String) throws {
+        guard EmailCredentialStore.hasAccount(email: username) else {
+            throw PasswordResetError.noLocalAccount
+        }
+        try EmailCredentialStore.register(email: username, password: newPassword)
     }
 
     // MARK: - Mode & onboarding

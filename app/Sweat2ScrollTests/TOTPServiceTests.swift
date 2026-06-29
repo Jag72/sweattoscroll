@@ -11,6 +11,9 @@
 import XCTest
 @testable import Sweat2Scroll
 
+// The tested type is @MainActor-isolated; hop the whole suite onto the
+// main actor so calls to its statics compile under strict concurrency.
+@MainActor
 final class TOTPServiceTests: XCTestCase {
 
     // MARK: - RFC 6238 Appendix B vectors (HMAC-SHA-256)
