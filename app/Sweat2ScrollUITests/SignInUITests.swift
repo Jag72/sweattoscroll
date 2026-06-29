@@ -4,6 +4,8 @@
 // device. Cross-device, real-Apple-credential, and post-auth-routing rows
 // (TC-UI-19, TC-UI-20) are intentionally NOT automated here — see the notes
 // at the bottom of this file.
+//
+// Sign Up is the auth root; each helper launch navigates Sign Up → Sign In.
 
 import XCTest
 
@@ -21,11 +23,15 @@ final class SignInUITests: XCTestCase {
         app.launchArguments = ["-uiTesting"]
         app.launch()
 
-        // Splash → transition → Sign In can take a few seconds on a cold launch.
-        let email = app.textFields["signIn.email"]
-        XCTAssertTrue(email.waitForExistence(timeout: 25),
-                      "Sign In screen never appeared — did the splash router stall?",
+        // Splash → transition → Sign Up can take a few seconds on a cold launch.
+        XCTAssertTrue(app.textFields["signUp.username"].waitForExistence(timeout: 25),
+                      "Sign Up screen never appeared — did the splash router stall?",
                       file: file, line: line)
+        app.buttons["signUp.goToSignIn"].tap()
+
+        let username = app.textFields["signIn.username"]
+        XCTAssertTrue(username.waitForExistence(timeout: 5),
+                      "Sign In did not push from Sign Up", file: file, line: line)
         return app
     }
 
@@ -42,7 +48,7 @@ final class SignInUITests: XCTestCase {
         ).firstMatch
         XCTAssertTrue(subtitle.exists, "Shield-related subtitle missing")
 
-        XCTAssertTrue(app.textFields["signIn.email"].exists)
+        XCTAssertTrue(app.textFields["signIn.username"].exists)
         XCTAssertTrue(app.secureTextFields["signIn.password"].exists)
         XCTAssertTrue(app.buttons["signIn.submit"].exists)
         XCTAssertTrue(app.buttons["signIn.forgotPassword"].exists)
@@ -52,32 +58,29 @@ final class SignInUITests: XCTestCase {
 
     // MARK: - TC-UI-11 / TC-UI-12 — CTA enabled state
 
-    func testSignIn_submitDisabledForInvalidEmail() throws {
+    func testSignIn_submitDisabledWithIncompleteForm() throws {
         let app = try launchedApp()
-        let email = app.textFields["signIn.email"]
-        let password = app.secureTextFields["signIn.password"]
+        let username = app.textFields["signIn.username"]
         let submit = app.buttons["signIn.submit"]
 
         // Empty form
         XCTAssertFalse(submit.isEnabled, "Submit should be disabled with empty form")
 
-        // Invalid email + non-empty password — still disabled
-        email.tap()
-        email.typeText("not-an-email")
-        password.tap()
-        password.typeText("hunter2")
+        // Username only — still disabled until a password is typed
+        username.tap()
+        username.typeText("jagkrishna")
         XCTAssertFalse(submit.isEnabled,
-                       "Submit should stay disabled until a syntactically valid email")
+                       "Submit should stay disabled until both fields are filled")
     }
 
     func testSignIn_submitEnabledForValidInput() throws {
         let app = try launchedApp()
-        let email = app.textFields["signIn.email"]
+        let username = app.textFields["signIn.username"]
         let password = app.secureTextFields["signIn.password"]
         let submit = app.buttons["signIn.submit"]
 
-        email.tap()
-        email.typeText("user@example.com")
+        username.tap()
+        username.typeText("jagkrishna")
         password.tap()
         password.typeText("hunter22")
 
@@ -127,20 +130,15 @@ final class SignInUITests: XCTestCase {
         XCTAssertFalse(alert.exists)
     }
 
-    // MARK: - TC-UI-17 — navigate to Sign Up
+    // MARK: - TC-UI-17 — pop back to Sign Up
 
-    func testSignIn_navigateToSignUpAndBack() throws {
+    func testSignIn_navigateBackToSignUp() throws {
         let app = try launchedApp()
         app.buttons["signIn.goToSignUp"].tap()
 
-        // Sign Up sheet anchor: the first-name field.
-        let firstName = app.textFields["signUp.firstName"]
-        XCTAssertTrue(firstName.waitForExistence(timeout: 5),
-                      "Sign Up screen did not appear after tapping Sign Up")
-
-        // Back to Sign In via the in-sheet "Sign In" button.
-        app.buttons["signUp.backToSignIn"].tap()
-        XCTAssertTrue(app.textFields["signIn.email"].waitForExistence(timeout: 5))
+        // Sign Up root anchor: the username field.
+        XCTAssertTrue(app.textFields["signUp.username"].waitForExistence(timeout: 5),
+                      "Sign Up screen did not reappear after tapping Sign Up")
     }
 
     // MARK: - TC-UI-18 — Google placeholder alert
@@ -171,11 +169,11 @@ final class SignInUITests: XCTestCase {
         chip.tap()
 
         // After tap, both fields should have the dev credentials.
-        let email = app.textFields["signIn.email"]
+        let username = app.textFields["signIn.username"]
         // The password field's `value` is masked in secure mode, so we can
-        // only assert via the email side here. Email is enough to prove the
-        // chip wired through.
-        XCTAssertEqual(email.value as? String, "puji")
+        // only assert via the username side here. Username is enough to prove
+        // the chip wired through.
+        XCTAssertEqual(username.value as? String, "puji")
     }
     #endif
 

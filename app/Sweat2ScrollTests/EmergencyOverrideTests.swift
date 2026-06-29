@@ -8,6 +8,9 @@
 import XCTest
 @testable import Sweat2Scroll
 
+// `EmergencyOverrideService` is @MainActor; hop the whole suite onto the main
+// actor so calls to its statics compile under strict concurrency checking.
+@MainActor
 final class EmergencyOverrideTests: XCTestCase {
 
     // MARK: - partnershipID
