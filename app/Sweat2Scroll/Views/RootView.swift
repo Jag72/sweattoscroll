@@ -13,7 +13,7 @@ struct RootView: View {
             switch auth.authState {
             case .unauthenticated:
                 NavigationStack {
-                    SignInView()
+                    SignUpView()
                 }
             case .onboarding:
                 onboardingFlow
