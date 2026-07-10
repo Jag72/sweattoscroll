@@ -152,7 +152,8 @@ private struct SoloHomeTab: View {
                     AppPastelTile(bg: .pasteYellow, icon: "bolt.fill", iconColor: Color(hex: "#E6A800"),
                                   label: "Energy",
                                   value: energyValue, unit: energyUnit,
-                                  sub: energySub)
+                                  sub: energySub,
+                                  progress: wellnessVM.energyScore > 0 ? wellnessVM.energyScore / 100 : nil)
                 }
                 .padding(.horizontal, 20)
 
@@ -183,10 +184,6 @@ private struct SoloHomeTab: View {
                 )
                 .padding(.horizontal, 20)
 
-                // Break-glass
-                AppBreakGlassTrigger(show: $showBreakGlass)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
             }
             .padding(.bottom, 16)
         }

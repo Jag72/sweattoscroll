@@ -103,6 +103,50 @@ final class AuthManager: ObservableObject {
         }
     }
 
+    // MARK: - Sign in with Google
+
+    /// Establishes a session from a Google profile, mirroring the Apple flow:
+    /// returning users route straight to their dashboard; new users start
+    /// onboarding. The Google user id is namespaced (`google_…`) so it can't
+    /// collide with an Apple user id in CloudKit.
+    func handleGoogleSignIn(userID: String, email: String?, fullName: String?) async {
+        isLoadingAuth = true
+        lastAuthError = nil
+        defer { isLoadingAuth = false }
+
+        let id = "google_" + userID
+        let emailLocal = email?.split(separator: "@").first.map(String.init)
+        let trimmedName = (fullName ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let display = !trimmedName.isEmpty ? trimmedName : (emailLocal ?? "Athlete")
+
+        UserDefaults.standard.set(id, forKey: appleIDDefaultsKey)
+        currentAppleUserID = id
+
+        if var existing = await cloud.fetchUserAccount(appleUserID: id) {
+            if existing.displayName.isEmpty { existing.displayName = display }
+            if existing.email == nil, let email, !email.isEmpty {
+                existing.email = email.lowercased()
+            }
+            cachedAccount = existing
+            try? await cloud.saveUserAccount(existing)
+            routeReturningUser(existing)
+            AppSession.setAuthenticated()
+        } else {
+            var newAcc = CloudUserAccount.newUser(appleUserID: id, displayName: display)
+            if let email, !email.isEmpty { newAcc.email = email.lowercased() }
+            do {
+                try await cloud.saveUserAccount(newAcc)
+                cachedAccount = newAcc
+                authState = .onboarding
+                postAuthStep = .prdHealth
+                AppSession.setAuthenticated()
+            } catch {
+                lastAuthError = error.localizedDescription
+                authState = .unauthenticated
+            }
+        }
+    }
+
     private func routeReturningUser(_ account: CloudUserAccount) {
         applyReturningUserRouting(account)
     }

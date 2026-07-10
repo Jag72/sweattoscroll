@@ -24,6 +24,17 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.812720529933-3f63vhh4li0lulgu25ode3lkf1c8jcev</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>812720529933-3f63vhh4li0lulgu25ode3lkf1c8jcev.apps.googleusercontent.com</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

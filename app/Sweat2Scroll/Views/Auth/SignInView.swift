@@ -22,7 +22,7 @@ struct SignInView: View {
             Color.paper.ignoresSafeArea()
 
             Circle()
-                .fill(Color.electricOrange.opacity(0.08))
+                .fill(Color.deepTeal.opacity(0.08))
                 .frame(width: 320, height: 320)
                 .blur(radius: 70)
                 .offset(x: 130, y: -240)
@@ -38,7 +38,7 @@ struct SignInView: View {
                             .fill(
                                 RadialGradient(
                                     colors: [
-                                        Color.electricOrange.opacity(0.18),
+                                        Color.deepTeal.opacity(0.18),
                                         Color.clear,
                                     ],
                                     center: .center,
@@ -50,17 +50,7 @@ struct SignInView: View {
                             .blur(radius: 10)
                         Sweat2ScrollLogo(size: 84, animated: true)
                     }
-                    VStack(spacing: 8) {
-                        Sweat2ScrollWordmark(size: 22)
-                        Text("Welcome back")
-                            .font(.display(26))
-                            .foregroundColor(.ink)
-                    }
-                    Text("Sign in to check your progress and manage your shield.")
-                        .font(.system(size: 14))
-                        .foregroundColor(.muted)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 12)
+                    Sweat2ScrollWordmark(size: 22)
 
                     VStack(spacing: 14) {
                         AuthFormField(
@@ -92,7 +82,7 @@ struct SignInView: View {
                     }
 
                     PrimaryCTAButton(
-                        title: "Sign In",
+                        title: "Continue",
                         isEnabled: isSignInReady,
                         isLoading: auth.isLoadingAuth,
                         accessibilityIdentifier: "signIn.submit",
@@ -105,7 +95,11 @@ struct SignInView: View {
 
                     AuthDividerOr()
 
-                    AuthSocialButtons(context: .signIn, showGoogleSoon: $showGoogleSoon) { result in
+                    AuthSocialButtons(
+                        context: .signIn,
+                        showGoogleSoon: $showGoogleSoon,
+                        onGoogle: { Task { await signInWithGoogle() } }
+                    ) { result in
                         Task { @MainActor in
                             authError = nil
                             switch result {
@@ -134,21 +128,8 @@ struct SignInView: View {
                             .accessibilityIdentifier("signIn.authError")
                     }
 
-                    HStack(spacing: 4) {
-                        Text("Don't have an account?")
-                            .font(.subheadline)
-                            .foregroundColor(.muted)
-                        Button {
-                            dismiss()
-                        } label: {
-                            Text("Sign Up")
-                                .font(.subheadline.weight(.bold))
-                                .foregroundColor(.electricOrange)
-                        }
-                        .accessibilityIdentifier("signIn.goToSignUp")
-                    }
-                    .padding(.top, 4)
-                    .padding(.bottom, 24)
+                    Spacer()
+                        .frame(height: 24)
                 }
                 .padding(.horizontal, 24)
             }
@@ -198,10 +179,34 @@ struct SignInView: View {
         #endif
 
         do {
-            try await auth.signIn(username: username, password: password)
+            // Single entry point: verify a returning account, or seed a brand-new
+            // one on first use so no separate sign-up screen is needed.
+            if EmailCredentialStore.hasAccount(email: username) {
+                try await auth.signIn(username: username, password: password)
+            } else {
+                try await auth.signUp(username: username, password: password)
+            }
         } catch {
             // `AuthManager` already surfaces a friendly `lastAuthError` for
             // transient iCloud failures — avoid showing a second, raw error line.
+            if auth.lastAuthError == nil {
+                authError = error.localizedDescription
+            }
+        }
+    }
+
+    @MainActor
+    private func signInWithGoogle() async {
+        authError = nil
+        auth.lastAuthError = nil
+        do {
+            let profile = try await GoogleAuthService.shared.signIn()
+            await auth.handleGoogleSignIn(
+                userID: profile.userID,
+                email: profile.email,
+                fullName: profile.fullName
+            )
+        } catch {
             if auth.lastAuthError == nil {
                 authError = error.localizedDescription
             }

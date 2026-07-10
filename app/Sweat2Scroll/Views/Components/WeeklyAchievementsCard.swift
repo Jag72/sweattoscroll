@@ -95,11 +95,14 @@ struct WeeklyAchievementsCard: View {
     // MARK: - View
 
     var body: some View {
-        Button(action: { onTap?() }) {
+        if let onTap {
+            Button(action: onTap) {
+                content
+            }
+            .buttonStyle(.plain)
+        } else {
             content
         }
-        .buttonStyle(.plain)
-        .disabled(onTap == nil)
     }
 
     @ViewBuilder

@@ -1,12 +1,11 @@
 // AppLaunchFlow.swift
-// Chains SplashView → TransitionAnimationView → main app (PRD §1),
-// crossfading between phases so there are no hard cuts.
+// Shows SplashView, then crossfades straight into the main app.
 
 import SwiftUI
 
 struct AppLaunchFlow<Content: View>: View {
     private enum Phase {
-        case splash, transition, main
+        case splash, main
     }
 
     @State private var phase = Phase.splash
@@ -16,10 +15,7 @@ struct AppLaunchFlow<Content: View>: View {
         ZStack {
             switch phase {
             case .splash:
-                SplashView { phase = .transition }
-                    .transition(.opacity)
-            case .transition:
-                TransitionAnimationView { phase = .main }
+                SplashView { phase = .main }
                     .transition(.opacity)
             case .main:
                 content()

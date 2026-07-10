@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA000001AAAA000100000001 /* WasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = AA000001AAAA000100000002 /* WasmKit */; };
+		FEC85D5E2FFE8C780047991F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = FEC85D5D2FFE8C780047991F /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -187,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA000001AAAA000100000001 /* WasmKit in Frameworks */,
+				FEC85D5E2FFE8C780047991F /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +204,7 @@
 				AA500001AAAA000100000001 /* DeviceActivityMonitorExtension */,
 				AA500002AAAA000100000001 /* ShieldConfigurationExtension */,
 				AA500003AAAA000100000001 /* ShieldActionExtension */,
+				FEC85D5C2FFE8C780047991F /* Frameworks */,
 				FE97B5422F6D88BD00104C5F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -217,6 +220,13 @@
 				AA400003AAAA000100000001 /* ShieldActionExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FEC85D5C2FFE8C780047991F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -346,6 +356,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FEC85D5B2FFE8C280047991F /* PBXTargetDependency */,
 				AA700001AAAA000100000001 /* PBXTargetDependency */,
 				AA700002AAAA000100000001 /* PBXTargetDependency */,
 				AA700003AAAA000100000001 /* PBXTargetDependency */,
@@ -356,6 +367,7 @@
 			name = Sweat2Scroll;
 			packageProductDependencies = (
 				AA000001AAAA000100000002 /* WasmKit */,
+				FEC85D5D2FFE8C780047991F /* GoogleSignIn */,
 			);
 			productName = Sweat2Scroll;
 			productReference = FE97B5412F6D88BD00104C5F /* Sweat2Scroll.app */;
@@ -403,6 +415,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AA000001AAAA000100000003 /* XCRemoteSwiftPackageReference "WasmKit" */,
+				FEC85D592FFE87700047991F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FE97B5422F6D88BD00104C5F /* Products */;
@@ -534,6 +547,10 @@
 			isa = PBXTargetDependency;
 			target = FE97B5402F6D88BD00104C5F /* Sweat2Scroll */;
 			targetProxy = BB2000812F6D88BD00104C5F /* PBXContainerItemProxy */;
+		};
+		FEC85D5B2FFE8C280047991F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = FEC85D5A2FFE8C280047991F /* GoogleSignIn */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1036,6 +1053,14 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		FEC85D592FFE87700047991F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1043,6 +1068,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AA000001AAAA000100000003 /* XCRemoteSwiftPackageReference "WasmKit" */;
 			productName = WasmKit;
+		};
+		FEC85D5A2FFE8C280047991F /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEC85D592FFE87700047991F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		FEC85D5D2FFE8C780047991F /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEC85D592FFE87700047991F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -27,7 +27,7 @@ struct SignUpView: View {
             Color.paper.ignoresSafeArea()
 
             Circle()
-                .fill(Color.electricOrange.opacity(0.08))
+                .fill(Color.deepTeal.opacity(0.08))
                 .frame(width: 320, height: 320)
                 .blur(radius: 70)
                 .offset(x: 130, y: -240)
@@ -43,7 +43,7 @@ struct SignUpView: View {
                             .fill(
                                 RadialGradient(
                                     colors: [
-                                        Color.electricOrange.opacity(0.18),
+                                        Color.deepTeal.opacity(0.18),
                                         Color.clear,
                                     ],
                                     center: .center,
@@ -144,7 +144,7 @@ struct SignUpView: View {
                         } label: {
                             Text("Sign In")
                                 .font(.subheadline.weight(.bold))
-                                .foregroundColor(.electricOrange)
+                                .foregroundColor(.deepTeal)
                         }
                         .accessibilityIdentifier("signUp.goToSignIn")
                     }

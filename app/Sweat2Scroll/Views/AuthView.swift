@@ -1,6 +1,7 @@
 // Views/AuthView.swift
 // Auth screen with three modes: Login, User Sign-Up, Partner Join.
-// Each mode has a distinct visual identity. After success → DashboardView via UserDefaults flag.
+// FinalTheme: auth uses the deep-teal accent end-to-end (entry experience);
+// orange is reserved for in-app energy. After success → DashboardView via UserDefaults flag.
 
 import SwiftUI
 import AuthenticationServices
@@ -36,21 +37,11 @@ struct AuthView: View {
         _mode = State(initialValue: initialMode)
     }
 
-    // MARK: - Accent per mode
-    private var accent: Color {
-        switch mode {
-        case .login:      return .electricOrange
-        case .signup:     return .electricOrange
-        case .partnerJoin: return .deepTeal
-        }
-    }
+    // MARK: - Accent (FinalTheme: teal for the whole auth flow)
+    private var accent: Color { .deepTeal }
 
     private var accentGradient: [Color] {
-        switch mode {
-        case .login:      return [Color.electricOrange, Color(hex: "#FF9A62")]
-        case .signup:     return [Color.electricOrange, Color(hex: "#FF9A62")]
-        case .partnerJoin: return [Color.deepTeal, Color(hex: "#1A7A90")]
-        }
+        [Color.deepTeal, Color(hex: "#1A7A90")]
     }
 
     var body: some View {
@@ -209,7 +200,7 @@ struct AuthView: View {
 
     private func modeTab(_ title: String, for tabMode: AuthMode) -> some View {
         let isActive = mode == tabMode
-        let tabAccent: Color = tabMode == .partnerJoin ? .deepTeal : .electricOrange
+        let tabAccent: Color = .deepTeal
         return Button(action: {
             withAnimation(.easeInOut(duration: 0.2)) {
                 mode = tabMode
@@ -318,7 +309,7 @@ struct AuthView: View {
         Button(action: { agreedToTerms.toggle() }) {
             HStack(alignment: .top, spacing: 10) {
                 Image(systemName: agreedToTerms ? "checkmark.square.fill" : "square")
-                    .foregroundColor(agreedToTerms ? .electricOrange : .muted)
+                    .foregroundColor(agreedToTerms ? .deepTeal : .muted)
                     .font(.title3)
                 Text("I agree to the Terms of Service and Privacy Policy. My health data stays on-device and is never uploaded.")
                     .font(.system(size: 12))
@@ -512,7 +503,7 @@ struct AuthTextField: View {
     let placeholder: String
     @Binding var text: String
     var keyboardType: UIKeyboardType = .default
-    var accentColor: Color = .electricOrange
+    var accentColor: Color = .deepTeal
 
     @FocusState private var isFocused: Bool
 
@@ -551,7 +542,7 @@ struct AuthSecureField: View {
     let placeholder: String
     @Binding var text: String
     @Binding var showPassword: Bool
-    var accentColor: Color = .electricOrange
+    var accentColor: Color = .deepTeal
 
     @FocusState private var isFocused: Bool
 

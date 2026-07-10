@@ -608,27 +608,26 @@ struct S2SBottomNav: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(DashboardPane.bottomBar, id: \.self) { tab in
+                let isActive = activePane == tab
                 Button(action: { activePane = tab }) {
-                    VStack(spacing: 4) {
-                        Image(systemName: tab.bottomIcon)
-                            .font(.system(size: 20, weight: activePane == tab ? .bold : .regular))
-                            .foregroundColor(activePane == tab ? Color(red: 0.91, green: 0.40, blue: 0.10) : .muted)
-                        Text(tab.bottomLabel)
-                            .font(.system(size: 9, weight: .bold, design: .default))
-                            .tracking(-0.3)
-                            .foregroundColor(activePane == tab ? Color(red: 0.91, green: 0.40, blue: 0.10) : .muted)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
+                    Image(systemName: tab.bottomIcon)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(isActive ? S2STheme.navBar : S2STheme.navInactive)
+                        .frame(width: 46, height: 46)
+                        .background(
+                            Circle().fill(isActive ? Color.white : Color.clear)
+                        )
+                        .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 9)
         .background(
             Capsule()
-                .fill(.thinMaterial)
-                .overlay(Capsule().strokeBorder(Color.white.opacity(0.8), lineWidth: 1))
-                .shadow(color: .black.opacity(0.10), radius: 20, x: 0, y: 8)
+                .fill(S2STheme.navBar)
+                .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 10)
         )
     }
 }

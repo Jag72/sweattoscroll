@@ -127,29 +127,27 @@ struct AppBottomNav: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(tabs.indices, id: \.self) { i in
+                let isActive = selection == i
                 Button { selection = i } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: tabs[i].icon)
-                            .font(.system(size: 22, weight: selection == i ? .semibold : .regular))
-                            .symbolRenderingMode(.hierarchical)
-                        Text(tabs[i].label)
-                            .font(.system(size: 10, weight: .semibold))
-                            .tracking(0.2)
-                    }
-                    .foregroundColor(selection == i ? accent : Color.white.opacity(0.35))
-                    .frame(maxWidth: .infinity)
-                    .contentShape(Rectangle())
+                    Image(systemName: tabs[i].icon)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(isActive ? Color.navSurface : Color.white.opacity(0.55))
+                        .frame(width: 46, height: 46)
+                        .background(
+                            Circle().fill(isActive ? Color.white : Color.clear)
+                        )
+                        .frame(maxWidth: .infinity)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(.top, 12)
-        .padding(.bottom, 8)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 9)
         .background(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
+            Capsule()
                 .fill(Color.navSurface)
-                .shadow(color: .black.opacity(0.35), radius: 20, y: 6)
+                .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 10)
         )
         .padding(.horizontal, 20)
     }
@@ -169,9 +167,10 @@ struct DashCard<Content: View>: View {
         content()
             .padding(padding)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .fill(Color.cardWhite)
-                    .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 3)
+                    .shadow(color: .black.opacity(0.045), radius: 10, x: 0, y: 4)
+                    .shadow(color: .black.opacity(0.04),  radius: 3,  x: 0, y: 1)
             )
     }
 }
@@ -184,27 +183,27 @@ struct AppShieldBanner: View {
 
     var body: some View {
         let color: Color = locked ? .rose : .emeraldGreen
-        HStack(spacing: 12) {
+        HStack(spacing: 13) {
             ZStack {
-                Circle()
-                    .fill(color.opacity(0.12))
-                    .frame(width: 40, height: 40)
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .fill(color)
+                    .frame(width: 42, height: 42)
                 Image(systemName: locked ? "lock.fill" : "checkmark.circle.fill")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(color)
+                    .foregroundColor(.white)
             }
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 1) {
                 Text(locked ? "Apps blocked" : "Goal met — apps unlocked")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(color)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.ink)
                 Text(locked ? "\(remaining) kcal to go" : "You earned your scroll.")
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.muted)
             }
-            Spacer()
+            Spacer(minLength: 8)
             if locked {
                 Text("\(max(0, 100 - Int(Double(remaining) / max(1, Double(remaining + 10)) * 100)))%")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 15, weight: .black, design: .rounded))
                     .foregroundColor(color)
             } else {
                 Image(systemName: "checkmark")
@@ -215,12 +214,10 @@ struct AppShieldBanner: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(color.opacity(0.07))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .strokeBorder(color.opacity(0.18), lineWidth: 1.5)
-                )
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.045), radius: 10, x: 0, y: 4)
+                .shadow(color: .black.opacity(0.04),  radius: 3,  x: 0, y: 1)
         )
     }
 }
@@ -346,6 +343,8 @@ struct CompactArcRing: View {
 // MARK: - Unified Pastel Stat Tile
 
 struct AppPastelTile: View {
+    /// Retained for call-site compatibility. Clean-minimal renders white cards,
+    /// so this pastel value is no longer painted as the tile background.
     let bg: Color
     let icon: String
     let iconColor: Color
@@ -353,18 +352,33 @@ struct AppPastelTile: View {
     let value: String
     let unit: String
     let sub: String
+    /// Optional mini progress ring (0...1) shown top-right in the icon's tint.
+    var progress: Double? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(iconColor)
+            HStack(alignment: .top) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(iconColor)
+                Spacer()
+                if let p = progress {
+                    ZStack {
+                        Circle().stroke(iconColor.opacity(0.15), lineWidth: 3.5)
+                        Circle()
+                            .trim(from: 0, to: min(max(p, 0), 1))
+                            .stroke(iconColor, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                    }
+                    .frame(width: 30, height: 30)
+                }
+            }
 
             Spacer(minLength: 8)
 
             HStack(alignment: .firstTextBaseline, spacing: 3) {
                 Text(value)
-                    .font(.system(size: 26, weight: .black, design: .rounded))
+                    .font(.system(size: 28, weight: .black, design: .rounded))
                     .foregroundColor(.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
@@ -391,7 +405,12 @@ struct AppPastelTile: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 130)
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(bg))
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.045), radius: 10, x: 0, y: 4)
+                .shadow(color: .black.opacity(0.04),  radius: 3,  x: 0, y: 1)
+        )
     }
 }
 
@@ -618,27 +637,32 @@ struct AppAuditRow: View {
 
 struct AppBreakGlassTrigger: View {
     @Binding var show: Bool
-    @State private var holding = false
-    @GestureState private var longPressing = false
 
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "exclamationmark.circle")
-                .font(.system(size: 12))
-            Text(holding ? "Keep holding…" : "Emergency override")
-                .font(.system(size: 12, weight: .medium))
+        Button {
+            show = true
+        } label: {
+            HStack(spacing: 7) {
+                Image(systemName: "exclamationmark.shield.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                Text("Emergency override")
+                    .font(.system(size: 13, weight: .semibold))
+            }
+            .foregroundColor(.rose)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 13)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color.white)
+                    .overlay(
+                        Capsule(style: .continuous)
+                            .strokeBorder(Color.rose.opacity(0.35), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+            )
+            .contentShape(Capsule(style: .continuous))
         }
-        .foregroundColor(.muted.opacity(holding ? 0.7 : 0.35))
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .contentShape(Rectangle())
-        .gesture(
-            LongPressGesture(minimumDuration: 0.9)
-                .updating($longPressing) { v, s, _ in s = v }
-                .onChanged { _ in holding = true }
-                .onEnded { _ in holding = false; show = true }
-        )
-        .onChange(of: longPressing) { if !$0 { holding = false } }
+        .buttonStyle(.plain)
     }
 }
 

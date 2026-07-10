@@ -68,37 +68,37 @@ struct BlockingStatusBanner: View {
         Button {
             if phase == .blocked { onTapBlocked() }
         } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: 13) {
                 ZStack {
-                    Circle().fill(color.opacity(0.12)).frame(width: 40, height: 40)
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(color)
+                        .frame(width: 42, height: 42)
                     Image(systemName: icon)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(color)
+                        .foregroundColor(.white)
                 }
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text(title)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(color)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.ink)
                     Text(subtitle)
-                        .font(.system(size: 12))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.muted)
                 }
-                Spacer()
+                Spacer(minLength: 8)
                 if phase == .blocked {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(color)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.muted.opacity(0.6))
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(color.opacity(0.07))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .strokeBorder(color.opacity(0.18), lineWidth: 1.5)
-                    )
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(Color.white)
+                    .shadow(color: .black.opacity(0.045), radius: 10, x: 0, y: 4)
+                    .shadow(color: .black.opacity(0.04),  radius: 3,  x: 0, y: 1)
             )
         }
         .buttonStyle(.plain)

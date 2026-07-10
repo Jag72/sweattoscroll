@@ -1,0 +1,62 @@
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Services/OPAService.swift:67:33: warning: 'ModuleInstance' is deprecated: ModuleInstance has been renamed to Instance to match the terminology in the WebAssembly ecosystem
+    private var moduleInstance: ModuleInstance?
+                                ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Services/OPAService.swift:67:33: note: use 'Instance' instead
+    private var moduleInstance: ModuleInstance?
+                                ^~~~~~~~~~~~~~
+                                Instance
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: warning: switch must be exhaustive
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.notInteractive'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.matchedExcludedCredential'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.credentialImport'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.credentialExport'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.preferSignInWithApple'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.deviceNotConfiguredForPasskeyCreation'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing cases
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Services/OPAService.swift:67:33: warning: 'ModuleInstance' is deprecated: ModuleInstance has been renamed to Instance to match the terminology in the WebAssembly ecosystem
+    private var moduleInstance: ModuleInstance?
+                                ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Services/OPAService.swift:67:33: note: use 'Instance' instead
+    private var moduleInstance: ModuleInstance?
+                                ^~~~~~~~~~~~~~
+                                Instance
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: warning: switch must be exhaustive
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.notInteractive'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.matchedExcludedCredential'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.credentialImport'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.credentialExport'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.preferSignInWithApple'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing case: '.deviceNotConfiguredForPasskeyCreation'
+            switch authErr.code {
+            ^
+/Users/pujithajagadish/Documents/GitHub/sweattoscroll/app/Sweat2Scroll/Views/Auth/AuthComponents.swift:126:13: note: add missing cases
+            switch authErr.code {
+            ^

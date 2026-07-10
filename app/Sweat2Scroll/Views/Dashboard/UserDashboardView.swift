@@ -171,9 +171,6 @@ private struct UserHomeTab: View {
                         .padding(.horizontal, 20)
                 }
 
-                AppBreakGlassTrigger(show: $showBreakGlass)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
             }
             .padding(.bottom, 16)
         }

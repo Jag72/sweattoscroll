@@ -72,6 +72,8 @@ struct Sweat2ScrollApp: App {
             .environmentObject(ScreenTimeService.shared)
             .environmentObject(authManager)
             .onOpenURL { url in
+                // Let the Google Sign-In SDK claim its OAuth redirect first.
+                if GoogleAuthService.handleURL(url) { return }
                 guard DeepLinkService.isPairingURL(url) else { return }
                 AppLogger.deepLink.info("Pairing URL: \(url.absoluteString, privacy: .public)")
                 onboardingVM.handleIncomingPairingURL(url)

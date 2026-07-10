@@ -25,14 +25,14 @@ struct PrimaryCTAButton: View {
             .padding(.vertical, 16)
             .background(
                 isEnabled
-                    ? LinearGradient(colors: [.electricOrange, Color(hex: "#FF9A62")],
+                    ? LinearGradient(colors: [.deepTeal, Color(hex: "#1A7A90")],
                                      startPoint: .leading, endPoint: .trailing)
                     : LinearGradient(colors: [Color.muted.opacity(0.25), Color.muted.opacity(0.2)],
                                      startPoint: .leading, endPoint: .trailing)
             )
             .foregroundColor(isEnabled ? .white : .muted)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: isEnabled ? Color.electricOrange.opacity(0.25) : .clear, radius: 12, y: 4)
+            .shadow(color: isEnabled ? Color.deepTeal.opacity(0.25) : .clear, radius: 12, y: 4)
         }
         .disabled(!isEnabled || isLoading)
         .modifier(PrimaryCTAButtonAccessibilityID(id: accessibilityIdentifier))
@@ -71,6 +71,9 @@ struct AuthSocialButtons: View {
 
     let context: Context
     @Binding var showGoogleSoon: Bool
+    /// When provided, taps run the real Google Sign-In flow; otherwise the
+    /// legacy "coming soon" alert (`showGoogleSoon`) is shown.
+    var onGoogle: (() -> Void)? = nil
     let onAppleResult: (Result<ASAuthorization, Error>) -> Void
 
     private var idPrefix: String { context == .signIn ? "signIn" : "signUp" }
@@ -78,7 +81,7 @@ struct AuthSocialButtons: View {
     var body: some View {
         VStack(spacing: 10) {
             Button {
-                showGoogleSoon = true
+                if let onGoogle { onGoogle() } else { showGoogleSoon = true }
             } label: {
                 HStack {
                     Image(systemName: "g.circle.fill")

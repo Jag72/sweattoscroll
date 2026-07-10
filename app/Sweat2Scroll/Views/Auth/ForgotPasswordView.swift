@@ -177,7 +177,7 @@ struct ForgotPasswordView: View {
         VStack(spacing: 20) {
             Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 44))
-                .foregroundColor(.electricOrange)
+                .foregroundColor(.deepTeal)
                 .padding(.top, 8)
 
             PrimaryCTAButton(
