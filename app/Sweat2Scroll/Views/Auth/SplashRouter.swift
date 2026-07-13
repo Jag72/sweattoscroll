@@ -16,7 +16,7 @@ struct SplashRouter: View {
         ZStack {
             if isSignedOut {
                 NavigationStack {
-                    SignUpView()
+                    SignInView()
                 }
                 .transition(.opacity)
             } else {

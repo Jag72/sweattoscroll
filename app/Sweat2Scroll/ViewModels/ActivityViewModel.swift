@@ -50,28 +50,30 @@ class ActivityViewModel: ObservableObject {
     // MARK: - Setup
     func initialize() async {
         isLoading = true
+        // HealthKit auth + first fetch are best-effort — a Simulator hiccup or
+        // zero activity today must not block the rest of startup.
+        try? await healthKit.requestAuthorization()
+        await healthKit.verifyAccess()
+
+        // Compute calorie goal — prefer the user's saved goal so the
+        // dashboard percentage matches what they set in onboarding.
+        activityGoal = makeActivityGoal(profile: healthKit.userProfile)
+
         do {
-            // 1. Request HealthKit authorization
-            try await healthKit.requestAuthorization()
-
-            // 2. Compute calorie goal — prefer the user's saved goal so the
-            // dashboard percentage matches what they set in onboarding.
-            activityGoal = makeActivityGoal(profile: healthKit.userProfile)
-
-            // 3. Load persisted shield state
+            // Load persisted shield state
             screenTime.loadSelection()
             isShieldActive = screenTime.isShieldActive
 
-            // 4. Load Wasm policy module (cold start ~38ms)
+            // Load Wasm policy module (cold start ~38ms)
             try opaService.loadModule()
 
-            // 5. Start tamper detection watchdog
+            // Start tamper detection watchdog
             tamperService.startMonitoring()
 
-            // 6. Start continuous policy evaluation loop
+            // Start continuous policy evaluation loop
             startPolicyEvaluationLoop()
 
-            // 7. Sync to CloudKit
+            // Sync to CloudKit
             await cloudKit.subscribeToPartnerUpdates()
 
         } catch {

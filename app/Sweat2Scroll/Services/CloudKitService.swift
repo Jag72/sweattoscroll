@@ -405,6 +405,13 @@ class CloudKitService: ObservableObject {
                 lastSyncError = "CloudKit zone not found. Re-pairing required."
             case .userDeletedZone:
                 lastSyncError = "Partner deleted the shared zone. Please re-pair."
+            case .quotaExceeded:
+                // Private-DB writes count against the signed-in iCloud account's
+                // storage. Common on the Simulator's sandbox account. Local data
+                // is unaffected — we just couldn't mirror to iCloud right now.
+                lastSyncError = "iCloud storage is full for this account, so we couldn't sync to iCloud. Your data is saved on this device."
+            case .notAuthenticated:
+                lastSyncError = "Sign in to iCloud (Settings) to sync your account across devices."
             default:
                 lastSyncError = ckError.localizedDescription
             }

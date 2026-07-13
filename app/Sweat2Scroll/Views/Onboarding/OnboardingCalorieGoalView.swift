@@ -27,13 +27,19 @@ struct OnboardingCalorieGoalView: View {
         return { auth.advancePRDOnboarding(to: step) }
     }
 
+    private var storedBMI: Double? {
+        UserDefaults.standard.object(forKey: "prdBMI") as? Double
+    }
+
+    private var profileWeightKg: Double? {
+        hk.userProfile?.weightKg ?? UserBodyProfileStorage.load().weightKg
+    }
+
+    /// BMI-informed daily active-calorie-burn recommendation (see
+    /// `CalorieRecommendation`). Higher BMI → a larger, still-realistic target
+    /// so the user trends toward a healthier range over time.
     private var recommended: Double {
-        if let bmi = UserDefaults.standard.object(forKey: "prdBMI") as? Double {
-            if bmi < 22 { return 350 }
-            if bmi < 28 { return 450 }
-            return 400
-        }
-        return 400
+        CalorieRecommendation.dailyActiveBurn(bmi: storedBMI, weightKg: profileWeightKg)
     }
 
     private var selectedOrRecommended: Double {
@@ -72,6 +78,29 @@ struct OnboardingCalorieGoalView: View {
                         .fill(Color.white)
                         .shadow(color: .black.opacity(0.04), radius: 10, y: 3)
                 )
+
+                if let bmi = storedBMI {
+                    let cat = BMICategory.from(bmi: bmi)
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "sparkles")
+                            .foregroundColor(.deepTeal)
+                            .font(.system(size: 15))
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Based on your BMI \(String(format: "%.1f", bmi)) (\(cat.rawValue))")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.ink)
+                            Text("\(cat.guidance) We suggest burning about \(Int(recommended)) kcal a day to keep building fitness.")
+                                .font(.system(size: 12))
+                                .foregroundColor(.muted)
+                                .lineSpacing(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.deepTeal.opacity(0.08))
+                    .cornerRadius(12)
+                }
 
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {

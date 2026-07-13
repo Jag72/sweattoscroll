@@ -74,7 +74,16 @@ class HealthKitService: ObservableObject {
     /// type — a strong signal we should send them to Settings → Health.
     /// (iOS doesn't expose read-status programmatically; we use writes as a
     /// proxy and combine with `hasAnyDataForToday()` for confirmation.)
+    ///
+    /// Deprecated for read-only apps: iOS always reports `.sharingDenied` for
+    /// read-only types, so this flag is never raised — see `verifyAccess()`.
     @Published var allTypesDenied: Bool = false
+
+    /// True once iOS reports the HealthKit permission sheet has already been
+    /// shown for our read set (`.unnecessary`). For read-only apps this is the
+    /// only reliable signal that the user responded — iOS intentionally hides
+    /// whether individual read categories were granted.
+    @Published private(set) var hasAnsweredAuthorizationPrompt: Bool = false
 
     /// Asks HealthKit for read access. iOS only shows the system sheet the
     /// first time per (bundle id, type-set); subsequent calls are a no-op even
@@ -84,45 +93,71 @@ class HealthKitService: ObservableObject {
             throw HealthKitError.notAvailable
         }
         try await store.requestAuthorization(toShare: [], read: readTypes)
-        // Optimistically flag as authorized; `verifyAccess` will downgrade
-        // this if a probe fetch comes back empty AND the user previously
-        // denied write access.
-        isAuthorized = true
-        try await fetchUserProfile()
-        try await fetchTodayMetrics()
         await verifyAccess()
+        // Profile + today's metrics are best-effort — a query failure (common on
+        // Simulator, or before the user has moved today) must NOT be treated as
+        // "access denied" and block onboarding.
+        try? await fetchUserProfile()
+        try? await fetchTodayMetrics()
+        // If the user already answered the prompt, treat Health as connected
+        // even when today's calorie/step totals are still 0.
+        if hasAnsweredAuthorizationPrompt {
+            isAuthorized = true
+        }
         setupBackgroundDelivery()
     }
 
-    /// Probes whether the user actually granted read access by:
-    ///   1. Reading per-type write status (the only thing iOS exposes).
-    ///   2. Trying a real fetch for active calories + steps today.
+    /// Determines whether we should treat HealthKit as usable.
     ///
-    /// We can't tell "0 samples because user denied" from "0 samples because
-    /// the user truly hasn't moved", so we combine signals: if iOS reports
-    /// every type as `.sharingDenied` AND today's fetch is empty, we assume
-    /// the user denied access.
+    /// IMPORTANT: For a **read-only** app, `authorizationStatus(for:)` (which
+    /// reports *share/write* permission) is meaningless — iOS returns
+    /// `.sharingDenied` for every read-only type on purpose, so it never leaks
+    /// whether the user allowed reads. Using it as a denial signal produced a
+    /// false "Apple Health is blocking access" banner whenever today's active
+    /// calories/steps happened to be 0 (e.g. the Simulator, or before the user
+    /// has moved), even though profile reads were working fine.
+    ///
+    /// Instead we ask iOS whether it still needs to prompt us. `.unnecessary`
+    /// means the user has already responded to our authorization request — at
+    /// which point we assume access is fine, because HealthKit gives us no way
+    /// to distinguish "denied read" from "no samples yet", and a false alarm is
+    /// worse than silently offering manual entry.
     func verifyAccess() async {
         guard isHealthKitAvailable else {
             isAuthorized = false
+            hasAnsweredAuthorizationPrompt = false
             allTypesDenied = false
             return
         }
 
-        let writeDenied = readTypes.allSatisfy {
-            store.authorizationStatus(for: $0) == .sharingDenied
-        }
-        let probe = (try? await fetchTodaySum(
-            type: .init(.activeEnergyBurned), unit: .kilocalorie()
-        )) ?? 0
-        let stepProbe = (try? await fetchTodaySum(
-            type: .init(.stepCount), unit: .count()
-        )) ?? 0
-        let hasData = probe > 0 || stepProbe > 0
+        let requestStatus = await requestStatusForAuthorization()
+        hasAnsweredAuthorizationPrompt = (requestStatus == .unnecessary)
 
-        // Authorized if we either received data or the user hasn't blocked us.
-        isAuthorized = hasData || !writeDenied
-        allTypesDenied = writeDenied && !hasData
+        switch requestStatus {
+        case .unnecessary:
+            // User already responded to our prompt (granted or denied — iOS won't
+            // tell us for reads). Treat as connected; manual entry covers gaps.
+            isAuthorized = true
+        case .shouldRequest:
+            // Haven't shown the sheet yet — only claim authorized if profile
+            // samples are already flowing (e.g. restored session).
+            isAuthorized = userProfile != nil && !needsManualBodyMetrics
+        @unknown default:
+            isAuthorized = hasAnsweredAuthorizationPrompt
+        }
+        // Never hard-flag "denied" from read-only signals — it can't be detected
+        // reliably and previously fired false positives.
+        allTypesDenied = false
+    }
+
+    /// Wraps `getRequestStatusForAuthorization` in async/await. Returns whether
+    /// iOS would still show the permission sheet for our read set.
+    private func requestStatusForAuthorization() async -> HKAuthorizationRequestStatus {
+        await withCheckedContinuation { continuation in
+            store.getRequestStatusForAuthorization(toShare: [], read: readTypes) { status, _ in
+                continuation.resume(returning: status)
+            }
+        }
     }
 
     // MARK: - Fetch User Profile (biometrics for CalorieEngine)
