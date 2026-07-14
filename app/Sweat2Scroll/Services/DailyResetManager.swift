@@ -48,10 +48,10 @@ final class DailyResetManager: ObservableObject {
         // Reset burned calories for the new day.
         UserDefaults.standard.set(0.0, forKey: Self.dailyCaloriesBurnedKey)
 
-        // Open the 30-minute free window starting at midnight.
-        let windowEnd = today.addingTimeInterval(30 * 60)
-        freeWindowEnd = windowEnd
-        UserDefaults.standard.set(windowEnd, forKey: Self.freeWindowEndKey)
+        // Per-app usage limits reset via DeviceActivityMonitor at midnight.
+        // Do NOT open a global free window here — each app tracks its own 30 min.
+        freeWindowEnd = nil
+        UserDefaults.standard.removeObject(forKey: Self.freeWindowEndKey)
 
         // Persist today as the last reset date.
         UserDefaults.standard.set(today, forKey: lastResetDateKey)

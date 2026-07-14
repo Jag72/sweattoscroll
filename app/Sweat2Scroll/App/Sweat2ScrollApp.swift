@@ -41,19 +41,17 @@ struct Sweat2ScrollApp: App {
         //    deploy the schema to Production from the Dashboard.
         Task { await CloudKitSchemaBootstrap.initializeIfNeeded() }
 
-        // 3. Midnight reset — re-engage shields at the start of a new day and open
-        //    the 30-minute free window. Called here so it fires even if the app was
-        //    force-quit overnight.
+        // 3. Midnight reset — calorie tally only. Per-app usage limits reset
+        //    via DeviceActivityMonitor at midnight (not a global free window).
         DailyResetManager.shared.performMidnightResetIfNeeded()
 
         // 4. Calorie observer — listens for new HealthKit activeEnergyBurned samples
         //    and posts a notification so the dashboard can react promptly.
         CalorieObserver.shared.startObserving()
 
-        // 5. Solo blocking session — initialize the daily 30-min grace window,
-        //    bypass timers, and persisted justification note. This is touched
-        //    here (rather than lazily) so the App Group container is populated
-        //    before the OS shield extension tries to read from it.
+        // 5. Solo blocking session — per-app usage state, bypass timers, and
+        //    persisted justification note. Touched here so the App Group container
+        //    is populated before the OS shield extension reads from it.
         Task { @MainActor in
             BlockingSessionService.shared.passiveTick()
         }

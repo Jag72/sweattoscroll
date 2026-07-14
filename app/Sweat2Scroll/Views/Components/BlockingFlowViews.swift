@@ -11,7 +11,8 @@ import SwiftUI
 struct BlockingStatusBanner: View {
     let phase: BlockingPhase
     let kcalRemaining: Int
-    let graceMinutes: Int
+    let exhaustedCount: Int
+    let monitoredCount: Int
     let bypassMinutes: Int
     var onTapBlocked: () -> Void = {}
 
@@ -20,30 +21,30 @@ struct BlockingStatusBanner: View {
         case .blocked:                  return .rose
         case .unlocked, .dayBypass:     return .emeraldGreen
         case .bypass15:                 return .amber
-        case .grace:                    return .deepTeal
+        case .monitoring:               return .deepTeal
         case .idle:                     return .muted
         }
     }
 
     private var icon: String {
         switch phase {
-        case .blocked:   return "lock.fill"
-        case .unlocked:  return "checkmark.circle.fill"
-        case .grace:     return "clock.fill"
-        case .bypass15:  return "hourglass"
-        case .dayBypass: return "calendar.badge.exclamationmark"
-        case .idle:      return "app.badge"
+        case .blocked:     return "lock.fill"
+        case .unlocked:    return "checkmark.circle.fill"
+        case .monitoring:  return "clock.fill"
+        case .bypass15:    return "hourglass"
+        case .dayBypass:   return "calendar.badge.exclamationmark"
+        case .idle:        return "app.badge"
         }
     }
 
     private var title: String {
         switch phase {
-        case .blocked:   return "Apps blocked — burn to unlock"
-        case .unlocked:  return "Goal met — apps unlocked"
-        case .grace:     return "Free scroll window"
-        case .bypass15:  return "15-min bypass active"
-        case .dayBypass: return "Apps unlocked for today"
-        case .idle:      return "No apps to lock yet"
+        case .blocked:     return "Apps blocked — burn to unlock"
+        case .unlocked:    return "Goal met — apps unlocked"
+        case .monitoring:  return "Per-app scroll limits"
+        case .bypass15:    return "15-min bypass active"
+        case .dayBypass:   return "Apps unlocked for today"
+        case .idle:        return "No apps to lock yet"
         }
     }
 
@@ -53,8 +54,11 @@ struct BlockingStatusBanner: View {
             return "\(kcalRemaining) kcal to earn your scroll • Tap"
         case .unlocked:
             return "You earned your scroll."
-        case .grace:
-            return "\(graceMinutes) min of free time left"
+        case .monitoring:
+            if exhaustedCount > 0 {
+                return "\(exhaustedCount) of \(monitoredCount) locked • 30 min each per day"
+            }
+            return "30 min per app per day — timer starts when you open each app"
         case .bypass15:
             return "\(bypassMinutes) min until apps re-lock"
         case .dayBypass:

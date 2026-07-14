@@ -421,6 +421,13 @@ final class AuthManager: ObservableObject {
         await refreshAccountFromCloud(appleUserID: id)
     }
 
+    /// Replace the cached account in place (used by `PairingService` after it
+    /// links this device to a peer). Also re-routes so paired dashboards update.
+    func updateCachedAccount(_ account: CloudUserAccount) {
+        cachedAccount = account
+        applyReturningUserRouting(account)
+    }
+
     // MARK: - Partnership role (post-pair)
 
     /// Persist the user's chosen `PartnershipRole` after pairing succeeds. Each

@@ -922,9 +922,10 @@ struct ShieldScreen: View {
     let blockedAppNames: [String]
     @Binding var showBreakGlass: Bool
     /// When provided, the shield hero adapts copy to the current block-session
-    /// phase (grace / blocked / bypass15 / dayBypass).
+    /// phase (monitoring / blocked / bypass15 / dayBypass).
     var blockingPhase: BlockingPhase? = nil
-    var graceMinutes: Int = 0
+    var exhaustedCount: Int = 0
+    var monitoredCount: Int = 0
     var bypassMinutes: Int = 0
     var onTapShield: () -> Void = {}
 
@@ -1011,9 +1012,14 @@ struct ShieldScreen: View {
         -> (title: String, subtitle: String, icon: String, color: Color)
     {
         switch phase {
-        case .grace:
-            return ("Free scroll window",
-                    "\(graceMinutes) min before your apps lock down.",
+        case .monitoring:
+            if exhaustedCount > 0 {
+                return ("Per-app scroll limits",
+                        "\(exhaustedCount) of \(monitoredCount) locked • 30 min each per day.",
+                        "clock.fill", .deepTeal)
+            }
+            return ("Per-app scroll limits",
+                    "30 min per app per day — timer starts when you open each app.",
                     "clock.fill", .deepTeal)
         case .blocked:
             return ("Time to move",
@@ -1261,6 +1267,8 @@ struct ShieldScreen: View {
 struct ProgressScreen: View {
     /// Drives navigation to the 30-day metric detail.
     @State private var detailMetric: MetricKind?
+    /// Presents the interactive Swift Charts analytics page (D/W/M/6M).
+    @State private var showAnalytics = false
     // Energy / Apple rings
     let energyScore: Double
     let moveProgress: Double
@@ -1321,6 +1329,8 @@ struct ProgressScreen: View {
                 heroRing
                 ringsBreakdown
 
+                analyticsEntryCard
+
                 sectionHeader("Heart Statistics", showChevron: true)
                     .onTapGesture { detailMetric = .heart }
                 heartStatsCard
@@ -1362,6 +1372,49 @@ struct ProgressScreen: View {
                 MetricDetailView(metric: metric)
             }
         }
+        .sheet(isPresented: $showAnalytics) {
+            NavigationStack {
+                ProgressAnalyticsView(moveGoalKcal: energyMoveGoalKcal)
+            }
+        }
+    }
+
+    // MARK: - Analytics entry card
+
+    /// Prominent entry into the interactive Swift Charts analytics page.
+    private var analyticsEntryCard: some View {
+        Button { showAnalytics = true } label: {
+            DashCard(padding: .init(top: 16, leading: 16, bottom: 16, trailing: 16)) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(
+                                LinearGradient(colors: [.electricOrange, Color(hex: "#FF8C42")],
+                                               startPoint: .topLeading, endPoint: .bottomTrailing)
+                            )
+                            .frame(width: 46, height: 46)
+                        Image(systemName: "chart.xyaxis.line")
+                            .font(.system(size: 19, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Deep Analytics")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.ink)
+                        Text("Compare days, weeks & months — scrub charts, see your baselines & trends")
+                            .font(.system(size: 11.5))
+                            .foregroundColor(.muted)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.electricOrange)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 20)
     }
 
     // MARK: - Section header

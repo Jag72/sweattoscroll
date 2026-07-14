@@ -72,9 +72,15 @@ struct PairCodeGeneratorView: View {
         isGenerating = true
         defer { isGenerating = false }
         do {
-            let c = try await PairingService.shared.generateCode(forMonitorID: mid)
+            let c = try await PairingService.shared.generateCode(
+                forMonitorID: mid,
+                monitorDisplayName: auth.userDisplayName
+            )
             code = c
             expiresAt = Date().addingTimeInterval(600)
+            // Restart polling against the freshly-generated code so the ECDH
+            // handshake completes on this exact code.
+            startPolling()
         } catch {
             code = "ERROR"
         }
@@ -82,9 +88,11 @@ struct PairCodeGeneratorView: View {
 
     private func startPolling() {
         pollTask?.cancel()
-        guard let mid = auth.currentAppleUserID else { return }
+        guard let mid = auth.currentAppleUserID, code.count == 6, code != "ERROR" else { return }
+        let activeCode = code
         pollTask = Task {
-            let ok = await PairingService.shared.pollForPairingConfirmation(monitorAppleUserID: mid)
+            let ok = await PairingService.shared.pollForPairingConfirmation(
+                monitorAppleUserID: mid, code: activeCode)
             if ok {
                 await auth.refreshAfterPairing()
                 await MainActor.run { paired = true }

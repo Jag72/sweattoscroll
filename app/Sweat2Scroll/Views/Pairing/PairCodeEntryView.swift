@@ -74,7 +74,10 @@ struct PairCodeEntryView: View {
         status = .idle
         Task {
             do {
-                let result = try await PairingService.shared.validateAndPair(code: codeString, userAppleUserID: uid)
+                let result = try await PairingService.shared.validateAndPair(
+                    code: codeString,
+                    userAppleUserID: uid,
+                    userDisplayName: auth.userDisplayName)
                 await MainActor.run {
                     isSubmitting = false
                     switch result {

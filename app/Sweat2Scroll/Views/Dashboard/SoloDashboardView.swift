@@ -118,7 +118,8 @@ private struct SoloHomeTab: View {
                 BlockingStatusBanner(
                     phase: blocking.phase,
                     kcalRemaining: remaining,
-                    graceMinutes: blocking.graceMinutesRemaining,
+                    exhaustedCount: blocking.exhaustedTargetCount,
+                    monitoredCount: blocking.monitoredTargetCount,
                     bypassMinutes: blocking.bypass15MinutesRemaining,
                     onTapBlocked: { showAppBlock = true }
                 )
@@ -377,7 +378,8 @@ private struct SoloShieldTab: View {
             blockedAppNames:  [],
             showBreakGlass:   $showBreakGlass,
             blockingPhase:    blocking.phase,
-            graceMinutes:     blocking.graceMinutesRemaining,
+            exhaustedCount:   blocking.exhaustedTargetCount,
+            monitoredCount:   blocking.monitoredTargetCount,
             bypassMinutes:    blocking.bypass15MinutesRemaining,
             onTapShield:      { if blocking.phase == .blocked { showAppBlock = true } }
         )

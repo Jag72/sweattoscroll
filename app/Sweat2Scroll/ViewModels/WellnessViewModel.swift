@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import HealthKit
 
 // MARK: - Chart Data Point
 struct DayScore: Identifiable {
@@ -372,42 +373,99 @@ class WellnessViewModel: ObservableObject {
             respiratoryRate = healthKit.respiratoryRate
         }
 
-        // Sleep — update sleep duration and re-derive sleep score components
-        if healthKit.sleepMinutesLast > 0 {
-            let totalMinutes = healthKit.sleepMinutesLast
-            sleepDuration = totalMinutes
+        // ───── Sleep — real stages + bedtime consistency via WellnessAlgorithms ─
+        // Uses the detailed sleep-night query (stages, in-bed window, bedtime)
+        // instead of assuming a fixed 23/26/51% stage split.
+        let recentNights = await healthKit.fetchSleepNights(days: 8)
+        let lastNight = recentNights.last ?? nil
+        if let night = lastNight {
+            sleepDuration   = night.asleepMinutes
+            sleepAwake      = night.awakeMinutes
+            sleepEfficiency = night.inBedMinutes > 0
+                ? min(night.asleepMinutes / night.inBedMinutes, 1.0) : 0
 
-            // Rough stage distribution based on typical proportions when live data
-            // does not include per-stage breakdown (Apple Watch provides full stages).
-            let effectiveMinutes = min(totalMinutes, 480)  // cap at 8 h for scoring
-            sleepDeep   = effectiveMinutes * 0.23  // ~23% deep is ideal
-            sleepREM    = effectiveMinutes * 0.26  // ~26% REM is ideal
-            sleepLight  = effectiveMinutes * 0.51
-            sleepAwake  = max(0, totalMinutes - effectiveMinutes)
-            sleepEfficiency = totalMinutes > 0 ? min(effectiveMinutes / totalMinutes, 1.0) : 0
+            if night.hasStages {
+                sleepDeep  = night.deepMinutes
+                sleepREM   = night.remMinutes
+                sleepLight = max(0, night.asleepMinutes - night.deepMinutes - night.remMinutes)
+            } else {
+                // iPhone-only tracking: population-typical split as display fallback.
+                sleepDeep  = night.asleepMinutes * 0.20
+                sleepREM   = night.remMinutes > 0 ? night.remMinutes : night.asleepMinutes * 0.24
+                sleepLight = night.asleepMinutes * 0.56
+            }
 
-            // Recalculate sleep score (0–100) from duration + efficiency
-            let durationScore   = min(totalMinutes / 480.0, 1.0)  // 8 h = 100%
-            let efficiencyScore = sleepEfficiency
-            sleepScore = ((durationScore * 0.6) + (efficiencyScore * 0.4)) * 100
+            let bedtimes = recentNights.dropLast().compactMap { $0?.bedtimeHour }.filter { $0 > 0 }
+            let result = WellnessAlgorithms.sleepScore(night: night, recentBedtimes: bedtimes)
+            sleepScore        = result.score
+            sleepPerformance  = result.components.duration
+            sleepConsistency  = result.components.consistency
+            sleepStageQuality = result.components.stages
+            sleepRespStability = result.components.continuity
+        } else if healthKit.sleepMinutesLast > 0 {
+            // Legacy fallback when the detailed query returns nothing.
+            sleepDuration = healthKit.sleepMinutesLast
+            sleepScore = min(healthKit.sleepMinutesLast / 480.0, 1.0) * 100
         }
 
-        // Recompute recovery score from updated HRV, RHR, respiratory rate, sleep
-        // Formula from paper: 0.40·lnRMSSD − 0.25·RHR_norm − 0.10·Resp_norm + 0.25·Sleep/100
-        // Values are normalized against typical ranges; clamped to 0–100.
-        let hrvNorm  = min(hrv / 100.0, 1.0)    // 0–100 ms range
-        let rhrNorm  = max(0, 1.0 - (rhr - 40.0) / 60.0)  // 40–100 bpm → 1.0–0.0
-        let respNorm = max(0, 1.0 - (respiratoryRate - 12.0) / 12.0)  // 12–24 → 1.0–0.0
-        let sleepNorm = sleepScore / 100.0
+        // ───── Strain — Banister TRIMP from real heart-rate samples ─────────
+        // Minute-bucketed HR since midnight → sex/age-adjusted TRIMP → 0–21.
+        // Falls back to a baseline-relative kcal+steps load when no HR exists.
+        let profile = healthKit.userProfile
+        let dayStart = Calendar.current.startOfDay(for: Date())
+        let hrSamples = await healthKit.fetchMinuteHeartRate(start: dayStart, end: Date())
+        if !hrSamples.isEmpty, rhr > 0 {
+            let trimp = WellnessAlgorithms.trimp(
+                samples: hrSamples,
+                restingHR: rhr,
+                age: profile?.ageYears ?? 30,
+                isFemale: profile?.biologicalSex == .female
+            )
+            strainScore = WellnessAlgorithms.strainScore(fromTRIMP: trimp)
+        } else {
+            strainScore = WellnessAlgorithms.strainScoreFallback(
+                activeKcal: healthKit.activeCaloriesToday,
+                steps: Double(healthKit.stepsToday),
+                kcalBaseline: .from(healthKit.calorieHistory),
+                stepsBaseline: .from(healthKit.stepsHistory)
+            )
+        }
 
-        // Update recovery components for the UI breakdown bars
-        recoveryHRVComponent    = hrvNorm
-        recoveryRHRComponent    = rhrNorm
-        recoveryRespComponent   = respNorm
-        recoverySleepComponent  = sleepNorm
+        // ───── Recovery — z-scores vs 30-day personal baseline ──────────────
+        // "Is today's HRV/RHR good *for this user*?" rather than fixed ranges.
+        async let hrv30 = healthKit.fetchDailyAverageHistory(
+            type: .init(.heartRateVariabilitySDNN), unit: .secondUnit(with: .milli), days: 30)
+        async let rhr30 = healthKit.fetchDailyAverageHistory(
+            type: .init(.restingHeartRate), unit: HKUnit(from: "count/min"), days: 30)
+        async let resp30 = healthKit.fetchDailyAverageHistory(
+            type: .init(.respiratoryRate), unit: HKUnit(from: "count/min"), days: 30)
+        let (hrvBase, rhrBase, respBase) = await (
+            MetricBaseline.from(hrv30), MetricBaseline.from(rhr30), MetricBaseline.from(resp30)
+        )
 
-        let rawRecovery = (0.40 * hrvNorm + 0.25 * rhrNorm + 0.10 * respNorm + 0.25 * sleepNorm)
-        recoveryScore = min(max(rawRecovery * 100, 0), 100)
+        // Yesterday's load from fresh HealthKit history (index 5 of 7 = yesterday),
+        // not from the possibly-stale published strainHistory array.
+        let yesterdayStrain: Double = {
+            guard healthKit.calorieHistory.count >= 6 else { return 0 }
+            return WellnessAlgorithms.strainScoreFallback(
+                activeKcal: healthKit.calorieHistory[5],
+                steps: healthKit.stepsHistory.count >= 6 ? healthKit.stepsHistory[5] : 0,
+                kcalBaseline: .from(healthKit.calorieHistory),
+                stepsBaseline: .from(healthKit.stepsHistory))
+        }()
+        recoveryScore = WellnessAlgorithms.energyScore(
+            hrvToday: hrv, rhrToday: rhr, respToday: respiratoryRate,
+            hrvBaseline: hrvBase, rhrBaseline: rhrBase, respBaseline: respBase,
+            sleepScore: sleepScore, yesterdayStrain: yesterdayStrain,
+            activityRingFallback: energyScore
+        )
+
+        // Component bars for the UI breakdown (normalized 0–1 around baseline).
+        recoveryHRVComponent   = hrvBase.isReliable ? min(max(0.5 + hrvBase.z(hrv) / 6, 0), 1) : min(hrv / 100.0, 1.0)
+        recoveryRHRComponent   = rhrBase.isReliable ? min(max(0.5 - rhrBase.z(rhr) / 6, 0), 1) : max(0, 1.0 - (rhr - 40.0) / 60.0)
+        recoveryRespComponent  = respBase.isReliable ? min(max(0.5 - respBase.z(respiratoryRate) / 6, 0), 1) : max(0, 1.0 - (respiratoryRate - 12.0) / 12.0)
+        recoverySleepComponent = sleepScore / 100.0
+        recoveryStrainComponent = 1.0 - min(yesterdayStrain / 21.0, 1.0)
 
         // Merge 7-day history into chart arrays. Index 0 = 6 days ago, 6 = today.
         let nonZero = { (arr: [Double]) -> Bool in arr.contains(where: { $0 > 0 }) }
@@ -447,13 +505,22 @@ class WellnessViewModel: ObservableObject {
             }
         }
 
-        // Strain history derived from active-calorie history (rough proxy: 0–21 scale).
+        // Strain history — baseline-relative load per day (kcal + steps blend).
+        // Today's entry is replaced by the TRIMP-based score computed above,
+        // which is more accurate whenever heart-rate samples exist.
         if nonZero(healthKit.calorieHistory) {
-            strainHistory = zip(labels, healthKit.calorieHistory).map { (day, kcal) in
-                // 0 kcal → 0 strain, 800 kcal → ~21 (matches WHOOP-ish scale)
-                DayScore(day: day, value: min(kcal / 800.0 * 21.0, 21.0))
+            let kcalBase  = MetricBaseline.from(healthKit.calorieHistory)
+            let stepsBase = MetricBaseline.from(healthKit.stepsHistory)
+            strainHistory = (0..<7).map { i in
+                let kcal  = i < healthKit.calorieHistory.count ? healthKit.calorieHistory[i] : 0
+                let steps = i < healthKit.stepsHistory.count   ? healthKit.stepsHistory[i]   : 0
+                let value = (i == 6 && strainScore > 0)
+                    ? strainScore
+                    : WellnessAlgorithms.strainScoreFallback(
+                        activeKcal: kcal, steps: steps,
+                        kcalBaseline: kcalBase, stepsBaseline: stepsBase)
+                return DayScore(day: labels[i], value: value)
             }
-            strainScore = strainHistory.last?.value ?? strainScore
         }
     }
 

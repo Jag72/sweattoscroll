@@ -69,10 +69,6 @@ struct SignInView: View {
                         action: { Task { await signInUsername() } }
                     )
 
-                    #if DEBUG
-                    devCredentialsHint
-                    #endif
-
                     AuthDividerOr()
 
                     AuthSocialButtons(
