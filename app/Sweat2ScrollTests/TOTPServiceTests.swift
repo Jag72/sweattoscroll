@@ -9,7 +9,62 @@
 // counter:)` and `currentCounter(at:)` directly.
 
 import XCTest
+import CryptoKit
 @testable import Sweat2Scroll
+
+// MARK: - Two-sided pairing handshake (ECDH key agreement)
+//
+// Pins the P0 fix: the monitor must REUSE the key it published in its pairing
+// code, so both devices derive the SAME shared secret. The old code generated a
+// fresh key on the monitor's completion step, guaranteeing a mismatch.
+final class PairingHandshakeTests: XCTestCase {
+
+    /// Mirrors TOTPService's derivation (HKDF-SHA256, salt "sweat2scroll-v1").
+    private func derive(_ priv: P256.KeyAgreement.PrivateKey,
+                        _ partnerPub: P256.KeyAgreement.PublicKey) throws -> SymmetricKey {
+        let shared = try priv.sharedSecretFromKeyAgreement(with: partnerPub)
+        return shared.hkdfDerivedSymmetricKey(using: SHA256.self,
+            salt: "sweat2scroll-v1".data(using: .utf8)!,
+            sharedInfo: Data(), outputByteCount: 32)
+    }
+
+    func testBothSidesDeriveIdenticalSecret() throws {
+        // Monitor keypair (published in the pair code) — REUSED on completion.
+        let monitorPriv = P256.KeyAgreement.PrivateKey()
+        // User keypair (fresh, responder side).
+        let userPriv = P256.KeyAgreement.PrivateKey()
+
+        let userSecret = try derive(userPriv, monitorPriv.publicKey)
+        let monitorSecret = try derive(monitorPriv, userPriv.publicKey)   // reuse!
+
+        XCTAssertEqual(userSecret.withUnsafeBytes { Data($0) },
+                       monitorSecret.withUnsafeBytes { Data($0) },
+                       "ECDH is symmetric only when the monitor reuses its original key")
+    }
+
+    func testFreshKeyOnBothSidesFails() throws {
+        // Regression guard: the OLD broken behavior (fresh key on both sides).
+        let monitorPub = P256.KeyAgreement.PrivateKey()   // published
+        let userPriv = P256.KeyAgreement.PrivateKey()
+        let monitorFresh = P256.KeyAgreement.PrivateKey() // BUG: new key at completion
+
+        let userSecret = try derive(userPriv, monitorPub.publicKey)
+        let monitorSecret = try derive(monitorFresh, userPriv.publicKey)
+        XCTAssertNotEqual(userSecret.withUnsafeBytes { Data($0) },
+                          monitorSecret.withUnsafeBytes { Data($0) })
+    }
+
+    func testStrangerCannotDeriveSecret() throws {
+        let monitorPriv = P256.KeyAgreement.PrivateKey()
+        let userPriv = P256.KeyAgreement.PrivateKey()
+        let stranger = P256.KeyAgreement.PrivateKey()
+
+        let real = try derive(monitorPriv, userPriv.publicKey)
+        let strangerSecret = try derive(stranger, monitorPriv.publicKey)
+        XCTAssertNotEqual(real.withUnsafeBytes { Data($0) },
+                          strangerSecret.withUnsafeBytes { Data($0) })
+    }
+}
 
 // The tested type is @MainActor-isolated; hop the whole suite onto the
 // main actor so calls to its statics compile under strict concurrency.

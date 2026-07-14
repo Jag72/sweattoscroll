@@ -55,10 +55,6 @@ struct OnboardingHealthView: View {
                 perksList
             }
 
-            if hk.allTypesDenied {
-                deniedBanner
-            }
-
             if let errorMessage {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -85,66 +81,7 @@ struct OnboardingHealthView: View {
             .background(Color.deepTeal.opacity(0.08))
             .cornerRadius(12)
         }
-        .task {
-            // 1. If iOS already remembers a previous grant, refresh data and
-            //    flip to "connected" without showing the system sheet again.
-            if hk.isAuthorized {
-                try? await hk.fetchUserProfile()
-                try? await hk.fetchTodayMetrics()
-                await hk.verifyAccess()
-                connected = hk.isAuthorized
-                return
-            }
-
-            // 2. Otherwise, proactively raise the system permission sheet so the
-            //    user doesn't have to hunt for the "Connect" button. iOS will
-            //    no-op silently if it's already been granted/denied — we then
-            //    use `verifyAccess()` to detect denial and surface a banner.
-            guard hk.isHealthKitAvailable else { return }
-            do {
-                isRequesting = true
-                try await hk.requestAuthorization()
-                connected = hk.isAuthorized
-            } catch {
-                // Don't surface an error yet — the user can still tap the
-                // primary button to retry, or skip into manual entry.
-            }
-            isRequesting = false
-        }
-    }
-
-    private var deniedBanner: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top, spacing: 10) {
-                Image(systemName: "exclamationmark.shield.fill")
-                    .foregroundColor(.rose)
-                Text("Apple Health is currently blocking access. Open Settings → Health → Data Access & Devices → Sweat2Scroll and enable the categories so we can read your activity.")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.ink)
-            }
-            Button {
-                if let url = URL(string: "x-apple-health://") {
-                    UIApplication.shared.open(url)
-                } else if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url)
-                }
-            } label: {
-                Text("Open Health settings")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color.rose)
-                    )
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.rose.opacity(0.10))
-        .cornerRadius(12)
+        .task { await refreshHealthConnection() }
     }
 
     private var incompleteBanner: some View {
@@ -222,7 +159,12 @@ struct OnboardingHealthView: View {
         let saved = UserBodyProfileStorage.load().weightKg
         let v = hk.userProfile?.weightKg ?? saved ?? 0
         guard v >= 30 && v <= 250 else { return "Not set — next screen" }
-        return String(format: "%.1f kg", v)
+        let unit = WeightUnitPreference.load()
+        let display = unit.fromKilograms(v)
+        if unit == .kg {
+            return String(format: "%.1f kg", display)
+        }
+        return String(format: "%.0f lb", display)
     }
 
     private var formatAge: String {
@@ -265,6 +207,43 @@ struct OnboardingHealthView: View {
         )
     }
 
+    // MARK: - Actions
+
+    @MainActor
+    private func refreshHealthConnection() async {
+        errorMessage = nil
+        await hk.verifyAccess()
+
+        if hk.hasAnsweredAuthorizationPrompt || hk.isAuthorized {
+            try? await hk.fetchUserProfile()
+            try? await hk.fetchTodayMetrics()
+            connected = true
+            return
+        }
+
+        // First visit — raise the system permission sheet automatically.
+        guard hk.isHealthKitAvailable else {
+            errorMessage = "HealthKit isn't available on this device. Tap Skip to enter your details manually."
+            return
+        }
+
+        isRequesting = true
+        defer { isRequesting = false }
+        do {
+            try await hk.requestAuthorization()
+            connected = hk.hasAnsweredAuthorizationPrompt || hk.isAuthorized
+        } catch HealthKitError.notAvailable {
+            errorMessage = "HealthKit isn't available on this device. Tap Skip to enter your details manually."
+        } catch {
+            // The permission sheet may still have succeeded — re-check before alarming.
+            await hk.verifyAccess()
+            connected = hk.hasAnsweredAuthorizationPrompt || hk.isAuthorized
+            if !connected {
+                errorMessage = "Couldn't connect to Apple Health right now. Tap Connect to retry, or Skip to enter manually."
+            }
+        }
+    }
+
     private func handlePrimary() {
         if connected {
             if hk.needsManualBodyMetrics {
@@ -278,13 +257,19 @@ struct OnboardingHealthView: View {
         Task {
             isRequesting = true
             errorMessage = nil
+            defer { isRequesting = false }
             do {
                 try await hk.requestAuthorization()
-                connected = true
+                connected = hk.hasAnsweredAuthorizationPrompt || hk.isAuthorized
+            } catch HealthKitError.notAvailable {
+                errorMessage = "HealthKit isn't available on this device. Tap Skip to enter your details manually."
             } catch {
-                errorMessage = "Apple Health access was not granted. You can enter your details manually instead."
+                await hk.verifyAccess()
+                connected = hk.hasAnsweredAuthorizationPrompt || hk.isAuthorized
+                if !connected {
+                    errorMessage = "Couldn't connect to Apple Health right now. Try again or tap Skip to enter manually."
+                }
             }
-            isRequesting = false
         }
     }
 }

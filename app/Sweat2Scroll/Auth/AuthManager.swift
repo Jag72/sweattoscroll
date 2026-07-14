@@ -90,16 +90,13 @@ final class AuthManager: ObservableObject {
             if let appleEmail = credential.email, !appleEmail.isEmpty {
                 newAcc.email = appleEmail.lowercased()
             }
-            do {
-                try await cloud.saveUserAccount(newAcc)
-                cachedAccount = newAcc
-                authState = .onboarding
-                postAuthStep = .prdHealth
-                AppSession.setAuthenticated()
-            } catch {
-                lastAuthError = error.localizedDescription
-                authState = .unauthenticated
-            }
+            // Best-effort cloud mirror — a quota/outage error must not block a
+            // brand-new Sign in with Apple from starting onboarding locally.
+            try? await cloud.saveUserAccount(newAcc)
+            cachedAccount = newAcc
+            authState = .onboarding
+            postAuthStep = .prdHealth
+            AppSession.setAuthenticated()
         }
     }
 
@@ -134,16 +131,13 @@ final class AuthManager: ObservableObject {
         } else {
             var newAcc = CloudUserAccount.newUser(appleUserID: id, displayName: display)
             if let email, !email.isEmpty { newAcc.email = email.lowercased() }
-            do {
-                try await cloud.saveUserAccount(newAcc)
-                cachedAccount = newAcc
-                authState = .onboarding
-                postAuthStep = .prdHealth
-                AppSession.setAuthenticated()
-            } catch {
-                lastAuthError = error.localizedDescription
-                authState = .unauthenticated
-            }
+            // Best-effort cloud mirror — a quota/outage error must not block a
+            // brand-new Google sign-in from starting onboarding locally.
+            try? await cloud.saveUserAccount(newAcc)
+            cachedAccount = newAcc
+            authState = .onboarding
+            postAuthStep = .prdHealth
+            AppSession.setAuthenticated()
         }
     }
 
@@ -245,13 +239,15 @@ final class AuthManager: ObservableObject {
     /// failure with `newUser(...)` here either — that would overwrite their
     /// real cloud profile with empty fields. On transient errors we throw so
     /// the user can retry; on `.unknownItem` we know it's a true new sign-up.
-    func signUp(username: String, password: String) async throws {
+    func signUp(username: String, password: String, displayName: String? = nil) async throws {
         isLoadingAuth = true
         lastAuthError = nil
         defer { isLoadingAuth = false }
 
-        let display = username.trimmingCharacters(in: .whitespacesAndNewlines)
-        let key = display.lowercased()
+        let key = username.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let providedName = displayName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let emailLocal = key.split(separator: "@").first.map(String.init)
+        let display = !providedName.isEmpty ? providedName : (emailLocal ?? "Athlete")
 
         let id = try EmailCredentialStore.register(email: key, password: password)
 
@@ -425,6 +421,13 @@ final class AuthManager: ObservableObject {
         await refreshAccountFromCloud(appleUserID: id)
     }
 
+    /// Replace the cached account in place (used by `PairingService` after it
+    /// links this device to a peer). Also re-routes so paired dashboards update.
+    func updateCachedAccount(_ account: CloudUserAccount) {
+        cachedAccount = account
+        applyReturningUserRouting(account)
+    }
+
     // MARK: - Partnership role (post-pair)
 
     /// Persist the user's chosen `PartnershipRole` after pairing succeeds. Each
@@ -464,7 +467,17 @@ final class AuthManager: ObservableObject {
         acc.weightKg = weightKg
         acc.appMode = .solo
         acc.isPaired = false
-        if !isDevSession { try await cloud.saveUserAccount(acc) }
+        // Best-effort cloud save: a CloudKit outage, throttle, or storage-quota
+        // error must NOT trap the user behind onboarding. We always cache the
+        // profile locally and complete the flow; the record re-syncs on the
+        // next successful save (mode switch, pairing, next launch).
+        if !isDevSession {
+            do {
+                try await cloud.saveUserAccount(acc)
+            } catch {
+                print("[Auth] onboarding profile cloud-save deferred: \(error.localizedDescription)")
+            }
+        }
         cachedAccount = acc
         authState = .solo
         UserDefaults.standard.set(true, forKey: "onboardingComplete")

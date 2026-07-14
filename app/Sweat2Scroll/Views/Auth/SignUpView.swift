@@ -1,99 +1,99 @@
 // SignUpView.swift
-// Root auth screen for users without a session (auth check routes here).
-// Minimal account creation: username + password, plus Google / Apple one-tap.
-// "Sign In" pushes `SignInView` for returning accounts.
+// The Create Account screen, pushed from SignInView. Clean, Cinemark-inspired:
+// optional name, email, password + confirm password with inline validation,
+// plus Google / Apple one-tap. "Sign In" pops back to the sign-in screen.
 
 import SwiftUI
 import AuthenticationServices
 
 struct SignUpView: View {
     @ObservedObject private var auth = AuthManager.shared
+    @Environment(\.dismiss) private var dismiss
 
-    @State private var username = ""
+    var prefillEmail: String = ""
+
+    @State private var fullName = ""
+    @State private var email = ""
     @State private var password = ""
+    @State private var confirmPassword = ""
     @State private var showPassword = false
+    @State private var showConfirmPassword = false
     @State private var authError: String?
-    @State private var showGoogleSoon = false
     @State private var showForgotPassword = false
-    @State private var showSignIn = false
-
-    private var isFormValid: Bool {
-        username.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 &&
-        password.count >= 6
-    }
 
     var body: some View {
         ZStack {
             Color.paper.ignoresSafeArea()
 
-            Circle()
-                .fill(Color.deepTeal.opacity(0.08))
-                .frame(width: 320, height: 320)
-                .blur(radius: 70)
-                .offset(x: 130, y: -240)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 22) {
+                VStack(spacing: 20) {
                     Spacer().frame(height: 28)
 
-                    ZStack {
-                        Circle()
-                            .fill(
-                                RadialGradient(
-                                    colors: [
-                                        Color.deepTeal.opacity(0.18),
-                                        Color.clear,
-                                    ],
-                                    center: .center,
-                                    startRadius: 2,
-                                    endRadius: 110
-                                )
-                            )
-                            .frame(width: 180, height: 180)
-                            .blur(radius: 10)
-                        Sweat2ScrollLogo(size: 84, animated: true)
-                    }
-                    VStack(spacing: 8) {
-                        Sweat2ScrollWordmark(size: 22)
+                    Sweat2ScrollLogo(size: 68, animated: true)
+                    VStack(spacing: 6) {
+                        Sweat2ScrollWordmark(size: 20)
                         Text("Create your account")
-                            .font(.display(26))
+                            .font(.display(24))
                             .foregroundColor(.ink)
                     }
-                    Text("Pick a username and you're in. Your health data never leaves this device.")
-                        .font(.system(size: 14))
+                    Text("Your health data never leaves this device.")
+                        .font(.system(size: 13))
                         .foregroundColor(.muted)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 12)
+                        .padding(.bottom, 4)
 
                     VStack(spacing: 14) {
                         AuthFormField(
                             icon: "person.fill",
-                            placeholder: "Username",
-                            text: $username,
-                            textContentType: .username,
-                            accessibilityFieldID: "signUp.username"
+                            placeholder: "Full name (optional)",
+                            text: $fullName,
+                            autocapitalization: .words,
+                            disableAutocorrection: false,
+                            accessibilityFieldID: "signUp.fullName"
                         )
 
-                        AuthFormField(
-                            icon: "lock.fill",
-                            placeholder: "Password (min 6 chars)",
-                            text: $password,
-                            textContentType: .newPassword,
-                            isSecure: true,
-                            showSecure: $showPassword,
-                            accessibilityFieldID: "signUp.password"
-                        )
-                    }
-                    .padding(.top, 8)
+                        VStack(alignment: .leading, spacing: 6) {
+                            AuthFormField(
+                                icon: "person.fill",
+                                placeholder: "Username or Email",
+                                text: $email,
+                                textContentType: .username,
+                                accessibilityFieldID: "signUp.email"
+                            )
+                            if showIdentifierError {
+                                AuthFieldError("Use a valid email, or a username of 3+ characters.")
+                            }
+                        }
 
-                    HStack {
-                        Spacer()
-                        Button("Forgot Password?") { showForgotPassword = true }
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.muted)
-                            .accessibilityIdentifier("signUp.forgotPassword")
+                        VStack(alignment: .leading, spacing: 6) {
+                            AuthFormField(
+                                icon: "lock.fill",
+                                placeholder: "Password",
+                                text: $password,
+                                textContentType: .newPassword,
+                                isSecure: true,
+                                showSecure: $showPassword,
+                                accessibilityFieldID: "signUp.password"
+                            )
+                            if showPasswordError {
+                                AuthFieldError("Use at least 6 characters.")
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            AuthFormField(
+                                icon: "lock.rotation",
+                                placeholder: "Confirm password",
+                                text: $confirmPassword,
+                                textContentType: .newPassword,
+                                isSecure: true,
+                                showSecure: $showConfirmPassword,
+                                accessibilityFieldID: "signUp.confirmPassword"
+                            )
+                            if showConfirmError {
+                                AuthFieldError("Passwords don't match.")
+                            }
+                        }
                     }
 
                     PrimaryCTAButton(
@@ -101,12 +101,16 @@ struct SignUpView: View {
                         isEnabled: isFormValid,
                         isLoading: auth.isLoadingAuth,
                         accessibilityIdentifier: "signUp.submit",
-                        action: { Task { await signUpUsername() } }
+                        action: { Task { await signUpEmail() } }
                     )
 
                     AuthDividerOr()
 
-                    AuthSocialButtons(context: .signUp, showGoogleSoon: $showGoogleSoon) { result in
+                    AuthSocialButtons(
+                        context: .signUp,
+                        showGoogleSoon: .constant(false),
+                        onGoogle: { Task { await signUpWithGoogle() } }
+                    ) { result in
                         Task { @MainActor in
                             authError = nil
                             switch result {
@@ -140,11 +144,11 @@ struct SignUpView: View {
                             .font(.subheadline)
                             .foregroundColor(.muted)
                         Button {
-                            showSignIn = true
+                            dismiss()
                         } label: {
                             Text("Sign In")
                                 .font(.subheadline.weight(.bold))
-                                .foregroundColor(.deepTeal)
+                                .foregroundColor(.electricOrange)
                         }
                         .accessibilityIdentifier("signUp.goToSignIn")
                     }
@@ -154,38 +158,75 @@ struct SignUpView: View {
                 .padding(.horizontal, 24)
             }
         }
-        .alert("Google Sign-In", isPresented: $showGoogleSoon) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or username for now.")
-        }
         .sheet(isPresented: $showForgotPassword) {
-            ForgotPasswordView(username: username) { resetUsername in
-                username = resetUsername
+            ForgotPasswordView(username: email) { resetUsername in
+                email = resetUsername
                 password = ""
+                confirmPassword = ""
                 authError = nil
                 auth.lastAuthError = nil
-                showSignIn = true
+                dismiss()
             }
-        }
-        .navigationDestination(isPresented: $showSignIn) {
-            SignInView()
         }
         .preferredColorScheme(.light)
         .onAppear {
+            if email.isEmpty { email = prefillEmail }
             authError = nil
             auth.lastAuthError = nil
         }
     }
 
+    // MARK: - Validation
+
+    private var trimmedEmail: String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var showIdentifierError: Bool {
+        !trimmedEmail.isEmpty && !Self.isValidIdentifier(trimmedEmail)
+    }
+
+    private var showPasswordError: Bool {
+        !password.isEmpty && password.count < 6
+    }
+
+    private var showConfirmError: Bool {
+        !confirmPassword.isEmpty && confirmPassword != password
+    }
+
+    private var isFormValid: Bool {
+        Self.isValidIdentifier(trimmedEmail) &&
+        password.count >= 6 &&
+        confirmPassword == password
+    }
+
+    /// Account creation accepts either an email (must be well-formed so it can
+    /// also populate the CloudKit `email` field) or a plain username (3+ chars).
+    static func isValidIdentifier(_ value: String) -> Bool {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.contains("@") { return isValidEmail(trimmed) }
+        return trimmed.count >= 3
+    }
+
     // MARK: - Actions
 
     @MainActor
-    private func signUpUsername() async {
+    private func signUpEmail() async {
         authError = nil
+        auth.lastAuthError = nil
         guard isFormValid else { return }
+
+        if EmailCredentialStore.hasAccount(email: trimmedEmail) {
+            authError = "An account with that username/email already exists. Try signing in instead."
+            return
+        }
+
         do {
-            try await auth.signUp(username: username, password: password)
+            try await auth.signUp(
+                username: trimmedEmail,
+                password: password,
+                displayName: fullName
+            )
         } catch {
             // `AuthManager` already surfaces a friendly `lastAuthError` for
             // transient iCloud failures — avoid showing a second, raw error line.
@@ -195,8 +236,26 @@ struct SignUpView: View {
         }
     }
 
-    /// Kept as the app-wide email validator: decides whether an email-shaped
-    /// username also lands in the CloudKit `email` slot (see `AuthManager`).
+    @MainActor
+    private func signUpWithGoogle() async {
+        authError = nil
+        auth.lastAuthError = nil
+        do {
+            let profile = try await GoogleAuthService.shared.signIn()
+            await auth.handleGoogleSignIn(
+                userID: profile.userID,
+                email: profile.email,
+                fullName: profile.fullName
+            )
+        } catch {
+            if auth.lastAuthError == nil {
+                authError = error.localizedDescription
+            }
+        }
+    }
+
+    /// App-wide email validator: also decides whether an email lands in the
+    /// CloudKit `email` slot (see `AuthManager`).
     static func isValidEmail(_ value: String) -> Bool {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.count >= 5, trimmed.contains("@"), trimmed.contains(".") else { return false }

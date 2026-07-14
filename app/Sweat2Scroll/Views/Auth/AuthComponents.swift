@@ -25,14 +25,14 @@ struct PrimaryCTAButton: View {
             .padding(.vertical, 16)
             .background(
                 isEnabled
-                    ? LinearGradient(colors: [.deepTeal, Color(hex: "#1A7A90")],
+                    ? LinearGradient(colors: [.electricOrange, Color(hex: "#FF8A3D")],
                                      startPoint: .leading, endPoint: .trailing)
                     : LinearGradient(colors: [Color.muted.opacity(0.25), Color.muted.opacity(0.2)],
                                      startPoint: .leading, endPoint: .trailing)
             )
             .foregroundColor(isEnabled ? .white : .muted)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: isEnabled ? Color.deepTeal.opacity(0.25) : .clear, radius: 12, y: 4)
+            .shadow(color: isEnabled ? Color.electricOrange.opacity(0.25) : .clear, radius: 12, y: 4)
         }
         .disabled(!isEnabled || isLoading)
         .modifier(PrimaryCTAButtonAccessibilityID(id: accessibilityIdentifier))
@@ -49,6 +49,23 @@ private struct PrimaryCTAButtonAccessibilityID: ViewModifier {
         } else {
             content
         }
+    }
+}
+
+// MARK: - Inline field validation message
+
+/// Small red helper shown under an auth text field when its value is invalid.
+struct AuthFieldError: View {
+    let message: String
+
+    init(_ message: String) { self.message = message }
+
+    var body: some View {
+        Text(message)
+            .font(.system(size: 12, weight: .medium))
+            .foregroundColor(.rose)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 4)
     }
 }
 

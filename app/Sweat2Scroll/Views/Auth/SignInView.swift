@@ -1,65 +1,46 @@
 // Views/Auth/SignInView.swift
-// Returning-user screen, pushed from `SignUpView` (the auth root).
-// Username + password sign in, plus Apple / Google one-tap. Tapping
-// "Sign Up" pops back to `SignUpView` for first-time accounts.
+// The sign-in screen for Sweat2Scroll (clean, Cinemark-inspired).
+// Email + password for returning accounts, plus Sign in with Apple and
+// Continue with Google. New users tap "Create Account" for the sign-up page.
 
 import SwiftUI
 import AuthenticationServices
 
 struct SignInView: View {
     @ObservedObject private var auth = AuthManager.shared
-    @Environment(\.dismiss) private var dismiss
 
-    @State private var username = ""
+    @State private var email = ""
     @State private var password = ""
     @State private var showPassword = false
     @State private var authError: String?
-    @State private var showGoogleSoon = false
     @State private var showForgotPassword = false
+    @State private var showCreateAccount = false
 
     var body: some View {
         ZStack {
             Color.paper.ignoresSafeArea()
 
-            Circle()
-                .fill(Color.deepTeal.opacity(0.08))
-                .frame(width: 320, height: 320)
-                .blur(radius: 70)
-                .offset(x: 130, y: -240)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 22) {
-                    Spacer().frame(height: 28)
+                VStack(spacing: 18) {
+                    Spacer().frame(height: 44)
 
-                    ZStack {
-                        Circle()
-                            .fill(
-                                RadialGradient(
-                                    colors: [
-                                        Color.deepTeal.opacity(0.18),
-                                        Color.clear,
-                                    ],
-                                    center: .center,
-                                    startRadius: 2,
-                                    endRadius: 110
-                                )
-                            )
-                            .frame(width: 180, height: 180)
-                            .blur(radius: 10)
-                        Sweat2ScrollLogo(size: 84, animated: true)
-                    }
+                    Sweat2ScrollLogo(size: 76, animated: true)
                     Sweat2ScrollWordmark(size: 22)
+                        .padding(.bottom, 10)
 
                     VStack(spacing: 14) {
-                        AuthFormField(
-                            icon: "person.fill",
-                            placeholder: "Username",
-                            text: $username,
-                            textContentType: .username,
-                            accessibilityFieldID: "signIn.username"
-                        )
+                        VStack(alignment: .leading, spacing: 6) {
+                            AuthFormField(
+                                icon: "person.fill",
+                                placeholder: "Username or Email",
+                                text: $email,
+                                textContentType: .username,
+                                accessibilityFieldID: "signIn.username"
+                            )
+                            if showIdentifierError {
+                                AuthFieldError("Enter your username or email.")
+                            }
+                        }
 
                         AuthFormField(
                             icon: "lock.fill",
@@ -71,33 +52,28 @@ struct SignInView: View {
                             accessibilityFieldID: "signIn.password"
                         )
                     }
-                    .padding(.top, 8)
 
                     HStack {
                         Spacer()
-                        Button("Forgot Password?") { showForgotPassword = true }
+                        Button("Forgot your Password?") { showForgotPassword = true }
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.muted)
                             .accessibilityIdentifier("signIn.forgotPassword")
                     }
 
                     PrimaryCTAButton(
-                        title: "Continue",
+                        title: "Sign In",
                         isEnabled: isSignInReady,
                         isLoading: auth.isLoadingAuth,
                         accessibilityIdentifier: "signIn.submit",
                         action: { Task { await signInUsername() } }
                     )
 
-                    #if DEBUG
-                    devCredentialsHint
-                    #endif
-
                     AuthDividerOr()
 
                     AuthSocialButtons(
                         context: .signIn,
-                        showGoogleSoon: $showGoogleSoon,
+                        showGoogleSoon: .constant(false),
                         onGoogle: { Task { await signInWithGoogle() } }
                     ) { result in
                         Task { @MainActor in
@@ -128,24 +104,36 @@ struct SignInView: View {
                             .accessibilityIdentifier("signIn.authError")
                     }
 
-                    Spacer()
-                        .frame(height: 24)
+                    HStack(spacing: 4) {
+                        Text("Don't have an account?")
+                            .font(.subheadline)
+                            .foregroundColor(.muted)
+                        Button {
+                            showCreateAccount = true
+                        } label: {
+                            Text("Create Account")
+                                .font(.subheadline.weight(.bold))
+                                .foregroundColor(.electricOrange)
+                        }
+                        .accessibilityIdentifier("signIn.goToCreateAccount")
+                    }
+                    .padding(.top, 4)
+
+                    Spacer().frame(height: 24)
                 }
                 .padding(.horizontal, 24)
             }
         }
-        .alert("Google Sign-In", isPresented: $showGoogleSoon) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Google Sign-In will be added with the GoogleSignIn SDK. Use Sign in with Apple or username for now.")
-        }
         .sheet(isPresented: $showForgotPassword) {
-            ForgotPasswordView(username: username) { resetUsername in
-                username = resetUsername
+            ForgotPasswordView(username: email) { resetUsername in
+                email = resetUsername
                 password = ""
                 authError = nil
                 auth.lastAuthError = nil
             }
+        }
+        .navigationDestination(isPresented: $showCreateAccount) {
+            SignUpView(prefillEmail: email)
         }
         .preferredColorScheme(.light)
         .onAppear {
@@ -154,12 +142,25 @@ struct SignInView: View {
         }
     }
 
-    /// True for either the DEBUG dev shortcut or a real, non-empty login.
+    // MARK: - Validation
+
+    private var trimmedEmail: String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Login accepts either a username or an email, so we only require a
+    /// minimally sensible identifier here (real verification happens against
+    /// the local credential store on submit).
+    private var showIdentifierError: Bool {
+        !trimmedEmail.isEmpty && trimmedEmail.count < 3
+    }
+
+    /// True for either the DEBUG dev shortcut or a username/email + password.
     private var isSignInReady: Bool {
         #if DEBUG
-        if AppSession.isDevCredentialMatch(username: username, password: password) { return true }
+        if AppSession.isDevCredentialMatch(username: email, password: password) { return true }
         #endif
-        return !username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !password.isEmpty
+        return trimmedEmail.count >= 3 && !password.isEmpty
     }
 
     @MainActor
@@ -168,7 +169,7 @@ struct SignInView: View {
         auth.lastAuthError = nil
 
         #if DEBUG
-        if AppSession.isDevCredentialMatch(username: username, password: password) {
+        if AppSession.isDevCredentialMatch(username: email, password: password) {
             if UserDefaults.standard.bool(forKey: "onboardingComplete") {
                 auth.devSignIn(as: .solo)
             } else {
@@ -178,14 +179,24 @@ struct SignInView: View {
         }
         #endif
 
+        guard trimmedEmail.count >= 3 else {
+            authError = "Enter your username or email."
+            return
+        }
+        guard !password.isEmpty else {
+            authError = "Enter your password."
+            return
+        }
+
+        // Sign-in only verifies existing accounts (username OR email). New users
+        // go through the dedicated Create Account page so onboarding is explicit.
+        guard EmailCredentialStore.hasAccount(email: trimmedEmail) else {
+            authError = "No account found. Check your username/email, or tap Create Account. For Apple/Google accounts, use the buttons below."
+            return
+        }
+
         do {
-            // Single entry point: verify a returning account, or seed a brand-new
-            // one on first use so no separate sign-up screen is needed.
-            if EmailCredentialStore.hasAccount(email: username) {
-                try await auth.signIn(username: username, password: password)
-            } else {
-                try await auth.signUp(username: username, password: password)
-            }
+            try await auth.signIn(username: trimmedEmail, password: password)
         } catch {
             // `AuthManager` already surfaces a friendly `lastAuthError` for
             // transient iCloud failures — avoid showing a second, raw error line.
@@ -217,10 +228,9 @@ struct SignInView: View {
     /// Tiny on-screen helper so anyone testing the app knows the simulator login.
     private var devCredentialsHint: some View {
         Button {
-            username = AppSession.devUsername
+            email = AppSession.devUsername
             password = AppSession.devPassword
         } label: {
-            // accessibilityIdentifier applied to the outer button below.
             HStack(spacing: 6) {
                 Image(systemName: "wrench.and.screwdriver.fill")
                     .font(.system(size: 11))

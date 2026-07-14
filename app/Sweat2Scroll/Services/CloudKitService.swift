@@ -29,6 +29,13 @@ class CloudKitService: ObservableObject {
     // MARK: - CloudKit Containers
     private let container = CKContainer(identifier: "iCloud.com.jagadish.sweat2scroll")
     private var privateDB: CKDatabase { container.privateCloudDatabase }
+    /// Public DB — REQUIRED for anything two different iCloud accounts must both
+    /// read (pairing handshake). A private DB is scoped to one account, so the
+    /// old private-DB pairing could only ever work when both "devices" shared an
+    /// Apple ID. The pairing record holds only ECDH *public* keys + display
+    /// names; the derived secret never leaves either device.
+    private var publicDB: CKDatabase { container.publicCloudDatabase }
+    private let pairHandshakeType = "PairHandshake"
 
     // MARK: - Record Types
     private let auditRecordType     = "AuditEvent"
@@ -405,6 +412,13 @@ class CloudKitService: ObservableObject {
                 lastSyncError = "CloudKit zone not found. Re-pairing required."
             case .userDeletedZone:
                 lastSyncError = "Partner deleted the shared zone. Please re-pair."
+            case .quotaExceeded:
+                // Private-DB writes count against the signed-in iCloud account's
+                // storage. Common on the Simulator's sandbox account. Local data
+                // is unaffected — we just couldn't mirror to iCloud right now.
+                lastSyncError = "iCloud storage is full for this account, so we couldn't sync to iCloud. Your data is saved on this device."
+            case .notAuthenticated:
+                lastSyncError = "Sign in to iCloud (Settings) to sync your account across devices."
             default:
                 lastSyncError = ckError.localizedDescription
             }
@@ -611,6 +625,132 @@ class CloudKitService: ObservableObject {
 
     func deletePairCodeRecord(recordID: CKRecord.ID) async {
         try? await privateDB.deleteRecord(withID: recordID)
+    }
+
+    // MARK: - Cross-Account Pairing Handshake (PUBLIC DB)
+    //
+    // In the PUBLIC database a record is world-readable but writable ONLY by its
+    // creator (default CloudKit security roles). So we use TWO creator-owned
+    // records per 6-digit code, both keyed off the code:
+    //
+    //   handshake-<code>  — created by the MONITOR, holds the monitor's ECDH
+    //                       public key. World-readable so the user can read it.
+    //   presp-<code>      — created by the USER, holds the user's ECDH public
+    //                       key. World-readable so the monitor can poll it.
+    //
+    // Only ECDH *public* keys + display names travel through CloudKit; the
+    // derived 256-bit secret is computed on-device and never leaves it.
+
+    struct PairHandshake {
+        let code: String
+        let monitorUserID: String
+        let monitorPublicKey: String
+        let monitorDisplayName: String
+        let expiresAt: Date
+    }
+
+    struct PairResponse {
+        let userUserID: String
+        let userPublicKey: String
+        let userDisplayName: String
+    }
+
+    /// Monitor: publish `handshake-<code>` with our public key + expiry.
+    func savePairHandshake(code: String,
+                           monitorUserID: String,
+                           monitorPublicKey: String,
+                           monitorDisplayName: String,
+                           expiresAt: Date) async throws {
+        let recordID = CKRecord.ID(recordName: "handshake-\(code)")
+        try await upsertPublic(recordID: recordID, recordType: pairHandshakeType) { record in
+            record["code"] = code as CKRecordValue
+            record["monitorUserID"] = monitorUserID as CKRecordValue
+            record["monitorPublicKey"] = monitorPublicKey as CKRecordValue
+            record["monitorDisplayName"] = monitorDisplayName as CKRecordValue
+            record["expiresAt"] = expiresAt as CKRecordValue
+        }
+    }
+
+    /// User: read the monitor's handshake for a code (nil if missing/expired).
+    func fetchPairHandshake(code: String) async -> PairHandshake? {
+        let recordID = CKRecord.ID(recordName: "handshake-\(code)")
+        do {
+            let r = try await publicDB.record(for: recordID)
+            guard let expires = r["expiresAt"] as? Date, expires > Date() else { return nil }
+            return PairHandshake(
+                code: r["code"] as? String ?? code,
+                monitorUserID: r["monitorUserID"] as? String ?? "",
+                monitorPublicKey: r["monitorPublicKey"] as? String ?? "",
+                monitorDisplayName: r["monitorDisplayName"] as? String ?? "Partner",
+                expiresAt: expires
+            )
+        } catch let e as CKError where e.code == .unknownItem {
+            return nil
+        } catch {
+            handleCloudKitError(error)
+            return nil
+        }
+    }
+
+    /// User: create OUR OWN `presp-<code>` record with our public key. (We can't
+    /// write into the monitor's record — public-DB records are creator-writable.)
+    func writePairResponse(code: String,
+                           userUserID: String,
+                           userPublicKey: String,
+                           userDisplayName: String) async throws {
+        let recordID = CKRecord.ID(recordName: "presp-\(code)")
+        try await upsertPublic(recordID: recordID, recordType: pairHandshakeType) { record in
+            record["code"] = code as CKRecordValue
+            record["userUserID"] = userUserID as CKRecordValue
+            record["userPublicKey"] = userPublicKey as CKRecordValue
+            record["userDisplayName"] = userDisplayName as CKRecordValue
+        }
+    }
+
+    /// Monitor: poll the user's response record for their public key.
+    func fetchPairResponse(code: String) async -> PairResponse? {
+        let recordID = CKRecord.ID(recordName: "presp-\(code)")
+        do {
+            let r = try await publicDB.record(for: recordID)
+            let key = r["userPublicKey"] as? String ?? ""
+            let uid = r["userUserID"] as? String ?? ""
+            guard !key.isEmpty, !uid.isEmpty else { return nil }
+            return PairResponse(userUserID: uid, userPublicKey: key,
+                                userDisplayName: r["userDisplayName"] as? String ?? "Partner")
+        } catch let e as CKError where e.code == .unknownItem {
+            return nil
+        } catch {
+            handleCloudKitError(error)
+            return nil
+        }
+    }
+
+    /// Best-effort cleanup (each side can only delete the record it created).
+    func deletePairHandshake(code: String) async {
+        try? await publicDB.deleteRecord(withID: CKRecord.ID(recordName: "handshake-\(code)"))
+    }
+    func deletePairResponse(code: String) async {
+        try? await publicDB.deleteRecord(withID: CKRecord.ID(recordName: "presp-\(code)"))
+    }
+
+    /// Public-DB variant of `upsert` (fetch-or-create + one conflict retry).
+    private func upsertPublic(recordID: CKRecord.ID,
+                              recordType: String,
+                              apply: (CKRecord) -> Void) async throws {
+        let record: CKRecord
+        if let existing = try? await publicDB.record(for: recordID) {
+            record = existing
+        } else {
+            record = CKRecord(recordType: recordType, recordID: recordID)
+        }
+        apply(record)
+        do {
+            try await publicDB.save(record)
+        } catch let ckError as CKError where ckError.code == .serverRecordChanged {
+            guard let latest = try? await publicDB.record(for: recordID) else { throw ckError }
+            apply(latest)
+            try await publicDB.save(latest)
+        }
     }
 
     // MARK: - BypassGrant (Emergency Override OTP from partner)

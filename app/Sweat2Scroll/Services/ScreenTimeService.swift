@@ -77,6 +77,8 @@ class ScreenTimeService: ObservableObject {
         let data = try? PropertyListEncoder().encode(cleaned)
         sharedDefaults?.set(data, forKey: "activitySelection")
         sharedDefaults?.set(isShieldActive, forKey: "isShieldActive")
+        // (Re)start per-app 30-min usage monitors whenever the selection changes.
+        PerAppUsageMonitorService.shared.refreshMonitoring(for: cleaned)
         return cleaned
     }
 
@@ -91,6 +93,7 @@ class ScreenTimeService: ObservableObject {
             sharedDefaults?.set(cleanedData, forKey: "activitySelection")
         }
         isShieldActive = sharedDefaults?.bool(forKey: "isShieldActive") ?? false
+        PerAppUsageMonitorService.shared.refreshMonitoring(for: activitySelection)
     }
 
     // MARK: - Master Shield Toggle (Single Radio Button)
@@ -117,9 +120,37 @@ class ScreenTimeService: ObservableObject {
     func disengageMasterShield() {
         store.shield.applications = nil
         store.shield.applicationCategories = nil
+        store.shield.webDomains = nil
         isShieldActive = false
         sharedDefaults?.set(false, forKey: "isShieldActive")
         AppLogger.screenTime.info("Master shield DISENGAGED.")
+    }
+
+    /// Shields only the apps/categories that have exhausted their individual
+    /// 30-minute daily allowance. Other selected apps stay open.
+    func applyPartialShield(
+        exhaustedApps: Set<ApplicationToken>,
+        exhaustedCategories: Set<ActivityCategoryToken>
+    ) {
+        refreshAuthorizationStatus()
+        guard authorizationStatus == .approved else { return }
+
+        if exhaustedApps.isEmpty {
+            store.shield.applications = nil
+        } else {
+            store.shield.applications = exhaustedApps
+        }
+
+        if exhaustedCategories.isEmpty {
+            store.shield.applicationCategories = nil
+        } else {
+            store.shield.applicationCategories = .specific(exhaustedCategories)
+        }
+
+        let active = !exhaustedApps.isEmpty || !exhaustedCategories.isEmpty
+        isShieldActive = active
+        sharedDefaults?.set(active, forKey: "isShieldActive")
+        AppLogger.screenTime.info("Partial shield applied — \(exhaustedApps.count) app(s), \(exhaustedCategories.count) categor(ies).")
     }
 
     // MARK: - Temporary Bypass (1 min / 15 min options on shield)

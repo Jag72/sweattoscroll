@@ -115,21 +115,18 @@ class TOTPService {
         UInt64(date.timeIntervalSince1970 / timeStepSeconds)
     }
 
-    // MARK: - ECDH Key Exchange (Pairing)
-    /// Generates an ECDH key pair for the initial device pairing.
-    /// The derived shared secret is stored in the Secure Enclave.
+    // MARK: - ECDH Key Exchange (Responder side)
+    /// Generates a FRESH ephemeral keypair, derives the shared secret from the
+    /// partner's public key, stores it in the Keychain, and returns our own
+    /// public key (raw representation) so the partner can derive the same secret.
+    /// Used by the user (responder) side of pairing via `completePairingAsUser`.
     static func performECDHExchange(withPartnerPublicKeyData partnerKeyData: Data) throws -> Data {
-        // Generate ephemeral private key
         let privateKey = P256.KeyAgreement.PrivateKey()
         let publicKey = privateKey.publicKey
 
-        // Deserialize partner's public key
         let partnerPublicKey = try P256.KeyAgreement.PublicKey(rawRepresentation: partnerKeyData)
-
-        // Derive shared secret via ECDH
         let sharedSecret = try privateKey.sharedSecretFromKeyAgreement(with: partnerPublicKey)
 
-        // Derive symmetric key using HKDF-SHA256
         let symmetricKey = sharedSecret.hkdfDerivedSymmetricKey(
             using: SHA256.self,
             salt: "sweat2scroll-v1".data(using: .utf8)!,
@@ -137,8 +134,7 @@ class TOTPService {
             outputByteCount: 32
         )
 
-        let keyData = symmetricKey.withUnsafeBytes { Data($0) }
-        try storeSharedSecret(keyData)
+        try storeSharedSecret(symmetricKey.withUnsafeBytes { Data($0) })
         return publicKey.rawRepresentation
     }
 
@@ -147,6 +143,127 @@ class TOTPService {
         let secret = try retrieveSharedSecret()
         let hash = SHA256.hash(data: secret)
         return hash.prefix(8).map { String(format: "%02x", $0) }.joined()
+    }
+
+    // MARK: - Two-Sided Pairing Handshake (6-digit code carries the ECDH keys)
+    //
+    // The bug this fixes: the old QR flow called `performECDHExchange(...)` on
+    // BOTH devices, and that function always generated a *fresh* private key.
+    // So each side computed a different secret (A2·B1 vs A1·B1) and no TOTP the
+    // monitor generated could ever validate on the user's device.
+    //
+    // New flow, driven by the existing 6-digit pairing code:
+    //   1. Monitor: `beginPairingAsMonitor()` → makes ONE keypair, persists the
+    //      private half in the Keychain, returns its public key (goes into the
+    //      PairCode record on the public DB).
+    //   2. User: `completePairingAsUser(monitorPublicKeyBase64:)` → makes its own
+    //      keypair, derives + stores the shared secret, returns its public key
+    //      (written back into the same PairCode record).
+    //   3. Monitor polls, sees the user's public key, and calls
+    //      `completePairingAsMonitor(userPublicKeyBase64:)` — which reuses the
+    //      SAME private key from step 1 to derive the identical shared secret.
+    //
+    // Both sides now hold the same 256-bit secret; TOTP works offline forever
+    // after (no CloudKit needed to generate or validate override codes).
+
+    private static let pairingPrivKeyTag = "com.sweat2scroll.pairingEphemeralPriv"
+
+    /// Monitor side, step 1. Generates the ephemeral ECDH keypair, stores the
+    /// private key in the Keychain, and returns the public key (Base64) to embed
+    /// in the pairing record.
+    static func beginPairingAsMonitor() throws -> String {
+        let privateKey = P256.KeyAgreement.PrivateKey()
+        try storeGeneric(privateKey.rawRepresentation, tag: pairingPrivKeyTag)
+        return privateKey.publicKey.rawRepresentation.base64EncodedString()
+    }
+
+    /// User side, step 2. Fresh keypair → derive + store shared secret →
+    /// return own public key (Base64) so the monitor can derive the same secret.
+    @discardableResult
+    static func completePairingAsUser(monitorPublicKeyBase64: String) throws -> (ownPublicKeyBase64: String, fingerprint: String) {
+        guard let monitorKeyData = Data(base64Encoded: monitorPublicKeyBase64) else {
+            throw TOTPError.keyExchangeFailed
+        }
+        // performECDHExchange makes a fresh key, derives the secret, stores it,
+        // and returns our own public key — exactly the responder behavior.
+        let ownPub = try performECDHExchange(withPartnerPublicKeyData: monitorKeyData)
+        return (ownPub.base64EncodedString(), try fingerprint())
+    }
+
+    /// Monitor side, step 3. Reuses the private key stored in step 1 to derive
+    /// the identical shared secret from the user's public key.
+    @discardableResult
+    static func completePairingAsMonitor(userPublicKeyBase64: String) throws -> String {
+        guard let privData = try loadGeneric(tag: pairingPrivKeyTag),
+              let privateKey = try? P256.KeyAgreement.PrivateKey(rawRepresentation: privData) else {
+            throw TOTPError.keyExchangeFailed
+        }
+        guard let userKeyData = Data(base64Encoded: userPublicKeyBase64),
+              let userPublicKey = try? P256.KeyAgreement.PublicKey(rawRepresentation: userKeyData) else {
+            throw TOTPError.keyExchangeFailed
+        }
+        let sharedSecret = try privateKey.sharedSecretFromKeyAgreement(with: userPublicKey)
+        let symmetricKey = sharedSecret.hkdfDerivedSymmetricKey(
+            using: SHA256.self,
+            salt: "sweat2scroll-v1".data(using: .utf8)!,
+            sharedInfo: Data(),
+            outputByteCount: 32
+        )
+        try storeSharedSecret(symmetricKey.withUnsafeBytes { Data($0) })
+        deleteGeneric(tag: pairingPrivKeyTag)   // one-time use
+        return try fingerprint()
+    }
+
+    /// True once a shared secret exists (i.e. the device is paired for overrides).
+    static var hasSharedSecret: Bool {
+        (try? retrieveSharedSecret()) != nil
+    }
+
+    /// Wipes the shared secret + any dangling ephemeral private key (unpair).
+    static func clearPairingSecrets() {
+        for tag in [secretKeychainTag, pairingPrivKeyTag] {
+            let q: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: tag
+            ]
+            SecItemDelete(q as CFDictionary)
+        }
+    }
+
+    // MARK: - Generic Keychain helpers (ephemeral pairing private key)
+
+    private static func storeGeneric(_ data: Data, tag: String) throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: tag,
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        ]
+        SecItemDelete(query as CFDictionary)
+        let status = SecItemAdd(query as CFDictionary, nil)
+        guard status == errSecSuccess else { throw TOTPError.keychainStoreFailed(status) }
+    }
+
+    private static func loadGeneric(tag: String) throws -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: tag,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess else { throw TOTPError.keychainRetrieveFailed(status) }
+        return result as? Data
+    }
+
+    private static func deleteGeneric(tag: String) {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: tag
+        ]
+        SecItemDelete(query as CFDictionary)
     }
 }
 

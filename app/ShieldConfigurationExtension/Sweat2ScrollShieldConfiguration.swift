@@ -91,11 +91,10 @@ class Sweat2ScrollShieldConfiguration: ShieldConfigurationDataSource {
         -> (title: String, subtitle: String)
     {
         switch phaseRaw {
-        case "grace":
-            let minutes = minutesUntil(K.blockingGraceEndsAt)
+        case "monitoring", "grace":
             return (
                 title: "Sweat2Scroll",
-                subtitle: "Free window: \(minutes) min before apps lock down."
+                subtitle: "30 min per app per day — the timer starts when you open each app."
             )
         case "bypass15":
             let minutes = minutesUntil(K.blockingBypass15EndsAt)
@@ -142,13 +141,20 @@ class Sweat2ScrollShieldConfiguration: ShieldConfigurationDataSource {
     /// the main app has been suspended.
     private func resolveLivePhase() -> String {
         let now = Date()
+        if sharedDefaults?.bool(forKey: "blockingSession.goalReached") == true {
+            return "unlocked"
+        }
         let dayBypass = sharedDefaults?.object(forKey: "blockingSession.dayBypassEndsAt") as? Date
         let bypass15  = sharedDefaults?.object(forKey: K.blockingBypass15EndsAt) as? Date
-        let grace     = sharedDefaults?.object(forKey: K.blockingGraceEndsAt) as? Date
 
         if let end = dayBypass, now < end { return "dayBypass" }
         if let end = bypass15,  now < end { return "bypass15"  }
-        if let end = grace,     now < end { return "grace"     }
+
+        let exhaustedAppIndices = sharedDefaults?.array(forKey: "usageMonitor.exhaustedAppIndices") as? [Int] ?? []
+        let exhaustedCatIndices = sharedDefaults?.array(forKey: "usageMonitor.exhaustedCatIndices") as? [Int] ?? []
+        if exhaustedAppIndices.isEmpty && exhaustedCatIndices.isEmpty {
+            return "monitoring"
+        }
         return "blocked"
     }
 }

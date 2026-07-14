@@ -39,6 +39,9 @@ class ActivityViewModel: ObservableObject {
     /// engage / disengage on transitions (avoiding double-scheduling of
     /// DeviceActivity bypass windows on every 30-second policy tick).
     private var lastBlockingPhase: BlockingPhase = .idle
+    /// Tracks per-app exhaustion count so partial shields update when a new app
+    /// hits its 30-min limit without a phase transition.
+    private var lastExhaustedTargetCount: Int = 0
 
     // MARK: - Initialization
     init() {
@@ -50,28 +53,30 @@ class ActivityViewModel: ObservableObject {
     // MARK: - Setup
     func initialize() async {
         isLoading = true
+        // HealthKit auth + first fetch are best-effort — a Simulator hiccup or
+        // zero activity today must not block the rest of startup.
+        try? await healthKit.requestAuthorization()
+        await healthKit.verifyAccess()
+
+        // Compute calorie goal — prefer the user's saved goal so the
+        // dashboard percentage matches what they set in onboarding.
+        activityGoal = makeActivityGoal(profile: healthKit.userProfile)
+
         do {
-            // 1. Request HealthKit authorization
-            try await healthKit.requestAuthorization()
-
-            // 2. Compute calorie goal — prefer the user's saved goal so the
-            // dashboard percentage matches what they set in onboarding.
-            activityGoal = makeActivityGoal(profile: healthKit.userProfile)
-
-            // 3. Load persisted shield state
+            // Load persisted shield state
             screenTime.loadSelection()
             isShieldActive = screenTime.isShieldActive
 
-            // 4. Load Wasm policy module (cold start ~38ms)
+            // Load Wasm policy module (cold start ~38ms)
             try opaService.loadModule()
 
-            // 5. Start tamper detection watchdog
+            // Start tamper detection watchdog
             tamperService.startMonitoring()
 
-            // 6. Start continuous policy evaluation loop
+            // Start continuous policy evaluation loop
             startPolicyEvaluationLoop()
 
-            // 7. Sync to CloudKit
+            // Sync to CloudKit
             await cloudKit.subscribeToPartnerUpdates()
 
         } catch {
@@ -190,22 +195,23 @@ class ActivityViewModel: ObservableObject {
         let result = opaService.evaluateWithFallback(input: input)
         lastPolicyResult = result
 
-        // Drive the Solo blocking-session state machine: grace → blocked →
-        // bypass15 / dayBypass / unlocked. The OS shield is only engaged when
-        // the resolved phase is `.blocked`; every other phase lets the user
-        // through (with appropriate friction).
+        // Drive the Solo blocking-session state machine: per-app usage → blocked →
+        // bypass15 / dayBypass / unlocked. The OS shield is applied per-app
+        // as each selected app hits its 30-minute daily allowance.
         let hasSelection = !screenTime.activitySelection.applicationTokens.isEmpty
                         || !screenTime.activitySelection.categoryTokens.isEmpty
                         || !screenTime.activitySelection.webDomainTokens.isEmpty
 
+        let groupDefaults = UserDefaults(suiteName: "group.com.sweat2scroll.appblocker")
+
         BlockingSessionService.shared.tick(goalReached: result.allow,
                                            hasSelection: hasSelection)
         let phase = BlockingSessionService.shared.phase
+        groupDefaults?.set(result.allow, forKey: AppGroupKey.goalReached)
         syncShield(forPhase: phase, hasSelection: hasSelection)
 
         // Mirror today's calorie progress to the App Group so the OS shield
         // extension can render contextual messaging.
-        let groupDefaults = UserDefaults(suiteName: "group.com.sweat2scroll.appblocker")
         groupDefaults?.set(healthKit.activeCaloriesToday, forKey: AppGroupKey.currentCalories)
         groupDefaults?.set(activityGoal.agreedTarget, forKey: AppGroupKey.currentGoal)
         groupDefaults?.set(activityGoal.currency.codeName, forKey: AppGroupKey.goalCurrency)
@@ -223,10 +229,20 @@ class ActivityViewModel: ObservableObject {
     }
 
     /// Reconciles the OS-level Family Controls shield with the current Solo
-    /// blocking-session phase. Only acts on phase transitions so we don't
-    /// re-schedule DeviceActivity bypass windows on every 30-second tick.
+    /// blocking-session phase. Applies partial shields per-app during
+    /// `.monitoring`, and full shields when every app is exhausted.
     private func syncShield(forPhase phase: BlockingPhase, hasSelection: Bool) {
-        defer { lastBlockingPhase = phase }
+        let selection = screenTime.activitySelection
+        let usage = PerAppUsageMonitorService.shared
+        let exhaustedApps = usage.loadExhaustedApplicationTokens(from: selection)
+        let exhaustedCats = usage.loadExhaustedCategoryTokens(from: selection)
+        let exhaustedCount = exhaustedApps.count + exhaustedCats.count
+
+        defer {
+            lastBlockingPhase = phase
+            lastExhaustedTargetCount = exhaustedCount
+        }
+
         isUnlocked = (phase != .blocked)
 
         guard hasSelection else {
@@ -237,29 +253,31 @@ class ActivityViewModel: ObservableObject {
             return
         }
 
-        // Skip work when nothing changed.
-        if phase == lastBlockingPhase { return }
+        // Skip redundant work unless phase or per-app exhaustion changed.
+        if phase == lastBlockingPhase,
+           exhaustedCount == lastExhaustedTargetCount,
+           phase != .bypass15 {
+            return
+        }
 
         switch phase {
         case .blocked:
             screenTime.engageMasterShield()
             isShieldActive = true
-            logAuditEvent(type: .shieldEngaged)
+            logAuditEvent(type: .shieldEngaged, notes: "All apps hit 30-min limit")
 
-        case .grace:
-            // Drop the shield + schedule re-engagement when grace expires.
-            // The DeviceActivityMonitor extension fires `intervalDidEnd` even
-            // if Sweat2Scroll is suspended, so the shield comes back even when
-            // the user is sitting in a third-party app.
-            let mins = max(1, Int(ceil(BlockingSessionService.shared.graceSecondsRemaining / 60)))
-            screenTime.temporaryBypass(minutes: mins)
-            isShieldActive = false
-            logAuditEvent(type: .shieldDisengaged,
-                          notes: "Grace window opened (\(mins) min)")
+        case .monitoring:
+            screenTime.applyPartialShield(
+                exhaustedApps: exhaustedApps,
+                exhaustedCategories: exhaustedCats
+            )
+            isShieldActive = !exhaustedApps.isEmpty || !exhaustedCats.isEmpty
+            if !exhaustedApps.isEmpty || !exhaustedCats.isEmpty {
+                logAuditEvent(type: .shieldEngaged,
+                              notes: "Partial shield — \(exhaustedCount) target(s) at 30-min limit")
+            }
 
         case .bypass15:
-            // Cold-start path: app launched while a 15-min bypass is still in
-            // flight. Keep the shield down and re-arm the OS schedule.
             let mins = max(1, Int(ceil(BlockingSessionService.shared.bypass15SecondsRemaining / 60)))
             screenTime.temporaryBypass(minutes: mins)
             isShieldActive = false
@@ -403,7 +421,8 @@ class ActivityViewModel: ObservableObject {
     func applyEmergencyOverride(durationMinutes: Int,
                                 grantedBy: String,
                                 reason: String?) {
-        let minutes = max(5, min(durationMinutes, 240))
+        // Partner override is a fixed 15-minute unlock (clamped defensively).
+        let minutes = max(1, min(durationMinutes, 15))
         overrideState = OverrideState(
             isActive: true,
             expiresAt: Date().addingTimeInterval(TimeInterval(minutes * 60)),

@@ -46,4 +46,17 @@ enum AppGroupKey {
     static let blockingNote            = "blockingSession.note"
     static let blockingNoteAt          = "blockingSession.noteAt"
     static let blockingPendingJustify  = "blockingSession.pendingJustify"
+
+    // MARK: - Per-app daily usage limits (DeviceActivityEvent thresholds)
+    /// Encoded `[Data]` manifest of monitored `ApplicationToken`s (index → event).
+    static let usageMonitorAppTokenData      = "usageMonitor.appTokenData"
+    static let usageMonitorCatTokenData      = "usageMonitor.catTokenData"
+    /// Indices (into the manifest) of apps/categories that hit their daily limit.
+    static let exhaustedAppIndices           = "usageMonitor.exhaustedAppIndices"
+    static let exhaustedCatIndices           = "usageMonitor.exhaustedCatIndices"
+    /// Legacy keys — cleared on rollover; kept for migration.
+    static let exhaustedApplicationTokenData = "usageMonitor.exhaustedAppTokenData"
+    static let exhaustedCategoryTokenData    = "usageMonitor.exhaustedCatTokenData"
+    /// Written by the main app so extensions know whether the calorie goal is met.
+    static let goalReached                   = "blockingSession.goalReached"
 }
