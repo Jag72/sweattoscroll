@@ -705,6 +705,8 @@ struct ProfileScreen: View {
     var onPermissions: () -> Void = {}
 
     @State private var showSignOutConfirm = false
+    @State private var showHelpSupport = false
+    @State private var showPrivacyPolicy = false
     @AppStorage("currentStreak") private var streak: Int = 14
 
     private var displayName: String { AuthManager.shared.userDisplayName }
@@ -748,10 +750,12 @@ struct ProfileScreen: View {
 
                 settingsGroup(title: "About") {
                     settingsRow(icon: "questionmark.circle.fill", color: .muted,
-                                title: "Help & Support", value: "")
+                                title: "Help & Support", value: "",
+                                action: { showHelpSupport = true })
                     Divider().padding(.leading, 60)
                     settingsRow(icon: "doc.text.fill", color: .muted,
-                                title: "Privacy Policy", value: "")
+                                title: "Privacy Policy", value: "",
+                                action: { showPrivacyPolicy = true })
                     Divider().padding(.leading, 60)
                     settingsRow(icon: "info.circle.fill", color: .muted,
                                 title: "Version", value: appVersion, chevron: false)
@@ -781,6 +785,8 @@ struct ProfileScreen: View {
                 .padding(.bottom, 28)
             }
         }
+        .sheet(isPresented: $showHelpSupport) { HelpSupportView() }
+        .sheet(isPresented: $showPrivacyPolicy) { PrivacyPolicyView() }
         .alert("Sign out?", isPresented: $showSignOutConfirm) {
             Button("Cancel", role: .cancel) {}
             Button("Sign Out", role: .destructive) { AuthManager.shared.signOut() }

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help &amp; Support — Sweat2Scroll</title>
+  <meta name="description" content="Get help with Sweat2Scroll — FAQs, troubleshooting, and support contact." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lime: #C8FF00; --dark: #080808; --card: #141414;
+      --border: rgba(255,255,255,0.08); --text: #F0F0EE; --muted: rgba(240,240,238,0.45);
+      --font-display: 'Anton', sans-serif; --font-body: 'Outfit', sans-serif;
+    }
+    body { background: var(--dark); color: var(--text); font-family: var(--font-body); line-height: 1.6; }
+    nav {
+      position: sticky; top: 0; z-index: 100; display: flex; align-items: center;
+      justify-content: space-between; padding: 1.2rem 5vw;
+      background: rgba(8,8,8,0.85); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--lime); text-decoration: none; }
+    nav a.link { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+    nav a.link:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 3.5rem 5vw 5rem; }
+    h1 { font-family: var(--font-display); font-size: clamp(2.2rem, 6vw, 3.4rem); letter-spacing: 0.02em; line-height: 1.1; }
+    h1 span { color: var(--lime); }
+    .sub { color: var(--muted); margin: 1rem 0 2.5rem; max-width: 55ch; }
+    h2 { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.03em; margin: 3rem 0 1rem; color: var(--lime); }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.4rem 1.6rem; margin-bottom: 1rem;
+    }
+    .card h3 { font-size: 1.02rem; font-weight: 600; margin-bottom: 0.45rem; }
+    .card p, .card li { color: var(--muted); font-size: 0.95rem; }
+    .card ol, .card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+    a.mail {
+      display: inline-block; background: var(--lime); color: var(--dark); font-weight: 600;
+      padding: 0.8rem 1.6rem; border-radius: 999px; text-decoration: none; margin-top: 0.8rem;
+    }
+    .meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    td { padding: 0.45rem 0; color: var(--muted); border-bottom: 1px solid var(--border); }
+    td:first-child { color: var(--text); font-weight: 500; width: 42%; }
+    footer { border-top: 1px solid var(--border); padding: 2rem 5vw; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="/">SWEAT2SCROLL</a>
+    <a class="link" href="/privacy.html">Privacy Policy</a>
+  </nav>
+
+  <main>
+    <h1>HELP &amp; <span>SUPPORT</span></h1>
+    <p class="sub">Stuck, found a bug, or have a complaint? We read every message and aim to reply within 48 hours.</p>
+
+    <div class="card">
+      <h3>📮 Contact us</h3>
+      <p>Log complaints, report bugs, or ask questions by email. Include your iOS version, app version, and a screenshot if possible — it speeds things up a lot.</p>
+      <a class="mail" href="mailto:coppersmith2222@gmail.com?subject=Sweat2Scroll%20Support">coppersmith2222@gmail.com</a>
+      <p class="meta">You can also open an issue on <a href="https://github.com/Jag72/sweattoscroll/issues" style="color:var(--lime)">GitHub</a>.</p>
+    </div>
+
+    <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+    <div class="card">
+      <h3>My apps didn't unlock after I hit my goal</h3>
+      <p>Sweat2Scroll re-checks your HealthKit progress roughly every 15 minutes in the background. To force a check, open the app — the dashboard refresh triggers an immediate policy evaluation. Also confirm Health access is granted in Settings → Privacy &amp; Security → Health → Sweat2Scroll.</p>
+    </div>
+
+    <div class="card">
+      <h3>I deleted Sweat2Scroll but my apps are still blocked</h3>
+      <p>iOS automatically removes all Screen Time shields an app has applied when that app is deleted, so your apps should unlock on their own. In rare cases an iOS system bug can leave a shield behind. If that happens:</p>
+      <ol>
+        <li>Reinstall Sweat2Scroll, sign in, and toggle the shield off — then delete the app again; or</li>
+        <li>Go to Settings → Screen Time, turn Screen Time off and back on; or</li>
+        <li>Restart your iPhone.</li>
+      </ol>
+      <p>This is Apple system behavior, not data we control — no Sweat2Scroll servers are involved in shielding.</p>
+    </div>
+
+    <div class="card">
+      <h3>What is Break-Glass and how do I use it?</h3>
+      <p>Break-Glass is an emergency override held by your accountability partner. Ask your partner for the current 6-digit code (it rotates and is single-use), tap Break-Glass in the app, and enter it. Your apps unlock for 15 minutes, and the event is recorded in your signed audit log.</p>
+    </div>
+
+    <div class="card">
+      <h3>My step / calorie data looks wrong or missing</h3>
+      <p>Sweat2Scroll only mirrors what Apple Health reports. Check the Health app first — if the data is missing there, it will be missing here. An Apple Watch gives the most accurate active-calorie, HRV, and sleep data; iPhone-only tracking covers steps and some workouts.</p>
+    </div>
+
+    <div class="card">
+      <h3>How do I change my blocked apps or daily goal?</h3>
+      <p>Profile tab → Daily calorie goal, or Profile tab → Restricted apps. Changes take effect immediately at the next policy evaluation.</p>
+    </div>
+
+    <div class="card">
+      <h3>Does my health data leave my phone?</h3>
+      <p>No. All fitness data is processed in-memory on your device by an on-device policy engine. Nothing is sent to our servers — we don't have any. See the <a href="/privacy.html" style="color:var(--lime)">Privacy Policy</a> for details.</p>
+    </div>
+
+    <div class="card">
+      <h3>How do I delete my account and data?</h3>
+      <p>Sign out and delete the app to remove all local data. To erase your private CloudKit records (pairing contract, audit log), email us at <a href="mailto:coppersmith2222@gmail.com" style="color:var(--lime)">coppersmith2222@gmail.com</a> with the subject "Data deletion" — or manage iCloud data yourself in Settings → Apple ID → iCloud → Manage Account Storage.</p>
+    </div>
+
+    <h2>VERSION 1.0</h2>
+    <div class="card">
+      <h3>What's in v1.0 — Initial Release (July 2026)</h3>
+      <ul>
+        <li>Fitness-gated app blocking: earn access by hitting your daily calorie, step, or workout goal</li>
+        <li>iOS Screen Time (FamilyControls) shield enforcement — no dismissable overlays</li>
+        <li>Apple HealthKit integration: steps, active calories, workouts, HRV, resting HR, sleep, respiratory rate</li>
+        <li>On-device policy engine (Open Policy Agent compiled to WebAssembly) — zero server round-trips</li>
+        <li>Partner accountability: ECDH-secured pairing, Break-Glass TOTP emergency codes, signed audit log</li>
+        <li>Wellness dashboards: Recovery, Strain, Sleep, and Heart metrics</li>
+        <li>Solo, User, and Monitor onboarding modes</li>
+      </ul>
+      <table style="margin-top:1rem">
+        <tr><td>Version</td><td>1.0</td></tr>
+        <tr><td>Released</td><td>July 2026</td></tr>
+        <tr><td>Requires</td><td>iOS 16.0 or later, iPhone</td></tr>
+        <tr><td>Recommended</td><td>Apple Watch (HRV, sleep, calorie accuracy)</td></tr>
+        <tr><td>Price</td><td>Free</td></tr>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 Jagadish Krishna Pilla · <a href="/privacy.html">Privacy Policy</a> · <a href="mailto:coppersmith2222@gmail.com">coppersmith2222@gmail.com</a>
+  </footer>
+</body>
+</html>
