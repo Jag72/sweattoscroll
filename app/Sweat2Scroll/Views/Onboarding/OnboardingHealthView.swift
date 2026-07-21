@@ -27,16 +27,16 @@ struct OnboardingHealthView: View {
 
     private var subtitleConnected: String {
         if hk.needsManualBodyMetrics {
-            return "Apple Health didn't include everything we need (or samples are missing). Tap Continue to confirm height, weight & age in Sweat2Scroll."
+            return "A few details are missing — you'll confirm them next."
         }
-        return "We pulled your latest profile from Apple Health. Tap Continue to set your daily target."
+        return "Here's what we found. Continue to set your daily goal."
     }
 
     var body: some View {
         OnboardingScaffold(
             title: connected ? "You're connected to Apple Health" : "Let's personalize your goals",
             subtitle: connected ? subtitleConnected
-                : "We'll read age, weight & height from Apple Health when available — otherwise you'll enter them in Sweat2Scroll.",
+                : "We'll use Apple Health to personalize your goal.",
             stepIndex: progress?.current,
             stepCount: progress?.total,
             primaryTitle: connected ? "Continue" : "Connect Apple Health",

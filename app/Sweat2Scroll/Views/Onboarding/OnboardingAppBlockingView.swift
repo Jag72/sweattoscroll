@@ -26,7 +26,7 @@ struct OnboardingAppBlockingView: View {
     var body: some View {
         OnboardingScaffold(
             title: "Choose apps to lock",
-            subtitle: "Pick apps or categories to lock until you hit today's goal. Use search at the top of Apple's picker to find apps quickly. Sweat2Scroll can't lock itself — if it appears, we'll skip it.",
+            subtitle: "Pick the apps to lock until you hit today's goal.",
             stepIndex: progress?.current,
             stepCount: progress?.total,
             backAction: { auth.advancePRDOnboarding(to: .prdCalorie) },

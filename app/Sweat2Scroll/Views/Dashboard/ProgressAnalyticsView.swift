@@ -279,11 +279,47 @@ struct ProgressAnalyticsView: View {
                 } else if currentPoints.allSatisfy({ $0.value == 0 }) {
                     emptyState
                 } else {
-                    chart.frame(height: 250)
+                    VStack(spacing: 10) {
+                        chart.frame(height: 250)
+                        if !metric.isCumulative, !ghostPoints.isEmpty {
+                            chartLegend
+                        }
+                    }
                 }
             }
         }
         .padding(.horizontal, 20)
+    }
+
+    /// Horizontal line shape for the dashed legend swatch.
+    private struct Line: Shape {
+        func path(in rect: CGRect) -> Path {
+            var p = Path()
+            p.move(to: CGPoint(x: rect.minX, y: rect.midY))
+            p.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+            return p
+        }
+    }
+
+    /// Tiny legend shown only when the previous-period ghost line is drawn,
+    /// so the dashed grey line is never a mystery.
+    private var chartLegend: some View {
+        HStack(spacing: 16) {
+            HStack(spacing: 5) {
+                Capsule().fill(metric.color).frame(width: 16, height: 3)
+                Text("This period")
+            }
+            HStack(spacing: 5) {
+                Line()
+                    .stroke(Color.muted.opacity(0.6), style: StrokeStyle(lineWidth: 2, dash: [3, 3]))
+                    .frame(width: 16, height: 2)
+                Text("Last period")
+            }
+            Spacer()
+        }
+        .font(.system(size: 10, weight: .semibold))
+        .foregroundColor(.muted)
+        .padding(.horizontal, 6)
     }
 
     private var chart: some View {
@@ -305,16 +341,22 @@ struct ProgressAnalyticsView: View {
                     }
             }
 
-            // Previous-period ghost.
-            ForEach(ghostPoints) { p in
-                LineMark(
-                    x: .value("Date", p.date, unit: xUnit),
-                    y: .value("Prev", p.value),
-                    series: .value("Series", "previous")
-                )
-                .interpolationMethod(.catmullRom)
-                .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                .foregroundStyle(Color.muted.opacity(0.45))
+            // Previous-period ghost — biometric line charts only. Overlaying a
+            // dashed spline on bar charts read as unlabeled noise, and the
+            // week-over-week delta is already shown in the header chip and
+            // insights. `.monotone` never overshoots the actual data points
+            // (catmullRom drew huge phantom arcs between spiky days).
+            if !metric.isCumulative {
+                ForEach(ghostPoints.filter { $0.value > 0 }) { p in
+                    LineMark(
+                        x: .value("Date", p.date, unit: xUnit),
+                        y: .value("Prev", p.value),
+                        series: .value("Series", "previous")
+                    )
+                    .interpolationMethod(.monotone)
+                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
+                    .foregroundStyle(Color.muted.opacity(0.45))
+                }
             }
 
             // Current period.
@@ -337,7 +379,7 @@ struct ProgressAnalyticsView: View {
                         x: .value("Date", p.date, unit: xUnit),
                         y: .value(metric.rawValue, p.value)
                     )
-                    .interpolationMethod(.catmullRom)
+                    .interpolationMethod(.monotone)
                     .foregroundStyle(
                         LinearGradient(colors: [metric.color.opacity(0.28), .clear],
                                        startPoint: .top, endPoint: .bottom)
@@ -347,7 +389,7 @@ struct ProgressAnalyticsView: View {
                         y: .value(metric.rawValue, p.value),
                         series: .value("Series", "current")
                     )
-                    .interpolationMethod(.catmullRom)
+                    .interpolationMethod(.monotone)
                     .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
                     .foregroundStyle(metric.color)
                     PointMark(

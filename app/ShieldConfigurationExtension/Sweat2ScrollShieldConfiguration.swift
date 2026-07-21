@@ -94,7 +94,7 @@ class Sweat2ScrollShieldConfiguration: ShieldConfigurationDataSource {
         case "monitoring", "grace":
             return (
                 title: "Sweat2Scroll",
-                subtitle: "30 min per app per day — the timer starts when you open each app."
+                subtitle: "30 min per app daily."
             )
         case "bypass15":
             let minutes = minutesUntil(K.blockingBypass15EndsAt)

@@ -43,7 +43,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Sweat2Scroll uses the camera to scan your partner's QR code during the secure device pairing process.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Sweat2Scroll uses Face ID or your device passcode to confirm adding or changing an accountability partner.</string>
+	<string>Sweat2Scroll uses Face ID or your device passcode to unlock the app and restore your session, and to confirm adding or changing an accountability partner.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Sweat2Scroll reads your active calories, steps, weight, and height from Apple Health to compute your daily fitness goal. This data is processed entirely on your device and is never transmitted to third-party servers.</string>
 	<key>NSHealthUpdateUsageDescription</key>

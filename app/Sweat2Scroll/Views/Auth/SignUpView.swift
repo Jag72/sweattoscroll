@@ -247,6 +247,8 @@ struct SignUpView: View {
                 email: profile.email,
                 fullName: profile.fullName
             )
+        } catch GoogleAuthService.GoogleAuthError.canceled {
+            // User backed out of the Google sheet — not an error, show nothing.
         } catch {
             if auth.lastAuthError == nil {
                 authError = error.localizedDescription
