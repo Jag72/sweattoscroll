@@ -495,6 +495,11 @@ final class AuthManager: ObservableObject {
         }
     }
 
+    /// Best-effort cloud save: a CloudKit outage, throttle, or storage-quota
+    /// error on the user's iCloud account must NOT trap them behind
+    /// onboarding — `cachedAccount`'s local mirror already captures the
+    /// profile, and it re-syncs on the next successful save. Mirrors the
+    /// resilience already used by `finishPRDOnboardingFlow`.
     func completeSoloOnboarding(displayName: String, ageYears: Int, weightKg: Double, dailyTargetKcal: Double) async throws {
         guard var acc = cachedAccount else { return }
         acc.displayName = displayName
@@ -502,7 +507,13 @@ final class AuthManager: ObservableObject {
         acc.weightKg = weightKg
         acc.dailyTargetKcal = dailyTargetKcal
         acc.appMode = .solo
-        if !isDevSession { try await cloud.saveUserAccount(acc) }
+        if !isDevSession {
+            do {
+                try await cloud.saveUserAccount(acc)
+            } catch {
+                AppLogger.auth.warning("Solo onboarding cloud-save deferred: \(error.localizedDescription, privacy: .public)")
+            }
+        }
         cachedAccount = acc
         authState = .solo
     }
@@ -518,7 +529,13 @@ final class AuthManager: ObservableObject {
             acc.isPaired = false
             acc.linkedPeerAppleUserID = nil
         }
-        if !isDevSession { try await cloud.saveUserAccount(acc) }
+        if !isDevSession {
+            do {
+                try await cloud.saveUserAccount(acc)
+            } catch {
+                AppLogger.auth.warning("User onboarding cloud-save deferred: \(error.localizedDescription, privacy: .public)")
+            }
+        }
         cachedAccount = acc
         authState = .user(paired: acc.isPaired)
     }
@@ -530,7 +547,13 @@ final class AuthManager: ObservableObject {
         acc.relationshipLabel = relationship
         acc.isPaired = false
         acc.linkedPeerAppleUserID = nil
-        if !isDevSession { try await cloud.saveUserAccount(acc) }
+        if !isDevSession {
+            do {
+                try await cloud.saveUserAccount(acc)
+            } catch {
+                AppLogger.auth.warning("Monitor onboarding cloud-save deferred: \(error.localizedDescription, privacy: .public)")
+            }
+        }
         cachedAccount = acc
         authState = .monitor(paired: false)
     }
