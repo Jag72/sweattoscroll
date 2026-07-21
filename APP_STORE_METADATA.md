@@ -143,7 +143,7 @@ KEY FLOWS:
 SIMULATOR NOTE: HealthKit returns mock data in Simulator. FamilyControls
 shield enforcement requires a physical device with Screen Time enabled.
 
-The FamilyControls entitlement was approved for this app. Bundle ID: com.jag.sweat2scroll
+The FamilyControls entitlement was approved for this app. Bundle ID: com.jagadish.sweat2scroll
 
 Thank you for your time.
 ```
