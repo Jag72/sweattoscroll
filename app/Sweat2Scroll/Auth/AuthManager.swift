@@ -516,6 +516,7 @@ final class AuthManager: ObservableObject {
         }
         cachedAccount = acc
         authState = .solo
+        UserDefaults.standard.set(true, forKey: "onboardingComplete")
     }
 
     func completeUserOnboarding(displayName: String, ageYears: Int, weightKg: Double, dailyTargetKcal: Double, skipPairing: Bool) async throws {
@@ -538,6 +539,7 @@ final class AuthManager: ObservableObject {
         }
         cachedAccount = acc
         authState = .user(paired: acc.isPaired)
+        UserDefaults.standard.set(true, forKey: "onboardingComplete")
     }
 
     func completeMonitorOnboarding(displayName: String, relationship: String) async throws {
@@ -556,6 +558,7 @@ final class AuthManager: ObservableObject {
         }
         cachedAccount = acc
         authState = .monitor(paired: false)
+        UserDefaults.standard.set(true, forKey: "onboardingComplete")
     }
 
     func refreshAfterPairing() async {
