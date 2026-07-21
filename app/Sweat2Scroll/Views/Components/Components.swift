@@ -416,38 +416,54 @@ struct OnboardingScaffold<Content: View>: View {
                     .padding(.top, (stepIndex == nil && backAction == nil) ? 32 : 4)
                     .padding(.bottom, 24)
                 }
-
-                VStack(spacing: 10) {
-                    Button(action: primaryAction) {
-                        HStack(spacing: 10) {
-                            if primaryLoading { ProgressView().tint(.white) }
-                            Text(primaryTitle).fontWeight(.bold)
+                .scrollDismissesKeyboard(.interactively)
+                // Button bar as a safe-area inset (NOT a sibling): the scroll
+                // content automatically gets the bar's height as bottom inset,
+                // so no card can ever be hidden underneath it — including while
+                // the keyboard is up or animating.
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    VStack(spacing: 10) {
+                        Button(action: primaryAction) {
+                            HStack(spacing: 10) {
+                                if primaryLoading { ProgressView().tint(.white) }
+                                Text(primaryTitle).fontWeight(.bold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                primaryEnabled
+                                    ? LinearGradient(colors: [.electricOrange, Color(hex: "#FF9A62")],
+                                                     startPoint: .leading, endPoint: .trailing)
+                                    : LinearGradient(colors: [Color.muted.opacity(0.25), Color.muted.opacity(0.2)],
+                                                     startPoint: .leading, endPoint: .trailing)
+                            )
+                            .foregroundColor(primaryEnabled ? .white : .muted)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .shadow(color: primaryEnabled ? Color.electricOrange.opacity(0.25) : .clear,
+                                    radius: 12, y: 4)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            primaryEnabled
-                                ? LinearGradient(colors: [.electricOrange, Color(hex: "#FF9A62")],
-                                                 startPoint: .leading, endPoint: .trailing)
-                                : LinearGradient(colors: [Color.muted.opacity(0.25), Color.muted.opacity(0.2)],
-                                                 startPoint: .leading, endPoint: .trailing)
-                        )
-                        .foregroundColor(primaryEnabled ? .white : .muted)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .shadow(color: primaryEnabled ? Color.electricOrange.opacity(0.25) : .clear,
-                                radius: 12, y: 4)
-                    }
-                    .disabled(!primaryEnabled || primaryLoading)
+                        .disabled(!primaryEnabled || primaryLoading)
 
-                    if let secondaryTitle, let secondaryAction {
-                        Button(secondaryTitle, action: secondaryAction)
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.muted)
-                            .padding(.vertical, 6)
+                        if let secondaryTitle, let secondaryAction {
+                            Button(secondaryTitle, action: secondaryAction)
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.muted)
+                                .padding(.vertical, 6)
+                        }
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 10)
+                    .padding(.bottom, 16)
+                    // Opaque paper backing with a soft top fade so cards
+                    // scrolling underneath don't visually collide with the bar.
+                    .background(
+                        LinearGradient(
+                            colors: [Color.paper.opacity(0), Color.paper, Color.paper],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                        .ignoresSafeArea(edges: .bottom)
+                    )
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 16)
             }
         }
         .navigationBarBackButtonHidden(true)

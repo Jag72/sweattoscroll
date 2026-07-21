@@ -15,7 +15,14 @@ final class AuthManager: ObservableObject {
     @Published var lastAuthError: String?
 
     @Published var currentAppleUserID: String?
-    @Published private(set) var cachedAccount: CloudUserAccount?
+
+    /// The in-memory account. Every assignment is mirrored to a local
+    /// per-user store so profile selections (mode, goal, age/weight, role)
+    /// survive sign-out → sign-in even when CloudKit saves fail or the
+    /// device is offline. CloudKit remains the source of truth when reachable.
+    @Published private(set) var cachedAccount: CloudUserAccount? {
+        didSet { if let acc = cachedAccount { persistLocalMirror(acc) } }
+    }
 
     private let appleIDDefaultsKey = "s2s_apple_user_id"
     private let cloud = CloudKitService.shared
@@ -35,28 +42,117 @@ final class AuthManager: ObservableObject {
         Task { await restoreSessionIfPossible() }
     }
 
+    // MARK: - Local account mirror (per-user, survives sign-out)
+
+    private func mirrorKey(_ appleUserID: String) -> String {
+        "s2s_account_mirror_\(appleUserID)"
+    }
+
+    private func persistLocalMirror(_ account: CloudUserAccount) {
+        if let data = try? JSONEncoder().encode(account) {
+            UserDefaults.standard.set(data, forKey: mirrorKey(account.appleUserID))
+        }
+    }
+
+    private func loadLocalMirror(appleUserID: String) -> CloudUserAccount? {
+        guard let data = UserDefaults.standard.data(forKey: mirrorKey(appleUserID)) else { return nil }
+        return try? JSONDecoder().decode(CloudUserAccount.self, from: data)
+    }
+
     // MARK: - Session
 
+    /// Restores the session from the locally stored user ID.
+    ///
+    /// Non-destructive by design: a transient CloudKit failure must NEVER log
+    /// the user out. The only paths to `.unauthenticated` are (a) no stored
+    /// session at all, (b) an explicit `signOut()`, or (c) CloudKit
+    /// definitively reporting the account no longer exists AND we have no
+    /// local copy to fall back on. This fixes the bug where backgrounding the
+    /// app (or a network blip on relaunch) bounced users back to the login page.
     func restoreSessionIfPossible() async {
         guard let id = UserDefaults.standard.string(forKey: appleIDDefaultsKey), !id.isEmpty else {
-            authState = .unauthenticated
-            currentAppleUserID = nil
-            cachedAccount = nil
+            // No stored session. Only reset if we aren't already signed in —
+            // never yank an active in-memory session out from under the UI.
+            if authState == .unauthenticated {
+                currentAppleUserID = nil
+                cachedAccount = nil
+            }
             return
         }
         currentAppleUserID = id
+
+        // Dev sessions have no CloudKit record — rebuild locally, never fetch.
+        if id.hasPrefix("dev_") {
+            if cachedAccount == nil {
+                if let mirror = loadLocalMirror(appleUserID: id) {
+                    cachedAccount = mirror
+                } else {
+                    var account = CloudUserAccount.newUser(appleUserID: id, displayName: "Dev User")
+                    account.appMode = .solo
+                    account.ageYears = 28
+                    account.weightKg = 75
+                    account.dailyTargetKcal = 400
+                    cachedAccount = account
+                }
+            }
+            if authState == .unauthenticated { authState = .solo }
+            AppSession.setAuthenticated()
+            return
+        }
+
+        // Already signed in and showing a dashboard? Just refresh the cached
+        // account silently — do NOT re-route, which could yank the user out of
+        // whatever screen they're on every time the app foregrounds.
+        if authState != .unauthenticated, cachedAccount != nil {
+            if let fresh = try? await cloud.fetchUserAccountStrict(appleUserID: id) {
+                cachedAccount = fresh
+            }
+            return
+        }
+
         await refreshAccountFromCloud(appleUserID: id)
     }
 
     private func refreshAccountFromCloud(appleUserID: String) async {
-        if let account = await cloud.fetchUserAccount(appleUserID: appleUserID) {
-            cachedAccount = account
-            routeReturningUser(account)
-            AppSession.setAuthenticated()
-        } else {
-            authState = .unauthenticated
-            currentAppleUserID = nil
-            cachedAccount = nil
+        do {
+            if let account = try await cloud.fetchUserAccountStrict(appleUserID: appleUserID) {
+                cachedAccount = account
+                routeReturningUser(account)
+                AppSession.setAuthenticated()
+            } else if let cached = cachedAccount ?? loadLocalMirror(appleUserID: appleUserID) {
+                // Definitive "no record" but we have a local copy (e.g. account
+                // created offline, cloud save silently failed) — keep the
+                // session, restore selections, and re-push to CloudKit.
+                cachedAccount = cached
+                try? await cloud.saveUserAccount(cached)
+                routeReturningUser(cached)
+                AppSession.setAuthenticated()
+            } else {
+                // Definitive "no record" and nothing local: true sign-out.
+                authState = .unauthenticated
+                currentAppleUserID = nil
+                cachedAccount = nil
+                AppSession.clear()
+            }
+        } catch {
+            // Transient failure (network, CloudKit throttle) — keep the session.
+            AppLogger.auth.warning("Session refresh deferred (transient): \(error.localizedDescription, privacy: .public)")
+            if let cached = cachedAccount ?? loadLocalMirror(appleUserID: appleUserID) {
+                cachedAccount = cached
+                routeReturningUser(cached)
+                AppSession.setAuthenticated()
+            } else if AppSession.hasSessionToken {
+                // Cold launch, offline, no cached profile — route from local
+                // flags so the user still lands on their dashboard. The account
+                // re-syncs on the next successful fetch.
+                if UserDefaults.standard.bool(forKey: "onboardingComplete") {
+                    authState = .solo
+                } else {
+                    authState = .onboarding
+                    postAuthStep = .prdHealth
+                }
+            }
+            // else: never signed in on this device — stay on the login page.
         }
     }
 
@@ -76,7 +172,7 @@ final class AuthManager: ObservableObject {
         UserDefaults.standard.set(id, forKey: appleIDDefaultsKey)
         currentAppleUserID = id
 
-        if var existing = await cloud.fetchUserAccount(appleUserID: id) {
+        if var existing = await cloud.fetchUserAccount(appleUserID: id) ?? loadLocalMirror(appleUserID: id) {
             if existing.displayName.isEmpty { existing.displayName = display }
             if existing.email == nil, let appleEmail = credential.email, !appleEmail.isEmpty {
                 existing.email = appleEmail.lowercased()
@@ -119,7 +215,7 @@ final class AuthManager: ObservableObject {
         UserDefaults.standard.set(id, forKey: appleIDDefaultsKey)
         currentAppleUserID = id
 
-        if var existing = await cloud.fetchUserAccount(appleUserID: id) {
+        if var existing = await cloud.fetchUserAccount(appleUserID: id) ?? loadLocalMirror(appleUserID: id) {
             if existing.displayName.isEmpty { existing.displayName = display }
             if existing.email == nil, let email, !email.isEmpty {
                 existing.email = email.lowercased()
@@ -264,7 +360,10 @@ final class AuthManager: ObservableObject {
         UserDefaults.standard.set(id, forKey: appleIDDefaultsKey)
         currentAppleUserID = id
 
-        var account = existing
+        // Cloud record first, then this device's local mirror (covers earlier
+        // sign-ups whose cloud save silently failed), then a fresh account.
+        let recovered = existing ?? loadLocalMirror(appleUserID: id)
+        var account = recovered
             ?? CloudUserAccount.newUser(appleUserID: id, displayName: display.isEmpty ? "Athlete" : display)
         if account.displayName.isEmpty { account.displayName = display }
         // Usernames may be plain handles — only email-shaped ones go in the email slot.
@@ -272,10 +371,10 @@ final class AuthManager: ObservableObject {
         cachedAccount = account
         try? await cloud.saveUserAccount(account)
 
-        // If we recovered a fully-onboarded existing account, drop the user
-        // straight back into their dashboard instead of forcing them through
-        // onboarding again.
-        if let existing, existing.appMode != nil {
+        // If we recovered a fully-onboarded account (cloud or local mirror),
+        // drop the user straight back into their dashboard instead of forcing
+        // them through onboarding again.
+        if let recovered, recovered.appMode != nil {
             routeReturningUser(account)
         } else {
             authState = .onboarding
@@ -304,8 +403,17 @@ final class AuthManager: ObservableObject {
             existing = try await cloud.fetchUserAccountStrict(appleUserID: id)
         } catch {
             // Transient failure — never write a blank fallback over the real
-            // server record. Keep the previous session intact and surface the
-            // error to the UI so the user can retry.
+            // server record. But if this device holds a local mirror of the
+            // account (password already verified above), sign in offline from
+            // it; CloudKit re-syncs on the next successful save.
+            if let mirror = loadLocalMirror(appleUserID: id) {
+                UserDefaults.standard.set(id, forKey: appleIDDefaultsKey)
+                currentAppleUserID = id
+                cachedAccount = mirror
+                routeReturningUser(mirror)
+                AppSession.setAuthenticated()
+                return
+            }
             lastAuthError = "Couldn't reach iCloud. Check your connection and try again."
             throw error
         }
@@ -318,6 +426,17 @@ final class AuthManager: ObservableObject {
         if let existing {
             cachedAccount = existing
             routeReturningUser(existing)
+            AppSession.setAuthenticated()
+            return
+        }
+
+        // No CloudKit record — restore this device's local mirror if the user
+        // completed onboarding here before (cloud save may have silently
+        // failed), pushing it back up to CloudKit.
+        if let mirror = loadLocalMirror(appleUserID: id) {
+            cachedAccount = mirror
+            try? await cloud.saveUserAccount(mirror)
+            routeReturningUser(mirror)
             AppSession.setAuthenticated()
             return
         }
@@ -500,9 +619,19 @@ final class AuthManager: ObservableObject {
         isLoadingAuth = false
         lastAuthError = nil
 
-        let fakeID = "dev_\(UUID().uuidString.prefix(8))"
+        // Stable ID so the dev account's selections (mode, goal, profile)
+        // survive sign-out → sign-in via the local mirror.
+        let fakeID = "dev_tester"
         UserDefaults.standard.set(fakeID, forKey: appleIDDefaultsKey)
         currentAppleUserID = fakeID
+
+        // Reuse the mirrored dev profile when one exists.
+        if let mirror = loadLocalMirror(appleUserID: fakeID) {
+            cachedAccount = mirror
+            applyReturningUserRouting(mirror)
+            AppSession.setAuthenticated()
+            return
+        }
 
         var account = CloudUserAccount.newUser(appleUserID: fakeID, displayName: "Dev User")
 

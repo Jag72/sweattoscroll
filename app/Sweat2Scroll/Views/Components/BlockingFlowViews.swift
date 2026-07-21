@@ -58,7 +58,7 @@ struct BlockingStatusBanner: View {
             if exhaustedCount > 0 {
                 return "\(exhaustedCount) of \(monitoredCount) locked • 30 min each per day"
             }
-            return "30 min per app per day — timer starts when you open each app"
+            return "30 min per app daily"
         case .bypass15:
             return "\(bypassMinutes) min until apps re-lock"
         case .dayBypass:

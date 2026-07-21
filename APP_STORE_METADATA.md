@@ -89,9 +89,9 @@ screen time,fitness,healthkit,productivity,accountability,step counter,calories,
 
 ## 6. SUPPORT URL
 ```
-https://github.com/Jag72/sweattoscroll/issues
+https://sweattoscroll.com/support.html
 ```
-*(Or use a simple landing page — even a GitHub repo page works for review.)*
+*(Live page with FAQ, v1.0 release notes, and support email coppersmith2222@gmail.com. Backup: https://github.com/Jag72/sweattoscroll/issues)*
 
 ---
 
@@ -118,10 +118,9 @@ https://github.com/Jag72/sweattoscroll
 
 ## 10. PRIVACY POLICY URL  (REQUIRED — Apple will reject without this)
 ```
-https://github.com/Jag72/sweattoscroll/blob/main/PRIVACY.md
+https://sweattoscroll.com/privacy.html
 ```
-⚠️  You must publish a privacy policy before submitting.
-A minimal one-page policy is included below — paste it into PRIVACY.md in your repo.
+✅  Published — privacy.html is live on the site; PRIVACY.md mirror is in the repo root.
 
 ---
 
@@ -195,9 +194,10 @@ Health data is accessed only with your explicit HealthKit authorization.
 This app does not include any third-party analytics SDKs.
 
 ## Contact
-For privacy questions: jagadishkrishna2222@gmail.com
+For privacy questions and complaints: coppersmith2222@gmail.com
 GitHub: https://github.com/Jag72/sweattoscroll
 ```
+*(Superseded by the full policy in PRIVACY.md / https://sweattoscroll.com/privacy.html — use those.)*
 
 ---
 

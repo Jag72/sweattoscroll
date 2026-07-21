@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Sweat2Scroll</title>
+  <meta name="description" content="Sweat2Scroll privacy policy — your health data never leaves your phone." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --lime: #C8FF00; --dark: #080808; --card: #141414;
+      --border: rgba(255,255,255,0.08); --text: #F0F0EE; --muted: rgba(240,240,238,0.45);
+      --font-display: 'Anton', sans-serif; --font-body: 'Outfit', sans-serif;
+    }
+    body { background: var(--dark); color: var(--text); font-family: var(--font-body); line-height: 1.7; }
+    nav {
+      position: sticky; top: 0; z-index: 100; display: flex; align-items: center;
+      justify-content: space-between; padding: 1.2rem 5vw;
+      background: rgba(8,8,8,0.85); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--lime); text-decoration: none; }
+    nav a.link { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+    nav a.link:hover { color: var(--text); }
+    main { max-width: 720px; margin: 0 auto; padding: 3.5rem 5vw 5rem; }
+    h1 { font-family: var(--font-display); font-size: clamp(2.2rem, 6vw, 3.2rem); letter-spacing: 0.02em; line-height: 1.1; }
+    h1 span { color: var(--lime); }
+    .updated { color: var(--muted); font-size: 0.9rem; margin: 0.8rem 0 2.5rem; }
+    h2 { font-family: var(--font-display); font-size: 1.25rem; letter-spacing: 0.03em; margin: 2.4rem 0 0.7rem; color: var(--lime); }
+    p, li { color: var(--muted); font-size: 0.96rem; }
+    strong { color: var(--text); font-weight: 600; }
+    ul { padding-left: 1.2rem; margin: 0.4rem 0 0.8rem; }
+    a { color: var(--lime); }
+    .highlight {
+      background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--lime);
+      border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.5rem 0;
+    }
+    footer { border-top: 1px solid var(--border); padding: 2rem 5vw; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="/">SWEAT2SCROLL</a>
+    <a class="link" href="/support.html">Help &amp; Support</a>
+  </nav>
+
+  <main>
+    <h1>PRIVACY <span>POLICY</span></h1>
+    <p class="updated">Effective date: July 20, 2026 · Applies to Sweat2Scroll v1.0 and later</p>
+
+    <div class="highlight">
+      <p><strong>The short version:</strong> your health data never leaves your phone. Sweat2Scroll has no servers, no analytics SDKs, no ads, and nothing to sell. The only cloud storage used is your own private Apple iCloud (CloudKit) container, which we cannot access.</p>
+    </div>
+
+    <h2>1. WHO WE ARE</h2>
+    <p>Sweat2Scroll is developed by Jagadish Krishna Pilla ("we", "us"). It is an iOS app that unlocks your chosen apps only after you hit a daily fitness goal, using Apple HealthKit and the Screen Time (FamilyControls) framework.</p>
+
+    <h2>2. DATA WE READ</h2>
+    <p>With your explicit HealthKit authorization, the app reads: steps, active energy (calories), workout minutes, heart rate, heart-rate variability (HRV), resting heart rate, respiratory rate, and sleep stages. This data is:</p>
+    <ul>
+      <li>Processed <strong>entirely in-memory, on your device</strong>, by an on-device policy engine (Open Policy Agent / WebAssembly)</li>
+      <li><strong>Never written to disk</strong>, never transmitted to us or any third party</li>
+      <li>Used for exactly one purpose: deciding whether your daily goal is met</li>
+    </ul>
+
+    <h2>3. DATA WE STORE</h2>
+    <ul>
+      <li><strong>On your device:</strong> your goal settings (calorie/step/minute targets), selected apps to block (as opaque Apple tokens — we cannot see which apps they are), and app preferences.</li>
+      <li><strong>In your private CloudKit container:</strong> your partner-pairing contract and audit-log events (shield toggles, Break-Glass usage). This container belongs to your Apple ID. We have no access to it — only you and, where the pairing contract allows, your paired partner can read it.</li>
+    </ul>
+
+    <h2>4. SCREEN TIME DATA</h2>
+    <p>App-blocking uses Apple's FamilyControls and ManagedSettings frameworks. Apple provides the app only anonymous tokens for the apps you select — we never see app names, usage history, or browsing activity. Shields are applied locally by iOS and are automatically removed by the system if you delete Sweat2Scroll.</p>
+
+    <h2>5. WHAT WE DON'T DO</h2>
+    <ul>
+      <li>No selling, sharing, or disclosing of health or personal data — to anyone, ever</li>
+      <li>No advertising, no tracking, no third-party analytics SDKs</li>
+      <li>No accounts on our servers — we don't operate any servers</li>
+      <li>No use of health data for marketing, and no use of HealthKit data for advertising as required by Apple's guidelines</li>
+    </ul>
+
+    <h2>6. SECURITY</h2>
+    <ul>
+      <li>Partner pairing uses ECDH P-256 key exchange — no passwords are transmitted or stored</li>
+      <li>Break-Glass emergency codes are time-based one-time passwords (TOTP, RFC 6238) — short-lived and single-use</li>
+      <li>Audit-log entries are cryptographically signed to prevent tampering</li>
+    </ul>
+
+    <h2>7. DATA RETENTION &amp; DELETION</h2>
+    <p>Local data is deleted when you delete the app. CloudKit records live in your personal iCloud and can be removed via Settings → Apple ID → iCloud → Manage Account Storage, or by emailing us a deletion request at <a href="mailto:coppersmith2222@gmail.com">coppersmith2222@gmail.com</a>. Because health data is never persisted, there is no health data to delete.</p>
+
+    <h2>8. CHILDREN</h2>
+    <p>Sweat2Scroll is rated 4+ and contains no objectionable content, but it is not directed at children under 13. We do not knowingly collect personal information from children; since the app collects no personal information on our systems at all, none can be retained.</p>
+
+    <h2>9. YOUR RIGHTS</h2>
+    <p>Depending on your region (e.g., GDPR, CCPA), you may have rights to access, correct, or delete personal data. Because we hold no personal data on our systems, most requests can be satisfied on-device as described above — but you can always contact us and we will help.</p>
+
+    <h2>10. CHANGES TO THIS POLICY</h2>
+    <p>If we change this policy, we will update this page and the effective date above. Material changes will be noted in the App Store release notes of the version that introduces them.</p>
+
+    <h2>11. CONTACT</h2>
+    <p>Questions or complaints about privacy: <a href="mailto:coppersmith2222@gmail.com">coppersmith2222@gmail.com</a><br />
+    Project page: <a href="https://github.com/Jag72/sweattoscroll">github.com/Jag72/sweattoscroll</a></p>
+  </main>
+
+  <footer>
+    © 2026 Jagadish Krishna Pilla · <a href="/support.html">Help &amp; Support</a> · <a href="mailto:coppersmith2222@gmail.com">coppersmith2222@gmail.com</a>
+  </footer>
+</body>
+</html>

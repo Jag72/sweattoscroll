@@ -23,7 +23,7 @@ struct PartnershipRoleSelectionView: View {
     var body: some View {
         OnboardingScaffold(
             title: "How do you want to support each other?",
-            subtitle: "You can change this anytime in settings. Your partner picks their own role on their phone.",
+            subtitle: "Your partner picks their own role. Change anytime.",
             stepIndex: progress?.current,
             stepCount: progress?.total,
             backAction: { auth.advancePRDOnboarding(to: .prdPairingPrompt) },

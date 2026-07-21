@@ -31,6 +31,9 @@ final class GoogleAuthService {
         case sdkMissing
         case noPresenter
         case missingProfile
+        /// User dismissed the Google sheet or the system consent dialog.
+        /// Callers should treat this as a no-op, NOT display it as an error.
+        case canceled
 
         var errorDescription: String? {
             switch self {
@@ -42,6 +45,8 @@ final class GoogleAuthService {
                 return "Couldn't present Google Sign-In. Please try again."
             case .missingProfile:
                 return "Google didn't return your account details. Please try again."
+            case .canceled:
+                return "Sign-in canceled."
             }
         }
     }
@@ -83,14 +88,31 @@ final class GoogleAuthService {
             throw GoogleAuthError.noPresenter
         }
 
-        let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
-        let user = result.user
-        guard let userID = user.userID else { throw GoogleAuthError.missingProfile }
-        return Profile(
-            userID: userID,
-            email: user.profile?.email,
-            fullName: user.profile?.name
-        )
+        // Returning Google user on this device? Restore silently — no browser
+        // sheet, no "Wants to Use google.com" dialog. Falls through to the
+        // interactive flow if restore fails (revoked, expired, first run).
+        if GIDSignIn.sharedInstance.hasPreviousSignIn(),
+           let restored = try? await GIDSignIn.sharedInstance.restorePreviousSignIn(),
+           let restoredID = restored.userID {
+            return Profile(
+                userID: restoredID,
+                email: restored.profile?.email,
+                fullName: restored.profile?.name
+            )
+        }
+
+        do {
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
+            let user = result.user
+            guard let userID = user.userID else { throw GoogleAuthError.missingProfile }
+            return Profile(
+                userID: userID,
+                email: user.profile?.email,
+                fullName: user.profile?.name
+            )
+        } catch let error as GIDSignInError where error.code == .canceled {
+            throw GoogleAuthError.canceled
+        }
         #else
         throw GoogleAuthError.sdkMissing
         #endif

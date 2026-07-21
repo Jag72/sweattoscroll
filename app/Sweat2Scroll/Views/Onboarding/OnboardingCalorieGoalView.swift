@@ -49,7 +49,7 @@ struct OnboardingCalorieGoalView: View {
     var body: some View {
         OnboardingScaffold(
             title: "Set your daily calorie burn goal",
-            subtitle: "We've calculated a recommended target based on your profile. You can adjust this anytime in Settings.",
+            subtitle: "Based on your profile. Adjust anytime in Settings.",
             stepIndex: progress?.current,
             stepCount: progress?.total,
             backAction: backTarget,

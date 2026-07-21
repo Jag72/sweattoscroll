@@ -33,7 +33,7 @@ struct OnboardingPairingPromptView: View {
     var body: some View {
         OnboardingScaffold(
             title: "Add an accountability partner?",
-            subtitle: "Use a one-time 6-digit code to pair two phones. After pairing, you'll choose how you support each other.",
+            subtitle: "Pair phones with a one-time 6-digit code.",
             stepIndex: progress?.current,
             stepCount: progress?.total,
             backAction: { auth.advancePRDOnboarding(to: .prdApps) },

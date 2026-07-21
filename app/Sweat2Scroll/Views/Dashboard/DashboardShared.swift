@@ -635,34 +635,47 @@ struct AppAuditRow: View {
 
 // MARK: - Break-Glass Long-Press Trigger
 
+/// Deliberately understated: plain grey text, no button chrome. Opening the
+/// Break-Glass sheet requires press-and-hold (~2.5 s) so it can't be tapped
+/// impulsively — the label switches to "Keep holding…" while pressed and a
+/// success haptic fires when the hold completes.
 struct AppBreakGlassTrigger: View {
     @Binding var show: Bool
 
+    @State private var isPressing = false
+
+    private let holdDuration: Double = 2.5
+
     var body: some View {
-        Button {
-            show = true
-        } label: {
-            HStack(spacing: 7) {
-                Image(systemName: "exclamationmark.shield.fill")
-                    .font(.system(size: 13, weight: .semibold))
-                Text("Emergency override")
-                    .font(.system(size: 13, weight: .semibold))
-            }
-            .foregroundColor(.rose)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 13)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.white)
-                    .overlay(
-                        Capsule(style: .continuous)
-                            .strokeBorder(Color.rose.opacity(0.35), lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
-            )
-            .contentShape(Capsule(style: .continuous))
+        HStack(spacing: 6) {
+            Image(systemName: "info.circle")
+                .font(.system(size: 13, weight: .medium))
+            Text(isPressing ? "Keep holding…" : "Emergency override")
+                .font(.system(size: 14, weight: .medium))
         }
-        .buttonStyle(.plain)
+        .foregroundColor(isPressing ? .ink : .muted)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .contentShape(Rectangle())
+        .scaleEffect(isPressing ? 1.04 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: isPressing)
+        .onLongPressGesture(
+            minimumDuration: holdDuration,
+            maximumDistance: 40,
+            perform: {
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                isPressing = false
+                show = true
+            },
+            onPressingChanged: { pressing in
+                isPressing = pressing
+                if pressing {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                }
+            }
+        )
+        .accessibilityLabel("Emergency override")
+        .accessibilityHint("Press and hold for about three seconds to open the emergency override.")
     }
 }
 
@@ -705,7 +718,10 @@ struct ProfileScreen: View {
     var onPermissions: () -> Void = {}
 
     @State private var showSignOutConfirm = false
+    @State private var showHelpSupport = false
+    @State private var showPrivacyPolicy = false
     @AppStorage("currentStreak") private var streak: Int = 14
+    @AppStorage(BiometricAuthService.lockEnabledKey) private var faceIDLockEnabled = true
 
     private var displayName: String { AuthManager.shared.userDisplayName }
 
@@ -744,14 +760,38 @@ struct ProfileScreen: View {
                     settingsRow(icon: "lock.shield.fill", color: .amber,
                                 title: "Permissions",
                                 value: "Health · Screen Time", action: onPermissions)
+                    if BiometricAuthService.shared.availableBiometry != .none {
+                        Divider().padding(.leading, 60)
+                        HStack(spacing: 14) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                    .fill(Color.deepTeal.opacity(0.15))
+                                    .frame(width: 34, height: 34)
+                                Image(systemName: BiometricAuthService.shared.availableBiometry.systemImage)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.deepTeal)
+                            }
+                            Text("\(BiometricAuthService.shared.availableBiometry.label) unlock")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.ink)
+                            Spacer()
+                            Toggle("", isOn: $faceIDLockEnabled)
+                                .labelsHidden()
+                                .tint(.electricOrange)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                    }
                 }
 
                 settingsGroup(title: "About") {
                     settingsRow(icon: "questionmark.circle.fill", color: .muted,
-                                title: "Help & Support", value: "")
+                                title: "Help & Support", value: "",
+                                action: { showHelpSupport = true })
                     Divider().padding(.leading, 60)
                     settingsRow(icon: "doc.text.fill", color: .muted,
-                                title: "Privacy Policy", value: "")
+                                title: "Privacy Policy", value: "",
+                                action: { showPrivacyPolicy = true })
                     Divider().padding(.leading, 60)
                     settingsRow(icon: "info.circle.fill", color: .muted,
                                 title: "Version", value: appVersion, chevron: false)
@@ -781,6 +821,8 @@ struct ProfileScreen: View {
                 .padding(.bottom, 28)
             }
         }
+        .sheet(isPresented: $showHelpSupport) { HelpSupportView() }
+        .sheet(isPresented: $showPrivacyPolicy) { PrivacyPolicyView() }
         .alert("Sign out?", isPresented: $showSignOutConfirm) {
             Button("Cancel", role: .cancel) {}
             Button("Sign Out", role: .destructive) { AuthManager.shared.signOut() }
@@ -1019,7 +1061,7 @@ struct ShieldScreen: View {
                         "clock.fill", .deepTeal)
             }
             return ("Per-app scroll limits",
-                    "30 min per app per day — timer starts when you open each app.",
+                    "30 min per app daily.",
                     "clock.fill", .deepTeal)
         case .blocked:
             return ("Time to move",
