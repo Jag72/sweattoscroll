@@ -24,7 +24,9 @@ enum CloudKitSchemaBootstrap {
     private static var privateDB: CKDatabase { container.privateCloudDatabase }
 
     // MARK: - UserDefaults key to track if schema has been initialized
-    private static let bootstrapKey = "cloudkit_schema_bootstrapped_v2"
+    // v3: adds BypassGrant (Break-Glass) — bumping the key re-runs the
+    // bootstrap once on devices that completed v2.
+    private static let bootstrapKey = "cloudkit_schema_bootstrapped_v3"
 
     // MARK: - Public Entry Point
     /// Call once on first launch. Idempotent — skips if already bootstrapped.
@@ -45,8 +47,9 @@ enum CloudKitSchemaBootstrap {
             async let pairing     = bootstrapPairingResponse()
             async let userAccount = bootstrapUserAccount()
             async let pairCode    = bootstrapPairCode()
+            async let bypass      = bootstrapBypassGrant()
 
-            let results = await [audit, contract, progress, pairing, userAccount, pairCode]
+            let results = await [audit, contract, progress, pairing, userAccount, pairCode, bypass]
             let successCount = results.filter { $0 }.count
 
             if successCount == results.count {
@@ -216,6 +219,25 @@ enum CloudKitSchemaBootstrap {
         record["expiresAt"] = Date().addingTimeInterval(600) as CKRecordValue
         record["consumed"] = 1 as CKRecordValue
         return await saveAndDelete(record, label: "PairCode")
+    }
+
+    // MARK: - BypassGrant Schema (Break-Glass emergency override)
+    // Mirrors CloudKitService.saveBypassGrant exactly — queried by
+    // `code == %@ AND partnershipID == %@ AND consumed == 0`.
+    private static func bootstrapBypassGrant() async -> Bool {
+        let recordID = CKRecord.ID(recordName: "schema-seed-bypassgrant-000000")
+        let record = CKRecord(recordType: "BypassGrant", recordID: recordID)
+        record["code"]            = "000000" as CKRecordValue
+        record["partnershipID"]   = "seed-partnership" as CKRecordValue
+        record["granterUserID"]   = "seed-granter" as CKRecordValue
+        record["recipientUserID"] = "seed-recipient" as CKRecordValue
+        record["durationMinutes"] = 15 as CKRecordValue
+        record["createdAt"]       = Date() as CKRecordValue
+        record["expiresAt"]       = Date().addingTimeInterval(600) as CKRecordValue
+        record["consumed"]        = 1 as CKRecordValue
+        record.encryptedValues["granterDisplayName"] = "seed" as CKRecordValue
+        record.encryptedValues["reason"]             = "schema seed" as CKRecordValue
+        return await saveAndDelete(record, label: "BypassGrant")
     }
 
     // MARK: - Save then Delete (creates schema without leaving stale data)
